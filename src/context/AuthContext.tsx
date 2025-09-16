@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await res.json();
 
-      setUser(data);
+      setUser(data.resultado[0]);
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);
       logout();
@@ -61,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (token: string) => {
     localStorage.setItem('token', token);
+    
     await fetchUser(token);
   };
 

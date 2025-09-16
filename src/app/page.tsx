@@ -105,7 +105,7 @@ export default function LoginPage() {
                 </button>
 
                 <p className="register-text">
-                  Sem acesso? <a href="/registrar">Entre em contato com nossa equipe</a>
+                  Sem acesso? <a href="#">Entre em contato com nossa equipe</a>
                 </p>
               </form>
             </div>

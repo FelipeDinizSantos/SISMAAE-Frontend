@@ -1,0 +1,46 @@
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 0.8rem 1.5rem;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Info do usuário */
+.dashboard-header .user-info {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.2rem;
+}
+
+/* Botão logout */
+.btn-logout {
+    background: #dd1919;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-logout:hover {
+    background: #b61515;
+}
+
+/* Container principal */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Conteúdo central */
+.dashboard-container section.conteudo {
+    flex: 1;
+    padding: 1rem;
+}

@@ -1,0 +1,156 @@
+.materiais-container {
+    margin-top: 1rem;
+}
+
+.materiais-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.materiais-tabela thead {
+    background: #e0e0e0;
+    text-align: center;
+}
+
+.materiais-tabela th {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.materiais-tabela td {
+    padding: 0.75rem;
+    border-top: 1px solid #ddd;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #444;
+}
+
+.materiais-tabela tbody tr:hover {
+    background: #f0f0f0;
+    cursor: pointer;
+}
+
+.status {
+    font-weight: bold;
+    border-radius: 4px;
+    text-align: center;
+    width: fit-content;
+}
+
+.status.disponivel p {
+    background: #d4edda;
+    color: #155724;
+    padding: .4rem;
+    border-radius: 3px;
+}
+.status.disp_c_restricao  p {
+    background: #fff3cd;
+    color: #856404;
+    padding: .4rem;
+    border-radius: 3px;
+}
+.status.indisponivel  p {
+    background: #f8d7da;
+    color: #721c24;
+    padding: .4rem;
+    border-radius: 3px;
+}
+.status.manutencao  p {
+    background: #d1ecf1;
+    color: #0c5460;
+    padding: .4rem;
+    border-radius: 3px;
+}
+
+.select-disponibilidade {
+    padding: .4rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.9rem;
+    width: 100%;
+    text-align: center;
+    margin: .8rem 0;
+}
+
+.botoes-edicao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+.btn-confirmar, .btn-cancelar {
+    padding: 5px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-confirmar {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-confirmar:hover {
+    background-color: #45a049;
+}
+
+.btn-cancelar {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-cancelar:hover {
+    background-color: #d32f2f;
+}
+
+.btn-editar {
+    height: 100%;
+    padding: 5px 10px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-editar:hover {
+    background-color: #0b7dda;
+}
+
+.status.editing {
+    background-color: #f5f5f5;
+    padding: .4rem;
+
+
+}
+
+.input-observacao {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-observacao:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.materiais-tabela td:nth-child(6) {
+    min-width: 150px;
+}
