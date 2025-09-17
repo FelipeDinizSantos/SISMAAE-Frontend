@@ -5,17 +5,6 @@ import Link from "next/link";
 import { AuthProvider } from '../context/AuthContext';
 import Image from "next/image";
 
-type UsuarioPerfil = {
-  id: number;
-  nome: string;
-  email: string;
-  criado_em: string;
-  perfil_id: number;
-  perfil_nome: string;
-  funcao_tecnica_id?: number;
-  funcao_tecnica_nome?: string;
-};
-
 const montserrat = Montserrat({
   subsets: ['latin'],
   weight: [
@@ -54,8 +43,8 @@ export default function RootLayout({
               <Image
                 src="/img/logo_batalhao.jpg"
                 alt="logo do batalhão"
-                width={85}
-                height={85}
+                width={240}
+                height={75}
               />
             </Link>
           </header>

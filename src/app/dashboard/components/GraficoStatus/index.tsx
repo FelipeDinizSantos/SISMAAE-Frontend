@@ -4,30 +4,18 @@ import { useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
 
 import "./GraficoStatus.css";
+import { Material } from '@/interfaces/Material.interface';
+import { Modulo } from '@/interfaces/Modulo.interface';
 
 // Registrar todos os componentes do Chart.js
 Chart.register(...registerables);
 
-interface Material {
-    id: number;
-    Material: string;
-    SN: string;
-    Disponibilidade: 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO';
-    OM_Origem: string;
-    OM_Atual: string;
-    Obs: string;
-}
-
-interface GraficoStatusProps {
-    materiais: Material[];
-}
-
-export default function GraficoStatus({ materiais }: GraficoStatusProps) {
+export default function GraficoStatus({ itens }:{itens:Material[] | Modulo[]}) {
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstance = useRef<Chart<'pie'> | null>(null);
 
     useEffect(() => {
-        if (!chartRef.current || materiais.length === 0) return;
+        if (!chartRef.current || itens.length === 0) return;
 
         const statusCount = {
             DISPONIVEL: 0,
@@ -36,7 +24,7 @@ export default function GraficoStatus({ materiais }: GraficoStatusProps) {
             MANUTENCAO: 0
         };
 
-        materiais.forEach(material => {
+        itens.forEach(material => {
             statusCount[material.Disponibilidade] += 1;
         });
 
@@ -90,9 +78,9 @@ export default function GraficoStatus({ materiais }: GraficoStatusProps) {
                 chartInstance.current.destroy();
             }
         };
-    }, [materiais]);
+    }, [itens]);
 
-    if (materiais.length === 0) {
+    if (itens.length === 0) {
         return <div className="grafico-container">Carregando dados para o gráfico...</div>;
     }
 

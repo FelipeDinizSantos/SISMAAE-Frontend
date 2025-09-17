@@ -1,15 +1,7 @@
+import { Material } from "@/interfaces/Material.interface";
 import "./ListaMateriais.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-
-interface Material {
-    id: number;
-    Material: string;
-    SN: string;
-    Disponibilidade: 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO';
-    OM_Origem: string;
-    OM_Atual: string;
-    Obs: string;
-}
+import { Modulo } from "@/interfaces/Modulo.interface";
 
 interface MaterialEditado extends Material {
     editando?: boolean;
@@ -18,15 +10,17 @@ interface MaterialEditado extends Material {
 }
 
 export default function ListaMateriais(
-    { 
-        materiais, 
-        setMateriais 
-    } 
-    : 
-    { 
-        materiais: Material[], 
-        setMateriais: Dispatch<SetStateAction<Material[]>>
+    {
+        materiais,
+        setMateriais,
+        setItens
     }
+        :
+        {
+            materiais: Material[],
+            setMateriais: Dispatch<SetStateAction<Material[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+        }
 ) {
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
 
@@ -62,13 +56,19 @@ export default function ListaMateriais(
             ...novosMateriais[index],
             editando: false
         };
-        
+
         novosMateriais[index] = materialEditado;
         setMateriaisEditaveis(novosMateriais);
-        
+
         const { editando, disponibilidadeOriginal, obsOriginal, ...materialSemPropriedadesEditaveis } = materialEditado;
-        setMateriais(prevMateriais => 
-            prevMateriais.map((mat, i) => 
+
+        setMateriais(prevMateriais =>
+            prevMateriais.map((mat, i) =>
+                i === index ? materialSemPropriedadesEditaveis : mat
+            )
+        );
+        setItens(materiaisEditaveis => 
+            materiaisEditaveis.map((mat, i) =>
                 i === index ? materialSemPropriedadesEditaveis : mat
             )
         );
@@ -79,7 +79,7 @@ export default function ListaMateriais(
         try {
             const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/${materiais[index].id}`, {
                 method: "PUT",
-                headers: { 
+                headers: {
                     'Authorization': `Barear ${token}`,
                     'Content-Type': 'application/json'
                 },
@@ -95,7 +95,7 @@ export default function ListaMateriais(
 
             const response = await result.json();
             console.log("Material atualizado com sucesso:", response);
-            
+
         } catch (error) {
             console.error("Erro ao atualizar material:", error);
             cancelarEdicao(index);
@@ -146,7 +146,7 @@ export default function ListaMateriais(
                                         <select
                                             value={mat.Disponibilidade}
                                             onChange={(e) => handleDisponibilidadeChange(
-                                                idx, 
+                                                idx,
                                                 e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
                                             )}
                                             className="select-disponibilidade"
@@ -178,14 +178,14 @@ export default function ListaMateriais(
                                 <td>
                                     {mat.editando ? (
                                         <div className="botoes-edicao">
-                                            <button 
+                                            <button
                                                 className="btn-confirmar"
                                                 onClick={() => confirmarEdicao(idx)}
                                                 title="Confirmar edição"
                                             >
                                                 ✓
                                             </button>
-                                            <button 
+                                            <button
                                                 className="btn-cancelar"
                                                 onClick={() => cancelarEdicao(idx)}
                                                 title="Cancelar edição"
@@ -194,7 +194,7 @@ export default function ListaMateriais(
                                             </button>
                                         </div>
                                     ) : (
-                                        <button 
+                                        <button
                                             className="btn-editar"
                                             onClick={() => iniciarEdicao(idx)}
                                         >

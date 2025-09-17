@@ -1,0 +1,395 @@
+import { Material } from "@/interfaces/Material.interface";
+import "./ListaModulos.css";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Modulo } from "@/interfaces/Modulo.interface";
+
+interface ModuloEditado extends Modulo {
+    editando?: boolean;
+    disponibilidadeOriginal?: string;
+    obsOriginal?: string;
+    omOrigemId?: number;
+    omDestinoId?: number;
+    cabideSNOriginal?: string;
+    cabideSNSelecionado?: string;
+}
+
+interface Batalhao {
+    id: number;
+    nome: string;
+    sigla: string;
+}
+
+interface MaterialAPI {
+    id: number;
+    Material: string;
+    SN: string;
+    Disponibilidade: string;
+    OM_Origem: string;
+    OM_Atual: string;
+    Obs: string;
+}
+
+export default function ListaModulos(
+    {
+        modulos,
+        setModulos,
+        setItens
+    }
+        :
+        {
+            modulos: Modulo[],
+            setModulos: Dispatch<SetStateAction<Modulo[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+        }
+) {
+    const [modulosEditaveis, setModulosEditaveis] = useState<ModuloEditado[]>([]);
+    const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
+    const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const fetchBatalhoes = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/batalhoes`, {
+                    headers: { 'Authorization': `Barear ${token}` }
+                });
+                if (!res.ok) throw new Error("Erro ao carregar batalhões");
+                const data = await res.json();
+                setBatalhoes(data.batalhoes);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        const fetchCabides = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
+                    headers: { 'Authorization': `Barear ${token}` }
+                });
+                if (!res.ok) throw new Error("Erro ao carregar cabides");
+                const data = await res.json();
+                setCabidesDisponiveis(data.resultado);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchBatalhoes();
+        fetchCabides();
+    }, []);
+
+    useEffect(() => {
+        setModulosEditaveis(modulos.map(mod => ({
+            ...mod,
+            editando: false,
+            omOrigemId: mod.OM_Origem_Id,
+            omDestinoId: mod.OM_Atual_Id,
+            cabideSNSelecionado: mod.SN_do_Cabide
+        })));
+    }, [modulos]);
+
+    const iniciarEdicao = (index: number) => {
+        const novos = [...modulosEditaveis];
+        novos[index] = {
+            ...novos[index],
+            editando: true,
+            disponibilidadeOriginal: novos[index].Disponibilidade,
+            obsOriginal: novos[index].Obs,
+            omOrigemId: novos[index].OM_Origem_Id,
+            omDestinoId: novos[index].OM_Atual_Id,
+            cabideSNOriginal: novos[index].SN_do_Cabide,
+            cabideSNSelecionado: novos[index].SN_do_Cabide
+        };
+        setModulosEditaveis(novos);
+    };
+
+    const cancelarEdicao = (index: number) => {
+        const novos = [...modulosEditaveis];
+        novos[index] = {
+            ...novos[index],
+            editando: false,
+            Disponibilidade: novos[index].disponibilidadeOriginal as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO',
+            Obs: novos[index].obsOriginal || '',
+            omOrigemId: novos[index].OM_Origem_Id,
+            omDestinoId: novos[index].OM_Atual_Id,
+            cabideSNSelecionado: novos[index].cabideSNOriginal
+        };
+        setModulosEditaveis(novos);
+    };
+
+    const confirmarEdicao = async (index: number) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const moduloEditado = modulosEditaveis[index];
+
+            const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos/${modulos[index].id}`, {
+                method: "PUT",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    disponibilidade: moduloEditado.Disponibilidade,
+                    observacao: moduloEditado.Obs,
+                    omOrigemId: moduloEditado.omOrigemId,
+                    omDestinoId: moduloEditado.omDestinoId,
+                    cabideSN: moduloEditado.cabideSNSelecionado
+                })
+            });
+
+            if (!result.ok) {
+                throw new Error('Erro ao atualizar módulo');
+            }
+
+            const response = await result.json();
+            console.log("Módulo atualizado com sucesso:", response);
+
+            const novosModulos = [...modulos];
+            const batalhaoOrigem = batalhoes.find(b => b.id === moduloEditado.omOrigemId);
+            const batalhaoDestino = batalhoes.find(b => b.id === moduloEditado.omDestinoId);
+
+            const cabideSelecionado = cabidesDisponiveis.find(cabide =>
+                cabide.SN === moduloEditado.cabideSNSelecionado
+            );
+
+            novosModulos[index] = {
+                ...novosModulos[index],
+                Disponibilidade: moduloEditado.Disponibilidade,
+                Obs: moduloEditado.Obs,
+                OM_Origem_Id: moduloEditado.omOrigemId!,
+                OM_Atual_Id: moduloEditado.omDestinoId!,
+                OM_Origem: batalhaoOrigem?.sigla || novosModulos[index].OM_Origem,
+                OM_Atual: batalhaoDestino?.sigla || novosModulos[index].OM_Atual,
+                SN_do_Cabide: moduloEditado.cabideSNSelecionado || novosModulos[index].SN_do_Cabide,
+                Disponibilidade_do_Cabide: cabideSelecionado?.Disponibilidade || novosModulos[index].Disponibilidade_do_Cabide
+            };
+
+            setModulos(novosModulos);
+            setItens(novosModulos);
+
+            const novosEditaveis = [...modulosEditaveis];
+            novosEditaveis[index] = {
+                ...novosEditaveis[index],
+                editando: false,
+                OM_Origem_Id: moduloEditado.omOrigemId!,
+                OM_Atual_Id: moduloEditado.omDestinoId!,
+                OM_Origem: batalhaoOrigem?.sigla || novosEditaveis[index].OM_Origem,
+                OM_Atual: batalhaoDestino?.sigla || novosEditaveis[index].OM_Atual,
+                SN_do_Cabide: moduloEditado.cabideSNSelecionado || novosEditaveis[index].SN_do_Cabide,
+                Disponibilidade_do_Cabide: cabideSelecionado?.Disponibilidade || novosEditaveis[index].Disponibilidade_do_Cabide
+            };
+            setModulosEditaveis(novosEditaveis);
+
+        } catch (error) {
+            console.error("Erro ao atualizar módulo:", error);
+            cancelarEdicao(index);
+        }
+    };
+
+    const handleDisponibilidadeChange = (
+        index: number,
+        novoValor: 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
+    ) => {
+        const novos = [...modulosEditaveis];
+        novos[index] = {
+            ...novos[index],
+            Disponibilidade: novoValor
+        };
+        setModulosEditaveis(novos);
+    };
+
+    const handleObsChange = (index: number, novoValor: string) => {
+        const novos = [...modulosEditaveis];
+        novos[index] = {
+            ...novos[index],
+            Obs: novoValor
+        };
+        setModulosEditaveis(novos);
+    };
+
+    const handleOmChange = (index: number, campo: 'omOrigemId' | 'omDestinoId', valor: number) => {
+        const novos = [...modulosEditaveis];
+        novos[index] = {
+            ...novos[index],
+            [campo]: valor
+        };
+        setModulosEditaveis(novos);
+    };
+
+    const handleCabideChange = (index: number, novoSN: string) => {
+        const novos = [...modulosEditaveis];
+
+        const cabideSelecionado = cabidesDisponiveis.find(cabide => cabide.SN === novoSN);
+
+        novos[index] = {
+            ...novos[index],
+            cabideSNSelecionado: novoSN,
+            Disponibilidade_do_Cabide: cabideSelecionado?.Disponibilidade || novos[index].Disponibilidade_do_Cabide
+        };
+
+        setModulosEditaveis(novos);
+    };
+    
+    const getOmSelectValue = (mod: ModuloEditado, campo: 'omOrigemId' | 'omDestinoId') => {
+        if (mod.editando) {
+            return mod[campo] || '';
+        }
+        return '';
+    };
+
+    return (
+        <div className="materiais-container">
+            <h3>Lista de Módulos</h3>
+            {modulosEditaveis.length > 0 ? (
+                <table className="materiais-tabela">
+                    <thead>
+                        <tr>
+                            <th>Módulo</th>
+                            <th>SN</th>
+                            <th>Disponibilidade</th>
+                            <th>OM Origem</th>
+                            <th>OM Atual</th>
+                            <th>Material</th>
+                            <th>SN do Cabide</th>
+                            <th>Disponibilidade do Cabide</th>
+                            <th>Obs</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {modulosEditaveis.map((mod, idx) => (
+                            <tr key={idx}>
+                                <td>{mod.modulo}</td>
+                                <td>{mod.SN}</td>
+                                <td className={`status ${mod.Disponibilidade.toLowerCase()}`}>
+                                    {mod.editando ? (
+                                        <select
+                                            value={mod.Disponibilidade}
+                                            onChange={(e) => handleDisponibilidadeChange(
+                                                idx,
+                                                e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
+                                            )}
+                                            className="select-disponibilidade"
+                                        >
+                                            <option value="DISPONIVEL">DISPONIVEL</option>
+                                            <option value="DISP_C_RESTRICAO">DISP_C_RESTRICAO</option>
+                                            <option value="INDISPONIVEL">INDISPONIVEL</option>
+                                            <option value="MANUTENCAO">MANUTENCAO</option>
+                                        </select>
+                                    ) : (
+                                        <p>{mod.Disponibilidade}</p>
+                                    )}
+                                </td>
+
+                                <td>
+                                    {mod.editando ? (
+                                        <select
+                                            value={getOmSelectValue(mod, 'omOrigemId')}
+                                            onChange={(e) => handleOmChange(idx, 'omOrigemId', Number(e.target.value))}
+                                            className="select-disponibilidade"
+                                        >
+                                            <option value="">Selecione</option>
+                                            {batalhoes.map(b => (
+                                                <option key={b.id} value={b.id}>{b.sigla}</option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <p>{mod.OM_Origem}</p>
+                                    )}
+                                </td>
+
+                                <td>
+                                    {mod.editando ? (
+                                        <select
+                                            value={getOmSelectValue(mod, 'omDestinoId')}
+                                            onChange={(e) => handleOmChange(idx, 'omDestinoId', Number(e.target.value))}
+                                            className="select-disponibilidade"
+                                        >
+                                            <option value="">Selecione</option>
+                                            {batalhoes.map(b => (
+                                                <option key={b.id} value={b.id}>{b.sigla}</option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <p>{mod.OM_Atual}</p>
+                                    )}
+                                </td>
+
+                                <td>{mod.Material}</td>
+
+                                <td>
+                                    {mod.editando ? (
+                                        <select
+                                            value={mod.cabideSNSelecionado || mod.SN_do_Cabide}
+                                            onChange={(e) => handleCabideChange(idx, e.target.value)}
+                                            className="select-disponibilidade"
+                                        >
+                                            <option value="">Selecione um cabide</option>
+                                            {cabidesDisponiveis.map(cabide => (
+                                                <option key={cabide.id} value={cabide.SN}>
+                                                    {cabide.SN} - {cabide.Material}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <p>{mod.SN_do_Cabide}</p>
+                                    )}
+                                </td>
+
+                                <td className={`status ${mod.Disponibilidade_do_Cabide?.toLowerCase() || ''}`}>
+                                    <p>{mod.Disponibilidade_do_Cabide}</p>
+                                </td>
+                                <td>
+                                    {mod.editando ? (
+                                        <input
+                                            type="text"
+                                            value={mod.Obs}
+                                            onChange={(e) => handleObsChange(idx, e.target.value)}
+                                            className="input-observacao"
+                                            placeholder="Digite a observação"
+                                        />
+                                    ) : (
+                                        <span>{mod.Obs}</span>
+                                    )}
+                                </td>
+                                <td>
+                                    {mod.editando ? (
+                                        <div className="botoes-edicao">
+                                            <button
+                                                className="btn-confirmar"
+                                                onClick={() => confirmarEdicao(idx)}
+                                                title="Confirmar edição"
+                                            >
+                                                ✓
+                                            </button>
+                                            <button
+                                                className="btn-cancelar"
+                                                onClick={() => cancelarEdicao(idx)}
+                                                title="Cancelar edição"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            className="btn-editar"
+                                            onClick={() => iniciarEdicao(idx)}
+                                        >
+                                            Editar
+                                        </button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p>Carregando módulos...</p>
+            )}
+        </div>
+    )
+}
