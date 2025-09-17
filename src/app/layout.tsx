@@ -41,10 +41,10 @@ export default function RootLayout({
           <header className="titulo-principal">
             <Link href="/dashboard">
               <Image
-                src="/img/logo_batalhao.jpg"
+                src="/img/logo_batalhao.jpeg"
                 alt="logo do batalhão"
-                width={240}
-                height={75}
+                width={450}
+                height={150}
               />
             </Link>
           </header>

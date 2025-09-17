@@ -251,7 +251,7 @@ export default function ListaModulos(
                             <th>Módulo</th>
                             <th>SN</th>
                             <th>Disponibilidade</th>
-                            <th>OM Origem</th>
+                            <th >OM Origem</th>
                             <th>OM Atual</th>
                             <th>Material</th>
                             <th>SN do Cabide</th>

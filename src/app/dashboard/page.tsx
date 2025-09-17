@@ -48,6 +48,45 @@ export default function DashboardPage() {
                 console.error("Erro ao buscar modulos:", error);
             }
         }
+
+        if (contextoLista === "MODULO-CABIDE" && auxiliarBuscaEspecifica) {
+            try {
+                let fetchData = async () => {
+                    let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos?cabide=${auxiliarBuscaEspecifica}`, {
+                        headers: { authorization: `Barear ${token}` }
+                    });
+
+                    let data = await res.json();
+
+                    setItens(data.resultado);
+                    setModulos(data.resultado);
+                }
+
+                fetchData();
+            } catch (error) {
+                console.error("Erro ao buscar modulos:", error);
+            }
+        }
+
+        if (contextoLista === "MODULO-OM_ATUAL" && auxiliarBuscaEspecifica) {
+            try {
+                let fetchData = async () => {
+                    let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos?atual=${auxiliarBuscaEspecifica.toUpperCase()}`, {
+                        headers: { authorization: `Barear ${token}` }
+                    });
+
+                    let data = await res.json();
+
+                    setItens(data.resultado);
+                    setModulos(data.resultado);
+                }
+
+                fetchData();
+            } catch (error) {
+                console.error("Erro ao buscar modulos:", error);
+            }
+        }
+
         if (contextoLista === "MATERIAL") {
             const fetchMateriais = async () => {
                 try {
@@ -141,6 +180,26 @@ export default function DashboardPage() {
 
                     {
                         contextoLista === "MODULO-NOME" && (
+                            <ListaModulos
+                                modulos={modulos}
+                                setItens={setItens}
+                                setModulos={setModulos}
+                            />
+                        )
+                    }
+
+                    {
+                        contextoLista === "MODULO-CABIDE" && (
+                            <ListaModulos
+                                modulos={modulos}
+                                setItens={setItens}
+                                setModulos={setModulos}
+                            />
+                        )
+                    }
+
+                    {
+                        contextoLista === "MODULO-OM_ATUAL" && (
                             <ListaModulos
                                 modulos={modulos}
                                 setItens={setItens}

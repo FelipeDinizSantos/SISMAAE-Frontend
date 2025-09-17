@@ -1,5 +1,7 @@
 /* Container do menu lateral */
 section.menu-lateral {
+    overflow-y: scroll;
+    height: 100vh;
     width: 25%;
     min-width: 220px;
     padding: 1.5rem;

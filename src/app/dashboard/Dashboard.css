@@ -44,3 +44,9 @@
     flex: 1;
     padding: 1rem;
 }
+
+/* Formatação da tabela principal */
+.materiais-container {
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+}
