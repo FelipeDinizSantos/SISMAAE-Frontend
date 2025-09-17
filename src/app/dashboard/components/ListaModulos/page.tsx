@@ -11,6 +11,7 @@ interface ModuloEditado extends Modulo {
     omDestinoId?: number;
     cabideSNOriginal?: string;
     cabideSNSelecionado?: string;
+    semCabide?: string;
 }
 
 interface Batalhao {
@@ -86,7 +87,7 @@ export default function ListaModulos(
             editando: false,
             omOrigemId: mod.OM_Origem_Id,
             omDestinoId: mod.OM_Atual_Id,
-            cabideSNSelecionado: mod.SN_do_Cabide
+            cabideSNSelecionado: mod.SN_do_Cabide,
         })));
     }, [modulos]);
 
@@ -100,7 +101,7 @@ export default function ListaModulos(
             omOrigemId: novos[index].OM_Origem_Id,
             omDestinoId: novos[index].OM_Atual_Id,
             cabideSNOriginal: novos[index].SN_do_Cabide,
-            cabideSNSelecionado: novos[index].SN_do_Cabide
+            cabideSNSelecionado: novos[index].SN_do_Cabide,
         };
         setModulosEditaveis(novos);
     };
@@ -126,19 +127,37 @@ export default function ListaModulos(
         try {
             const moduloEditado = modulosEditaveis[index];
 
+            if(moduloEditado.cabideSNSelecionado === "Sem Cabide"){
+                modulos[index].Disponibilidade_do_Cabide = " ";
+            }
+
+            let corpoRequisicaoComCabide;
+
+            if (moduloEditado.cabideSNSelecionado === "Sem Cabide") {
+                corpoRequisicaoComCabide = {
+                    disponibilidade: moduloEditado.Disponibilidade,
+                    observacao: moduloEditado.Obs,
+                    omOrigemId: moduloEditado.omOrigemId,
+                    omDestinoId: moduloEditado.omDestinoId,
+                    isSemCabide: true,
+                }
+            } else {
+                corpoRequisicaoComCabide = {
+                    disponibilidade: moduloEditado.Disponibilidade,
+                    observacao: moduloEditado.Obs,
+                    omOrigemId: moduloEditado.omOrigemId,
+                    omDestinoId: moduloEditado.omDestinoId,
+                    cabideSN: moduloEditado.cabideSNSelecionado,
+                }
+            }
+
             const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos/${modulos[index].id}`, {
                 method: "PUT",
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    disponibilidade: moduloEditado.Disponibilidade,
-                    observacao: moduloEditado.Obs,
-                    omOrigemId: moduloEditado.omOrigemId,
-                    omDestinoId: moduloEditado.omDestinoId,
-                    cabideSN: moduloEditado.cabideSNSelecionado
-                })
+                body: JSON.stringify(corpoRequisicaoComCabide)
             });
 
             if (!result.ok) {
@@ -233,7 +252,7 @@ export default function ListaModulos(
 
         setModulosEditaveis(novos);
     };
-    
+
     const getOmSelectValue = (mod: ModuloEditado, campo: 'omOrigemId' | 'omDestinoId') => {
         if (mod.editando) {
             return mod[campo] || '';
@@ -329,6 +348,7 @@ export default function ListaModulos(
                                             className="select-disponibilidade"
                                         >
                                             <option value="">Selecione um cabide</option>
+                                            <option value="Sem Cabide">Sem Cabide</option>
                                             {cabidesDisponiveis.map(cabide => (
                                                 <option key={cabide.id} value={cabide.SN}>
                                                     {cabide.SN} - {cabide.Material}
