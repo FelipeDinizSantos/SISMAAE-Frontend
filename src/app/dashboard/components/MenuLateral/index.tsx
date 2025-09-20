@@ -2,7 +2,7 @@ import { Material } from "@/interfaces/Material.interface";
 import GraficoStatus from "../GraficoStatus";
 import "./MenuLateral.css";
 import { Modulo } from "@/interfaces/Modulo.interface";
-import { Dispatch, FormEventHandler, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Batalhao } from "@/interfaces/Batalhao.interface";
 
 export default function MenuLateral({
@@ -96,8 +96,8 @@ export default function MenuLateral({
             case "CABIDE":
                 setBuscaEspecifica("CABIDE");
                 break;
-            case "OM_ATUAL":
-                setBuscaEspecifica("OM_ATUAL");
+            case "ATUAL":
+                setBuscaEspecifica("ATUAL");
                 break;
             default:
                 setBuscaEspecifica('');
@@ -111,7 +111,7 @@ export default function MenuLateral({
 
         if (buscaEspecifica === "NOME") setContextoLista("MODULO-NOME");
         if (buscaEspecifica === "CABIDE") setContextoLista("MODULO-CABIDE");
-        if (buscaEspecifica === "OM_ATUAL") setContextoLista("MODULO-OM_ATUAL");
+        if (buscaEspecifica === "ATUAL") setContextoLista("MODULO-ATUAL");
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -136,7 +136,7 @@ export default function MenuLateral({
                     onChange={handleBuscaGeral}
                     value={filtroGeralValue} // Controlar o valor
                 >
-                    <option value="">Selecione</option>
+                    <option value="">Materiais</option>
                     <option value="MODULO">Módulos</option>
                 </select>
 
@@ -148,7 +148,7 @@ export default function MenuLateral({
                             <option value="">Selecione</option>
                             <option value="NOME">Nome</option>
                             <option value="CABIDE">Cabide</option>
-                            <option value="OM_ATUAL">OM Atual</option>
+                            <option value="ATUAL">OM Atual</option>
                         </select>
                     </>
                 )}
@@ -194,7 +194,7 @@ export default function MenuLateral({
                 )}
 
                 {/* Select 3 - OM atual */}
-                {buscaGeral === "MODULO" && buscaEspecifica === "OM_ATUAL" && (
+                {buscaGeral === "MODULO" && buscaEspecifica === "ATUAL" && (
                     <>
                         <label htmlFor="filtro-auxiliar-especifico">Qual OM?</label>
                         <select
