@@ -2,6 +2,7 @@ import { Material } from "@/interfaces/Material.interface";
 import "./ListaModulos.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
+import { usePermissao } from "@/hooks/usePermissao";
 
 interface ModuloEditado extends Modulo {
     editando?: boolean;
@@ -47,6 +48,8 @@ export default function ListaModulos(
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
 
+    const { podeEditar } = usePermissao();
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -71,7 +74,7 @@ export default function ListaModulos(
                 });
                 if (!res.ok) throw new Error("Erro ao carregar cabides");
                 const data = await res.json();
-                setCabidesDisponiveis(data.resultado);
+                setCabidesDisponiveis(data.materiais);
             } catch (err) {
                 console.error(err);
             }
@@ -92,17 +95,35 @@ export default function ListaModulos(
     }, [modulos]);
 
     const iniciarEdicao = (index: number) => {
-        const novos = [...modulosEditaveis];
-        novos[index] = {
-            ...novos[index],
-            editando: true,
-            disponibilidadeOriginal: novos[index].Disponibilidade,
-            obsOriginal: novos[index].Obs,
-            omOrigemId: novos[index].OM_Origem_Id,
-            omDestinoId: novos[index].OM_Atual_Id,
-            cabideSNOriginal: novos[index].SN_do_Cabide,
-            cabideSNSelecionado: novos[index].SN_do_Cabide,
-        };
+        const novos = modulosEditaveis.map((mod, i) => {
+            if (mod.editando && i !== index) {
+                return {
+                    ...mod,
+                    editando: false,
+                    Disponibilidade: mod.disponibilidadeOriginal as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO',
+                    Obs: mod.obsOriginal || '',
+                    omOrigemId: mod.OM_Origem_Id,
+                    omDestinoId: mod.OM_Atual_Id,
+                    cabideSNSelecionado: mod.cabideSNOriginal
+                };
+            }
+
+            if (i === index) {
+                return {
+                    ...mod,
+                    editando: true,
+                    disponibilidadeOriginal: mod.Disponibilidade,
+                    obsOriginal: mod.Obs,
+                    omOrigemId: mod.OM_Origem_Id,
+                    omDestinoId: mod.OM_Atual_Id,
+                    cabideSNOriginal: mod.SN_do_Cabide,
+                    cabideSNSelecionado: mod.SN_do_Cabide
+                };
+            }
+
+            return mod;
+        });
+
         setModulosEditaveis(novos);
     };
 
@@ -127,7 +148,7 @@ export default function ListaModulos(
         try {
             const moduloEditado = modulosEditaveis[index];
 
-            if(moduloEditado.cabideSNSelecionado === "Sem Cabide"){
+            if (moduloEditado.cabideSNSelecionado === "Sem Cabide") {
                 modulos[index].Disponibilidade_do_Cabide = " ";
             }
 
@@ -135,18 +156,16 @@ export default function ListaModulos(
 
             if (moduloEditado.cabideSNSelecionado === "Sem Cabide") {
                 corpoRequisicaoComCabide = {
-                    disponibilidade: moduloEditado.Disponibilidade,
-                    observacao: moduloEditado.Obs,
-                    omOrigemId: moduloEditado.omOrigemId,
-                    omDestinoId: moduloEditado.omDestinoId,
+                    status: moduloEditado.Disponibilidade,
+                    obs: moduloEditado.Obs,
+                    loc_id: moduloEditado.omDestinoId,
                     isSemCabide: true,
                 }
             } else {
                 corpoRequisicaoComCabide = {
-                    disponibilidade: moduloEditado.Disponibilidade,
-                    observacao: moduloEditado.Obs,
-                    omOrigemId: moduloEditado.omOrigemId,
-                    omDestinoId: moduloEditado.omDestinoId,
+                    status: moduloEditado.Disponibilidade,
+                    obs: moduloEditado.Obs,
+                    loc_id: moduloEditado.omDestinoId,
                     cabideSN: moduloEditado.cabideSNSelecionado,
                 }
             }
@@ -305,24 +324,11 @@ export default function ListaModulos(
                                 </td>
 
                                 <td>
-                                    {mod.editando ? (
-                                        <select
-                                            value={getOmSelectValue(mod, 'omOrigemId')}
-                                            onChange={(e) => handleOmChange(idx, 'omOrigemId', Number(e.target.value))}
-                                            className="select-disponibilidade"
-                                        >
-                                            <option value="">Selecione</option>
-                                            {batalhoes.map(b => (
-                                                <option key={b.id} value={b.id}>{b.sigla}</option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        <p>{mod.OM_Origem}</p>
-                                    )}
+                                    <p>{mod.OM_Origem}</p>
                                 </td>
 
                                 <td>
-                                    {mod.editando ? (
+                                    {mod.editando && podeEditar("modulos", "omAtual") ? (
                                         <select
                                             value={getOmSelectValue(mod, 'omDestinoId')}
                                             onChange={(e) => handleOmChange(idx, 'omDestinoId', Number(e.target.value))}
@@ -341,7 +347,7 @@ export default function ListaModulos(
                                 <td>{mod.Material}</td>
 
                                 <td>
-                                    {mod.editando ? (
+                                    {mod.editando && podeEditar("modulos", "cabideSN") ? (
                                         <select
                                             value={mod.cabideSNSelecionado || mod.SN_do_Cabide}
                                             onChange={(e) => handleCabideChange(idx, e.target.value)}

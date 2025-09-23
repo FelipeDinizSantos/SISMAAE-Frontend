@@ -41,8 +41,8 @@ export default function DashboardPage() {
                 });
                 const data = await res.json();
 
-                setMateriais(data.resultado || []);
-                setItens(data.resultado || []);
+                setMateriais(data.materiais || []);
+                setItens(data.materiais || []);
             } catch (error) {
                 console.error("Erro ao buscar materiais:", error);
             }

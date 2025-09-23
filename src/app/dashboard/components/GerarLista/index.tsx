@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import ListaMateriais from "../ListaMateriais";
 import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
-import ListaModulos from "../ListaModulos/page";
+import ListaModulos from "../ListaModulos";
 
 export default function GerarLista({
     parametrosDeBusca,
@@ -36,8 +36,8 @@ export default function GerarLista({
                     });
                     const data = await res.json();
 
-                    setMateriais(data.resultado || []);
-                    setItens(data.resultado || []);
+                    setMateriais(data.materiais || []);
+                    setItens(data.materiais || []);
                 } catch (error) {
                     console.error("Erro ao buscar materiais:", error);
                 }
@@ -57,8 +57,10 @@ export default function GerarLista({
 
                     let data = await res.json();
 
-                    setItens(data.resultado);
-                    setModulos(data.resultado);
+                    console.log(data);
+
+                    setItens(data.modulos);
+                    setModulos(data.modulos);
                 }
 
                 fetchData();

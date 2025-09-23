@@ -2,11 +2,14 @@ import { Material } from "@/interfaces/Material.interface";
 import "./ListaMateriais.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
+import { usePermissao } from "@/hooks/usePermissao";
+import { Batalhao } from "@/interfaces/Batalhao.interface";
 
 interface MaterialEditado extends Material {
     editando?: boolean;
     disponibilidadeOriginal?: string;
     obsOriginal?: string;
+    OM_Atual_Original?: string;
 }
 
 export default function ListaMateriais(
@@ -22,20 +25,60 @@ export default function ListaMateriais(
             setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
         }
 ) {
+    const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
+
+    const { podeEditar } = usePermissao();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const fetchBatalhoes = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/batalhoes`, {
+                    headers: { 'Authorization': `Barear ${token}` }
+                });
+                if (!res.ok) throw new Error("Erro ao carregar batalhões");
+                const data = await res.json();
+                setBatalhoes(data.batalhoes);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        fetchBatalhoes();
+    }, []);
 
     useEffect(() => {
         setMateriaisEditaveis(materiais.map(mat => ({ ...mat })));
     }, [materiais]);
 
     const iniciarEdicao = (index: number) => {
-        const novosMateriais = [...materiaisEditaveis];
-        novosMateriais[index] = {
-            ...novosMateriais[index],
-            editando: true,
-            disponibilidadeOriginal: novosMateriais[index].Disponibilidade,
-            obsOriginal: novosMateriais[index].Obs
-        };
+        const novosMateriais = materiaisEditaveis.map((mat, i) => {
+
+            if (mat.editando && i !== index) {
+                return {
+                    ...mat,
+                    editando: false,
+                    OM_Atual: mat.OM_Atual_Original || mat.OM_Atual,
+                    Disponibilidade: mat.disponibilidadeOriginal as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO',
+                    Obs: mat.obsOriginal || mat.Obs
+                };
+            }
+
+            if (i === index) {
+                return {
+                    ...mat,
+                    editando: true,
+                    OM_Atual_Original: mat.OM_Atual,
+                    disponibilidadeOriginal: mat.Disponibilidade,
+                    obsOriginal: mat.Obs
+                };
+            }
+            return mat;
+        });
+
         setMateriaisEditaveis(novosMateriais);
     };
 
@@ -44,6 +87,7 @@ export default function ListaMateriais(
         novosMateriais[index] = {
             ...novosMateriais[index],
             editando: false,
+            OM_Atual: novosMateriais[index].OM_Atual_Original || '',
             Disponibilidade: novosMateriais[index].disponibilidadeOriginal as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO',
             Obs: novosMateriais[index].obsOriginal || ''
         };
@@ -67,7 +111,7 @@ export default function ListaMateriais(
                 i === index ? materialSemPropriedadesEditaveis : mat
             )
         );
-        setItens(materiaisEditaveis => 
+        setItens(materiaisEditaveis =>
             materiaisEditaveis.map((mat, i) =>
                 i === index ? materialSemPropriedadesEditaveis : mat
             )
@@ -84,8 +128,9 @@ export default function ListaMateriais(
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    disponibilidade: materiaisEditaveis[index].Disponibilidade,
-                    observacao: materiaisEditaveis[index].Obs
+                    status: materiaisEditaveis[index].Disponibilidade,
+                    obs: materiaisEditaveis[index].Obs,
+                    loc_id: batalhoes.find((bat)=>bat.id === parseInt(materiaisEditaveis[index].OM_Atual))?.id,
                 })
             });
 
@@ -111,6 +156,15 @@ export default function ListaMateriais(
         setMateriaisEditaveis(novosMateriais);
     };
 
+    const handleOmAtualChange = (index: number, novoValor: string) => {
+        const novosMateriais = [...materiaisEditaveis];
+        novosMateriais[index] = {
+            ...novosMateriais[index],
+            OM_Atual: novoValor
+        }
+        setMateriaisEditaveis(novosMateriais);
+    }
+
     const handleObsChange = (index: number, novoValor: string) => {
         const novosMateriais = [...materiaisEditaveis];
         novosMateriais[index] = {
@@ -119,7 +173,6 @@ export default function ListaMateriais(
         };
         setMateriaisEditaveis(novosMateriais);
     };
-
     return (
         <div className="materiais-container">
             <h3>Lista de Materiais</h3>
@@ -161,7 +214,27 @@ export default function ListaMateriais(
                                     )}
                                 </td>
                                 <td>{mat.OM_Origem}</td>
-                                <td>{mat.OM_Atual}</td>
+                                <td>
+                                    {
+                                        mat.editando && podeEditar("materiais", "omAtual") ? (
+                                            <select
+                                                value={mat.OM_Atual}
+                                                onChange={(e) => handleOmAtualChange(
+                                                    idx,
+                                                    e.target.value
+                                                )}
+                                                className="select-disponibilidade"
+                                            >
+                                                <option value="">Selecione</option>
+                                                {batalhoes.map(b => (
+                                                    <option key={b.id} value={b.id}>{b.sigla}</option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <span>{batalhoes.find(b => String(b.id) === String(mat.OM_Atual))?.sigla || mat.OM_Atual}</span>
+                                        )
+                                    }
+                                </td>
                                 <td>
                                     {mat.editando ? (
                                         <input

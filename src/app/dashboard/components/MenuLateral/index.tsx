@@ -49,7 +49,7 @@ export default function MenuLateral({
 
                 let dataCabide = await resCabide.json();
                 
-                setlistaCabide(dataCabide.resultado);
+                setlistaCabide(dataCabide.materiais);
             }
 
             fetchData();

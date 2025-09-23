@@ -1,0 +1,1 @@
+export type Role = "ADMIN" | "COMANDO" | "COL" | "S4" | "MECANICO";
