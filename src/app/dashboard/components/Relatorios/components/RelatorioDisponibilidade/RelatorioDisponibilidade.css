@@ -1,0 +1,174 @@
+.titulo-relatorio {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.indices-materiais {
+    flex: 1;
+    background: #fafafa;
+    padding: 1.2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.indices-materiais h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: #444;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+}
+
+.indices-materiais ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.indices-materiais li {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.indices-materiais li strong {
+    margin-left: auto;
+    font-weight: bold;
+    color: #222;
+}
+
+.indices-materiais .total {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #000;
+    border-top: 1px solid #ddd;
+    padding-top: 0.5rem;
+}
+
+.indices-materiais .cor {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.relatorio-bloco {
+    margin-bottom: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.titulo-relatorio {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.relatorio-conteudo-flex {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.grafico-area .grafico-container {
+    width: 350px;
+    height: 350px;
+}
+
+.indices-area {
+    flex: 1;
+    background: #fafafa;
+    padding: 1.2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 6px #0000000d;
+}
+
+.indices-area h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: #444;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+}
+
+.indices-area ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.indices-area li {
+    margin: 0.6rem 0;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.indices-area li strong {
+    margin-left: auto;
+    font-weight: bold;
+    color: #222;
+}
+
+.indices-area li em {
+    font-size: 0.85rem;
+    color: #666;
+    margin-left: 0.5rem;
+}
+
+.indices-area .total {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #000;
+    border-top: 1px solid #ddd;
+    padding-top: 0.5rem;
+}
+
+.indices-area .cor {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.indices-area .cor.disponivel {
+    background-color: #4CAF50;
+}
+
+.indices-area .cor.restricao {
+    background-color: #FFC107;
+}
+
+.indices-area .cor.indisponivel {
+    background-color: #F44336;
+}
+
+.indices-area .cor.manutencao {
+    background-color: #2196F3;
+}
+
+.mapa-conteudo {
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 6px #0000000d;
+    border-radius: 8px;
+    padding: 1rem;
+    background: #fafafa;
+
+    h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+        color: #444;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.5rem;
+    }
+}

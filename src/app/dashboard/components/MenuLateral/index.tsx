@@ -1,5 +1,5 @@
 import { Material } from "@/interfaces/Material.interface";
-import GraficoStatus from "../GraficoStatus";
+import GraficoStatus from "../../../../components/GraficoStatus";
 import "./MenuLateral.css";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -217,7 +217,6 @@ export default function MenuLateral({
                     Voltar para o início
                 </button>
             </form>
-
             <GraficoStatus itens={itens} />
         </section>
     );

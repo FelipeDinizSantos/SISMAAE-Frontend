@@ -2,15 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
-
-import "./GraficoStatus.css";
 import { Material } from '@/interfaces/Material.interface';
 import { Modulo } from '@/interfaces/Modulo.interface';
 
 // Registrar todos os componentes do Chart.js
 Chart.register(...registerables);
 
-export default function GraficoStatus({ itens }:{itens:Material[] | Modulo[]}) {
+export default function GraficoStatus({ itens, titulo = 'Distribuição de Status' }:{itens:Material[] | Modulo[]; titulo?:string}) {
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstance = useRef<Chart<'pie'> | null>(null);
 
@@ -58,7 +56,7 @@ export default function GraficoStatus({ itens }:{itens:Material[] | Modulo[]}) {
                 },
                 title: {
                     display: true,
-                    text: 'Distribuição de Status'
+                    text: titulo
                 }
             }
         };
@@ -86,7 +84,6 @@ export default function GraficoStatus({ itens }:{itens:Material[] | Modulo[]}) {
 
     return (
         <div className="grafico-container">
-            <h3>Relação de Disponibilidade</h3>
             <div className="grafico-wrapper">
                 <canvas ref={chartRef}></canvas>
             </div>

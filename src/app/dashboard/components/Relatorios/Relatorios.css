@@ -1,0 +1,63 @@
+.relatorios-container {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+}
+
+.relatorios-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 25%;
+    padding: 1rem;
+    overflow-y: auto;
+    border: 1px solid #0000001a;
+    border-radius: 8px;
+}
+
+.relatorio-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px #0000001a;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.relatorio-card:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.relatorio-card.ativo {
+    border: 1px solid #2196F3;
+    box-shadow: 0 2px 6px #2196f333;
+}
+
+.relatorio-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.relatorio-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.relatorio-conteudo {
+    flex: 1;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.placeholder {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    margin-top: 2rem;
+}
+
