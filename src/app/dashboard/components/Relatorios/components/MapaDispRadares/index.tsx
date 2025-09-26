@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 
 import "./MapaDispRadares.css";
+import { regiao } from "@/interfaces/Regiao.interface";
 
 const geoUrl =
   "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
@@ -11,33 +12,70 @@ const geoUrl =
 const regioes: Record<string, number> = {
   "Acre": 1, "Amazonas": 1, "Rondônia": 1, "Roraima": 1, "Pará": 1, "Amapá": 1, "Maranhão": 1,
 
-  "Tocantins": 2, "Piauí": 2, "Ceará": 2, "Rio Grande do Norte": 2, "Paraíba": 2, "Pernambuco": 2,
-  "Alagoas": 2, "Sergipe": 2, "Bahia": 2, "Mato Grosso": 2, "Goiás": 2, "Distrito Federal": 2,
+  "Tocantins": 2, "Goiás": 2, "Piauí": 2, "Ceará": 2, "Rio Grande do Norte": 2, "Paraíba": 2, "Pernambuco": 2,
+  "Alagoas": 2, "Sergipe": 2, "Bahia": 2, "Distrito Federal": 2, "Minas Gerais": 2,
 
-  "Minas Gerais": 4, "São Paulo": 4,
+  "Mato Grosso": 3, "Mato Grosso do Sul": 3,
 
-  "Santa Catarina": 5, "Rio Grande do Sul": 5,
+  "São Paulo": 4,
 
-  "Rio de Janeiro": 6, "Espírito Santo": 6,
+  "Rio de Janeiro": 5, "Espírito Santo": 5,
 
-  "Paraná": 7, "Mato Grosso do Sul": 7,
+  "Paraná": 6, "Santa Catarina": 6, "Rio Grande do Sul": 6,
 };
 
 const cores = [
-  "#ff9999", "#99ccff", "#99ff99", "#ffcc99", "#c299ff", "#ffeb99", "#4ef823ff",
-];
-
-const divisoesCoords: { id: number; nome: string; coords: [number, number]; total: number; ativos: number }[] = [
-  { id: 1, nome: "Divisão 1", coords: [-63, -5], total: 5, ativos: 2 },
-  { id: 2, nome: "Divisão 2", coords: [-50, -12], total: 6, ativos: 3 },
-  { id: 4, nome: "Divisão 4", coords: [-47, -22], total: 4, ativos: 1 },
-  { id: 5, nome: "Divisão 5", coords: [-52, -28], total: 5, ativos: 4 },
-  { id: 6, nome: "Divisão 6", coords: [-42, -21], total: 3, ativos: 2 },
-  { id: 7, nome: "Divisão 7", coords: [-54.5, -20], total: 4, ativos: 0 },
+  "#83da83ff", "#d0d27eff", "#99ff99", "#b2b3c3ff", "#9b9ceaff", "#696be9ff",
 ];
 
 export default function MapaDispRadares() {
   const [hoverDiv, setHoverDiv] = useState<number | null>(null);
+  const [divisoesCoords, setDivisoesCoords] = useState<{ id: number; nome: string; coords: [number, number]; total: number; ativos: number }[]>(
+    [
+      { id: 1, nome: "Norte", coords: [-58, -3], total: 0, ativos: 0 },
+      { id: 2, nome: "Planalto", coords: [-43, -12], total: 0, ativos: 0 },
+      { id: 3, nome: "Oeste", coords: [-55, -15], total: 0, ativos: 0 },
+      { id: 4, nome: "Sudeste", coords: [-49, -22], total: 0, ativos: 0 },
+      { id: 5, nome: "Leste", coords: [-38, -21], total: 0, ativos: 0 },
+      { id: 6, nome: "Sul", coords: [-51, -26], total: 0, ativos: 0 },
+    ]
+  );
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const fetchData = async () => {
+      try {
+        let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/relatorios/radares/disp-por-regiao`, {
+          headers: { authorization: `Bearer ${token}` }
+        });
+
+        let data = await res.json();
+        let regioes: regiao[] = data.regioes;
+
+        let novasDivisoes = [...divisoesCoords];
+        
+        novasDivisoes.map((div, index) => {
+          regioes.forEach((regiao) => {
+            if (regiao.nome === div.nome.toUpperCase()) {
+              novasDivisoes[index] = {
+                ...div, 
+                total: regiao.total,
+                ativos: regiao.ativos
+              };
+            }
+          });
+        });
+
+        setDivisoesCoords(novasDivisoes);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <div className="mapa-container">
@@ -89,10 +127,10 @@ export default function MapaDispRadares() {
             {Array.from({ length: div.total }).map((_, i) => (
               <circle
                 key={i}
-                cx={i * 12 - (div.total * 6)}
+                cx={i * 12 - (div.total * 4)}
                 cy={20}
                 r={5}
-                fill={i < div.ativos ? "#007bff" : "#fff"}
+                fill={i < div.ativos ? "#14cd4fff" : "#ce4444ff"}
                 stroke="#000"
                 strokeWidth={0.6}
                 cursor={"pointer"}

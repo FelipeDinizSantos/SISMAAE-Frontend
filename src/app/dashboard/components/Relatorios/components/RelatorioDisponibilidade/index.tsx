@@ -5,6 +5,7 @@ import GraficoStatus from "../../../../../../components/GraficoStatus";
 
 import "./RelatorioDisponibilidade.css";
 import MapaDispRadares from "../MapaDispRadares";
+import modulosRadares from "@/config/modulosRadares";
 
 export default function RelatorioDisponibilidade() {
     const [materiais, setMateriais] = useState<Material[]>([]);
@@ -62,6 +63,27 @@ export default function RelatorioDisponibilidade() {
         return { total, disponiveis, restricao, indisponiveis, manutencao };
     }, [modulos]);
 
+    const indispPorModulos = useMemo(() => {
+        let modulosLista: { nome: string, qtd: number, total: number }[] = [];
+
+        modulosRadares.forEach(modNome => {
+            let modulo = { nome: modNome, qtd: 0, total: 0 };
+
+            modulos.forEach(mod => {
+                if (mod.modulo?.toUpperCase() === modNome.toUpperCase()) {
+                    modulo.total++
+
+                    if (mod.Disponibilidade === "INDISPONIVEL" || mod.Disponibilidade === "MANUTENCAO") modulo.qtd++;
+                }
+            })
+
+            modulosLista.push(modulo);
+        })
+
+
+        return { modulosLista };
+    }, [modulos]);
+
     const percent = (valor: number, total: number) =>
         total > 0 ? ((valor / total) * 100).toFixed(1) + "%" : "-";
 
@@ -103,7 +125,27 @@ export default function RelatorioDisponibilidade() {
                 </div>
             </div>
 
-            {/* --- Módulos --- */}
+            {/* indispPorModulos */}
+            <div className="relatorio-conteudo-flex">
+                <div className="indices-area">
+                    <h3>Indisponibilidade de Módulos</h3>
+                    <ul>
+                        {
+                            indispPorModulos.modulosLista.map((modulo: { nome: string, qtd: number, total: number }) => {
+                                return (
+                                    <li>
+                                        <span className="cor indisponivel"></span> {modulo.nome}:{" "}
+                                        <strong>{modulo.qtd}</strong>{" "}
+                                        <em>{percent(modulo.qtd, modulo.total)}</em>
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            {/* --- Módulos ---
             <div className="relatorio-conteudo-flex">
                 <div className="indices-area">
                     <h3>Índice de Módulos</h3>
@@ -133,11 +175,7 @@ export default function RelatorioDisponibilidade() {
                         </li>
                     </ul>
                 </div>
-
-                <div className="grafico-area">
-                    <GraficoStatus itens={modulos} titulo="Disponibilidade de Módulos" />
-                </div>
-            </div>
+            </div> */}
 
             {/* --- Mapa --- */}
             <div className="mapa-conteudo">

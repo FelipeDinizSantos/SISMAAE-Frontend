@@ -121,17 +121,28 @@ export default function ListaMateriais(
         if (!token) return;
 
         try {
+            const body: any = {
+                status: materiaisEditaveis[index].Disponibilidade,
+                obs: materiaisEditaveis[index].Obs,
+            };
+
+            // só adiciona loc_id se foi alterado
+            if (materiaisEditaveis[index].OM_Atual !== materiaisEditaveis[index].OM_Atual_Original) {
+                const novoLoc = batalhoes.find(
+                    (bat) => bat.id === parseInt(materiaisEditaveis[index].OM_Atual)
+                )?.id;
+                if (novoLoc) {
+                    body.loc_id = novoLoc;
+                }
+            }
+
             const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/${materiais[index].id}`, {
                 method: "PUT",
                 headers: {
-                    'Authorization': `Barear ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    status: materiaisEditaveis[index].Disponibilidade,
-                    obs: materiaisEditaveis[index].Obs,
-                    loc_id: batalhoes.find((bat)=>bat.id === parseInt(materiaisEditaveis[index].OM_Atual))?.id,
-                })
+                body: JSON.stringify(body)
             });
 
             if (!result.ok) {
