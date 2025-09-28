@@ -1,1 +1,0 @@
-export default ["CRF", "IFF", "Pedestal", "UPS", "Quadripe", "UV"];

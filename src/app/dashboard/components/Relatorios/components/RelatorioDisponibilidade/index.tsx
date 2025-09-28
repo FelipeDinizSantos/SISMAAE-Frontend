@@ -5,7 +5,6 @@ import GraficoStatus from "../../../../../../components/GraficoStatus";
 
 import "./RelatorioDisponibilidade.css";
 import MapaDispRadares from "../MapaDispRadares";
-import modulosRadares from "@/config/modulosRadares";
 
 export default function RelatorioDisponibilidade() {
     const [materiais, setMateriais] = useState<Material[]>([]);
@@ -53,36 +52,50 @@ export default function RelatorioDisponibilidade() {
         return { total, disponiveis, restricao, indisponiveis, manutencao };
     }, [materiais]);
 
-    const indicesModulos = useMemo(() => {
-        const total = modulos.length;
-        const disponiveis = modulos.filter((m) => m.Disponibilidade === "DISPONIVEL").length;
-        const restricao = modulos.filter((m) => m.Disponibilidade === "DISP_C_RESTRICAO").length;
-        const indisponiveis = modulos.filter((m) => m.Disponibilidade === "INDISPONIVEL").length;
-        const manutencao = modulos.filter((m) => m.Disponibilidade === "MANUTENCAO").length;
-
-        return { total, disponiveis, restricao, indisponiveis, manutencao };
-    }, [modulos]);
-
     const indispPorModulos = useMemo(() => {
-        let modulosLista: { nome: string, qtd: number, total: number }[] = [];
+        const ignorar = ["ANTENA", "CAIXA DE BATERIAS", "GERADOR", "CABEAMENTO"];
 
-        modulosRadares.forEach(modNome => {
-            let modulo = { nome: modNome, qtd: 0, total: 0 };
+        const renomear: Record<string, string> = {
+            "PEDESTAL": "Pedestal",
+            "QUADRIPÉ": "Quadripé"
+        };
 
-            modulos.forEach(mod => {
-                if (mod.modulo?.toUpperCase() === modNome.toUpperCase()) {
-                    modulo.total++
+        const modulosMap = modulos.reduce<
+            Record<string, { nome: string; qtd: number; total: number }>
+        >((acc, mod) => {
+            let nome = mod.modulo?.toUpperCase();
+            if (!nome) return acc;
 
-                    if (mod.Disponibilidade === "INDISPONIVEL" || mod.Disponibilidade === "MANUTENCAO") modulo.qtd++;
-                }
-            })
+            if (ignorar.includes(nome)) return acc;
 
-            modulosLista.push(modulo);
-        })
+            const nomeFormatado = renomear[nome] || nome;
 
+            if (!acc[nomeFormatado]) {
+                acc[nomeFormatado] = { nome: nomeFormatado, qtd: 0, total: 0 };
+            }
 
-        return { modulosLista };
+            acc[nomeFormatado].total++;
+
+            if (
+                mod.Disponibilidade === "INDISPONIVEL" ||
+                mod.Disponibilidade === "MANUTENCAO"
+            ) {
+                acc[nomeFormatado].qtd++;
+            }
+
+            return acc;
+        }, {});
+
+        const modulosLista = Object.values(modulosMap);
+
+        const totalModulosIndisp = modulosLista.reduce(
+            (soma, m) => soma + m.qtd,
+            0
+        );
+
+        return { modulosLista, totalModulosIndisp };
     }, [modulos]);
+
 
     const percent = (valor: number, total: number) =>
         total > 0 ? ((valor / total) * 100).toFixed(1) + "%" : "-";
@@ -133,7 +146,7 @@ export default function RelatorioDisponibilidade() {
                         {
                             indispPorModulos.modulosLista.map((modulo: { nome: string, qtd: number, total: number }) => {
                                 return (
-                                    <li>
+                                    <li key={modulo.nome}>
                                         <span className="cor indisponivel"></span> {modulo.nome}:{" "}
                                         <strong>{modulo.qtd}</strong>{" "}
                                         <em>{percent(modulo.qtd, modulo.total)}</em>
@@ -141,41 +154,13 @@ export default function RelatorioDisponibilidade() {
                                 )
                             })
                         }
+
+                        <li className="total">
+                            Total: <strong>{indispPorModulos.totalModulosIndisp}</strong>
+                        </li>
                     </ul>
                 </div>
             </div>
-
-            {/* --- Módulos ---
-            <div className="relatorio-conteudo-flex">
-                <div className="indices-area">
-                    <h3>Índice de Módulos</h3>
-                    <ul>
-                        <li>
-                            <span className="cor disponivel"></span> Disponíveis:{" "}
-                            <strong>{indicesModulos.disponiveis}</strong>{" "}
-                            <em>{percent(indicesModulos.disponiveis, indicesModulos.total)}</em>
-                        </li>
-                        <li>
-                            <span className="cor restricao"></span> Disp. c/ Restrição:{" "}
-                            <strong>{indicesModulos.restricao}</strong>{" "}
-                            <em>{percent(indicesModulos.restricao, indicesModulos.total)}</em>
-                        </li>
-                        <li>
-                            <span className="cor indisponivel"></span> Indisponíveis:{" "}
-                            <strong>{indicesModulos.indisponiveis}</strong>{" "}
-                            <em>{percent(indicesModulos.indisponiveis, indicesModulos.total)}</em>
-                        </li>
-                        <li>
-                            <span className="cor manutencao"></span> Em Manutenção:{" "}
-                            <strong>{indicesModulos.manutencao}</strong>{" "}
-                            <em>{percent(indicesModulos.manutencao, indicesModulos.total)}</em>
-                        </li>
-                        <li className="total">
-                            Total: <strong>{indicesModulos.total}</strong>
-                        </li>
-                    </ul>
-                </div>
-            </div> */}
 
             {/* --- Mapa --- */}
             <div className="mapa-conteudo">
