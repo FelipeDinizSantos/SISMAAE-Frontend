@@ -15,7 +15,7 @@ export const permissoes: PermissoesSistema = {
     modulos: {
         ADMIN: { podeEditar: {  } },
         COMANDO: { podeEditar: {  } },
-        COL: { podeEditar: { status: true, obs: true, omAtual: true } },
+        COL: { podeEditar: { status: true, obs: true, omAtual: true, cabideSN: true } },
         S4: { podeEditar: { status: true, obs: true, cabideSN: true } },
         MECANICO: { podeEditar: { status: true, obs: true } },
     },

@@ -4,6 +4,11 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
 import { Batalhao } from "@/interfaces/Batalhao.interface";
+import MenuContexto from "../MenuContexto";
+import Modal from "@/components/Modal";
+import FormRegistro from "../FormRegistro";
+import ListaRegistros from "../ListaRegistros";
+import { useAuth } from "@/context/AuthContext";
 
 interface MaterialEditado extends Material {
     editando?: boolean;
@@ -27,6 +32,20 @@ export default function ListaMateriais(
 ) {
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
+
+    const [contextMenu, setContextMenu] = useState<{
+        visible: boolean;
+        x: number;
+        y: number;
+        mat: Material | null;
+    }>({
+        visible: false,
+        x: 0,
+        y: 0,
+        mat: null,
+    });
+
+    const [modal, setModal] = useState<{ type: "novo" | "listar" | null, materialId?: number }>({ type: null });
 
     const { podeEditar } = usePermissao();
 
@@ -53,6 +72,18 @@ export default function ListaMateriais(
     useEffect(() => {
         setMateriaisEditaveis(materiais.map(mat => ({ ...mat })));
     }, [materiais]);
+
+    const { user } = useAuth();
+
+    const abrirMenu = (event: React.MouseEvent, idx: number, mat: Material) => {
+        event.preventDefault();
+        setContextMenu({
+            visible: true,
+            x: event.pageX,
+            y: event.pageY,
+            mat: mat
+        });
+    };
 
     const iniciarEdicao = (index: number) => {
         const novosMateriais = materiaisEditaveis.map((mat, i) => {
@@ -188,108 +219,141 @@ export default function ListaMateriais(
         <div className="materiais-container">
             <h3>Lista de Materiais</h3>
             {materiaisEditaveis.length > 0 ? (
-                <table className="materiais-tabela">
-                    <thead>
-                        <tr>
-                            <th>Material</th>
-                            <th>SN</th>
-                            <th>Disponibilidade</th>
-                            <th>OM Origem</th>
-                            <th>OM Atual</th>
-                            <th>Obs</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {materiaisEditaveis.map((mat, idx) => (
-                            <tr key={idx}>
-                                <td>{mat.Material}</td>
-                                <td>{mat.SN}</td>
-                                <td className={`status ${mat.Disponibilidade.toLowerCase()}`}>
-                                    {mat.editando ? (
-                                        <select
-                                            value={mat.Disponibilidade}
-                                            onChange={(e) => handleDisponibilidadeChange(
-                                                idx,
-                                                e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
-                                            )}
-                                            className="select-disponibilidade"
-                                        >
-                                            <option value="DISPONIVEL">DISPONIVEL</option>
-                                            <option value="DISP_C_RESTRICAO">DISP_C_RESTRICAO</option>
-                                            <option value="INDISPONIVEL">INDISPONIVEL</option>
-                                            <option value="MANUTENCAO">MANUTENCAO</option>
-                                        </select>
-                                    ) : (
-                                        <p>{mat.Disponibilidade}</p>
-                                    )}
-                                </td>
-                                <td>{mat.OM_Origem}</td>
-                                <td>
-                                    {
-                                        mat.editando && podeEditar("materiais", "omAtual") ? (
+                <>
+                    <table className="materiais-tabela">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>SN</th>
+                                <th>Disponibilidade</th>
+                                <th>OM Origem</th>
+                                <th>OM Atual</th>
+                                <th>Obs</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {materiaisEditaveis.map((mat, idx) => (
+                                <tr key={idx} onContextMenu={(e) => abrirMenu(e, idx, mat)}>
+                                    <td>{mat.Material}</td>
+                                    <td>{mat.SN}</td>
+                                    <td className={`status ${mat.Disponibilidade.toLowerCase()}`}>
+                                        {mat.editando ? (
                                             <select
-                                                value={mat.OM_Atual}
-                                                onChange={(e) => handleOmAtualChange(
+                                                value={mat.Disponibilidade}
+                                                onChange={(e) => handleDisponibilidadeChange(
                                                     idx,
-                                                    e.target.value
+                                                    e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
                                                 )}
                                                 className="select-disponibilidade"
                                             >
-                                                <option value="">Selecione</option>
-                                                {batalhoes.map(b => (
-                                                    <option key={b.id} value={b.id}>{b.sigla}</option>
-                                                ))}
+                                                <option value="DISPONIVEL">DISPONIVEL</option>
+                                                <option value="DISP_C_RESTRICAO">DISP_C_RESTRICAO</option>
+                                                <option value="INDISPONIVEL">INDISPONIVEL</option>
+                                                <option value="MANUTENCAO">MANUTENCAO</option>
                                             </select>
                                         ) : (
-                                            <span>{batalhoes.find(b => String(b.id) === String(mat.OM_Atual))?.sigla || mat.OM_Atual}</span>
-                                        )
-                                    }
-                                </td>
-                                <td>
-                                    {mat.editando ? (
-                                        <input
-                                            type="text"
-                                            value={mat.Obs}
-                                            onChange={(e) => handleObsChange(idx, e.target.value)}
-                                            className="input-observacao"
-                                            placeholder="Digite a observação"
-                                        />
-                                    ) : (
-                                        <span>{mat.Obs}</span>
-                                    )}
-                                </td>
-                                <td>
-                                    {mat.editando ? (
-                                        <div className="botoes-edicao">
+                                            <p>{mat.Disponibilidade}</p>
+                                        )}
+                                    </td>
+                                    <td>{mat.OM_Origem}</td>
+                                    <td>
+                                        {
+                                            mat.editando && podeEditar("materiais", "omAtual") ? (
+                                                <select
+                                                    value={mat.OM_Atual}
+                                                    onChange={(e) => handleOmAtualChange(
+                                                        idx,
+                                                        e.target.value
+                                                    )}
+                                                    className="select-disponibilidade"
+                                                >
+                                                    <option value="">Selecione</option>
+                                                    {batalhoes.map(b => (
+                                                        <option key={b.id} value={b.id}>{b.sigla}</option>
+                                                    ))}
+                                                </select>
+                                            ) : (
+                                                <span>{batalhoes.find(b => String(b.id) === String(mat.OM_Atual))?.sigla || mat.OM_Atual}</span>
+                                            )
+                                        }
+                                    </td>
+                                    <td>
+                                        {mat.editando ? (
+                                            <input
+                                                type="text"
+                                                value={mat.Obs}
+                                                onChange={(e) => handleObsChange(idx, e.target.value)}
+                                                className="input-observacao"
+                                                placeholder="Digite a observação"
+                                            />
+                                        ) : (
+                                            <span>{mat.Obs}</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {mat.editando ? (
+                                            <div className="botoes-edicao">
+                                                <button
+                                                    className="btn-confirmar"
+                                                    onClick={() => confirmarEdicao(idx)}
+                                                    title="Confirmar edição"
+                                                >
+                                                    ✓
+                                                </button>
+                                                <button
+                                                    className="btn-cancelar"
+                                                    onClick={() => cancelarEdicao(idx)}
+                                                    title="Cancelar edição"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ) : (
                                             <button
-                                                className="btn-confirmar"
-                                                onClick={() => confirmarEdicao(idx)}
-                                                title="Confirmar edição"
+                                                className="btn-editar"
+                                                onClick={() => iniciarEdicao(idx)}
                                             >
-                                                ✓
+                                                Editar
                                             </button>
-                                            <button
-                                                className="btn-cancelar"
-                                                onClick={() => cancelarEdicao(idx)}
-                                                title="Cancelar edição"
-                                            >
-                                                ✕
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            className="btn-editar"
-                                            onClick={() => iniciarEdicao(idx)}
-                                        >
-                                            Editar
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <MenuContexto
+                        x={contextMenu.x}
+                        y={contextMenu.y}
+                        visible={contextMenu.visible}
+                        onClose={() => setContextMenu({ ...contextMenu, visible: false })}
+                        options={[
+                            { label: "Criar Novo Registro", onClick: () => setModal({ type: "novo", materialId: contextMenu.mat!.id }) },
+                            { label: "Visualizar Registros", onClick: () => setModal({ type: "listar", materialId: contextMenu.mat!.id}) },
+                        ]}
+                    />
+
+                    <Modal
+                        visible={modal.type === "novo"}
+                        title="Criar Registro"
+                        onClose={() => setModal({ type: null })}
+                    >
+                        <FormRegistro
+                            materialId={modal.materialId!}
+                            mecanicoId={user?.id || 0} 
+                            onSuccess={() => setModal({ type: null })}
+                        />
+                    </Modal>
+
+                    <Modal
+                        visible={modal.type === "listar"}
+                        title="Registros do Material"
+                        onClose={() => setModal({ type: null })}
+                    >
+                        <ListaRegistros materialId={modal.materialId!} />
+                    </Modal>
+                </>
             ) : (
                 <p>Carregando materiais...</p>
             )}

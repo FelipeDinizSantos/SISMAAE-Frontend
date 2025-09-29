@@ -3,6 +3,7 @@ import "./ListaModulos.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
+import MenuContexto from "../MenuContexto";
 
 interface ModuloEditado extends Modulo {
     editando?: boolean;
@@ -47,6 +48,11 @@ export default function ListaModulos(
     const [modulosEditaveis, setModulosEditaveis] = useState<ModuloEditado[]>([]);
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
+    const [contextMenu, setContextMenu] = useState({
+        visible: false,
+        x: 0,
+        y: 0,
+    });
 
     const { podeEditar } = usePermissao();
 
@@ -93,6 +99,15 @@ export default function ListaModulos(
             cabideSNSelecionado: mod.SN_do_Cabide,
         })));
     }, [modulos]);
+
+    const abrirMenu = (event: React.MouseEvent, idx: number) => {
+        event.preventDefault();
+        setContextMenu({
+            visible: true,
+            x: event.pageX,
+            y: event.pageY,
+        });
+    };
 
     const iniciarEdicao = (index: number) => {
         const novos = modulosEditaveis.map((mod, i) => {
@@ -283,136 +298,148 @@ export default function ListaModulos(
         <div className="materiais-container">
             <h3>Lista de Módulos</h3>
             {modulosEditaveis.length > 0 ? (
-                <table className="materiais-tabela">
-                    <thead>
-                        <tr>
-                            <th>Módulo</th>
-                            <th>SN</th>
-                            <th>Disponibilidade</th>
-                            <th >OM Origem</th>
-                            <th>OM Atual</th>
-                            <th>Material</th>
-                            <th>SN do Cabide</th>
-                            <th>Disponibilidade do Cabide</th>
-                            <th>Obs</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {modulosEditaveis.map((mod, idx) => (
-                            <tr key={idx}>
-                                <td>{mod.modulo}</td>
-                                <td>{mod.SN}</td>
-                                <td className={`status ${mod.Disponibilidade.toLowerCase()}`}>
-                                    {mod.editando ? (
-                                        <select
-                                            value={mod.Disponibilidade}
-                                            onChange={(e) => handleDisponibilidadeChange(
-                                                idx,
-                                                e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
-                                            )}
-                                            className="select-disponibilidade"
-                                        >
-                                            <option value="DISPONIVEL">DISPONIVEL</option>
-                                            <option value="DISP_C_RESTRICAO">DISP_C_RESTRICAO</option>
-                                            <option value="INDISPONIVEL">INDISPONIVEL</option>
-                                            <option value="MANUTENCAO">MANUTENCAO</option>
-                                        </select>
-                                    ) : (
-                                        <p>{mod.Disponibilidade}</p>
-                                    )}
-                                </td>
-
-                                <td>
-                                    <p>{mod.OM_Origem}</p>
-                                </td>
-
-                                <td>
-                                    {mod.editando && podeEditar("modulos", "omAtual") ? (
-                                        <select
-                                            value={getOmSelectValue(mod, 'omDestinoId')}
-                                            onChange={(e) => handleOmChange(idx, 'omDestinoId', Number(e.target.value))}
-                                            className="select-disponibilidade"
-                                        >
-                                            <option value="">Selecione</option>
-                                            {batalhoes.map(b => (
-                                                <option key={b.id} value={b.id}>{b.sigla}</option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        <p>{mod.OM_Atual}</p>
-                                    )}
-                                </td>
-
-                                <td>{mod.Material}</td>
-
-                                <td>
-                                    {mod.editando && podeEditar("modulos", "cabideSN") ? (
-                                        <select
-                                            value={mod.cabideSNSelecionado || mod.SN_do_Cabide}
-                                            onChange={(e) => handleCabideChange(idx, e.target.value)}
-                                            className="select-disponibilidade"
-                                        >
-                                            <option value="">Selecione um cabide</option>
-                                            <option value="Sem Cabide">Sem Cabide</option>
-                                            {cabidesDisponiveis.map(cabide => (
-                                                <option key={cabide.id} value={cabide.SN}>
-                                                    {cabide.SN} - {cabide.Material}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        <p>{mod.SN_do_Cabide}</p>
-                                    )}
-                                </td>
-
-                                <td className={`status ${mod.Disponibilidade_do_Cabide?.toLowerCase() || ''}`}>
-                                    <p>{mod.Disponibilidade_do_Cabide}</p>
-                                </td>
-                                <td>
-                                    {mod.editando ? (
-                                        <input
-                                            type="text"
-                                            value={mod.Obs}
-                                            onChange={(e) => handleObsChange(idx, e.target.value)}
-                                            className="input-observacao"
-                                            placeholder="Digite a observação"
-                                        />
-                                    ) : (
-                                        <span>{mod.Obs}</span>
-                                    )}
-                                </td>
-                                <td>
-                                    {mod.editando ? (
-                                        <div className="botoes-edicao">
-                                            <button
-                                                className="btn-confirmar"
-                                                onClick={() => confirmarEdicao(idx)}
-                                                title="Confirmar edição"
-                                            >
-                                                ✓
-                                            </button>
-                                            <button
-                                                className="btn-cancelar"
-                                                onClick={() => cancelarEdicao(idx)}
-                                                title="Cancelar edição"
-                                            >
-                                                ✕
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            className="btn-editar"
-                                            onClick={() => iniciarEdicao(idx)}
-                                        >
-                                            Editar
-                                        </button>
-                                    )}
-                                </td>
+                <>
+                    <table className="materiais-tabela">
+                        <thead>
+                            <tr>
+                                <th>Módulo</th>
+                                <th>SN</th>
+                                <th>Disponibilidade</th>
+                                <th >OM Origem</th>
+                                <th>OM Atual</th>
+                                <th>Material</th>
+                                <th>SN do Cabide</th>
+                                <th>Disponibilidade do Cabide</th>
+                                <th>Obs</th>
+                                <th>Ações</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {modulosEditaveis.map((mod, idx) => (
+                                <tr key={idx} onContextMenu={(e) => abrirMenu(e, idx)}>
+                                    <td>{mod.modulo}</td>
+                                    <td>{mod.SN}</td>
+                                    <td className={`status ${mod.Disponibilidade.toLowerCase()}`}>
+                                        {mod.editando ? (
+                                            <select
+                                                value={mod.Disponibilidade}
+                                                onChange={(e) => handleDisponibilidadeChange(
+                                                    idx,
+                                                    e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
+                                                )}
+                                                className="select-disponibilidade"
+                                            >
+                                                <option value="DISPONIVEL">DISPONIVEL</option>
+                                                <option value="DISP_C_RESTRICAO">DISP_C_RESTRICAO</option>
+                                                <option value="INDISPONIVEL">INDISPONIVEL</option>
+                                                <option value="MANUTENCAO">MANUTENCAO</option>
+                                            </select>
+                                        ) : (
+                                            <p>{mod.Disponibilidade}</p>
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        <p>{mod.OM_Origem}</p>
+                                    </td>
+
+                                    <td>
+                                        {mod.editando && podeEditar("modulos", "omAtual") ? (
+                                            <select
+                                                value={getOmSelectValue(mod, 'omDestinoId')}
+                                                onChange={(e) => handleOmChange(idx, 'omDestinoId', Number(e.target.value))}
+                                                className="select-disponibilidade"
+                                            >
+                                                <option value="">Selecione</option>
+                                                {batalhoes.map(b => (
+                                                    <option key={b.id} value={b.id}>{b.sigla}</option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <p>{mod.OM_Atual}</p>
+                                        )}
+                                    </td>
+
+                                    <td>{mod.Material}</td>
+
+                                    <td>
+                                        {mod.editando && podeEditar("modulos", "cabideSN") ? (
+                                            <select
+                                                value={mod.cabideSNSelecionado || mod.SN_do_Cabide}
+                                                onChange={(e) => handleCabideChange(idx, e.target.value)}
+                                                className="select-disponibilidade"
+                                            >
+                                                <option value="">Selecione um cabide</option>
+                                                <option value="Sem Cabide">Sem Cabide</option>
+                                                {cabidesDisponiveis.map(cabide => (
+                                                    <option key={cabide.id} value={cabide.SN}>
+                                                        {cabide.SN} - {cabide.Material}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <p>{mod.SN_do_Cabide}</p>
+                                        )}
+                                    </td>
+
+                                    <td className={`status ${mod.Disponibilidade_do_Cabide?.toLowerCase() || ''}`}>
+                                        <p>{mod.Disponibilidade_do_Cabide}</p>
+                                    </td>
+                                    <td>
+                                        {mod.editando ? (
+                                            <input
+                                                type="text"
+                                                value={mod.Obs}
+                                                onChange={(e) => handleObsChange(idx, e.target.value)}
+                                                className="input-observacao"
+                                                placeholder="Digite a observação"
+                                            />
+                                        ) : (
+                                            <span>{mod.Obs}</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {mod.editando ? (
+                                            <div className="botoes-edicao">
+                                                <button
+                                                    className="btn-confirmar"
+                                                    onClick={() => confirmarEdicao(idx)}
+                                                    title="Confirmar edição"
+                                                >
+                                                    ✓
+                                                </button>
+                                                <button
+                                                    className="btn-cancelar"
+                                                    onClick={() => cancelarEdicao(idx)}
+                                                    title="Cancelar edição"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                className="btn-editar"
+                                                onClick={() => iniciarEdicao(idx)}
+                                            >
+                                                Editar
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <MenuContexto
+                        x={contextMenu.x}
+                        y={contextMenu.y}
+                        visible={contextMenu.visible}
+                        onClose={() => setContextMenu({ ...contextMenu, visible: false })}
+                        options={[
+                            { label: "Criar um Registro", onClick: () => console.log("Criar registro") },
+                            { label: "Visualizar Registros", onClick: () => console.log("Visualizar registros") },
+                        ]}
+                    />
+                </>
             ) : (
                 <p>Carregando módulos...</p>
             )}

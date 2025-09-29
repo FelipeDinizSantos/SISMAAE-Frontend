@@ -1,0 +1,69 @@
+"use client";
+import { useState } from "react";
+
+import "./FormRegistro.css";
+
+interface FormRegistroProps {
+  materialId: number;
+  mecanicoId: number;
+  onSuccess: () => void;
+}
+
+export default function FormRegistro({ materialId, mecanicoId, onSuccess }: FormRegistroProps) {
+  const [acao, setAcao] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const payload = {
+      material_id: materialId,
+      modulo_id: null,
+      acao,
+      automatico: false,
+      mecanico_id: mecanicoId,
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/registros`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Erro ao criar registro");
+
+      setAcao("");
+      onSuccess();
+    } catch (err) {
+      console.error(err);
+      alert("Falha ao salvar registro.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="form-registro">
+      <label>
+        Ação:
+        <input
+          type="text"
+          value={acao}
+          onChange={(e) => setAcao(e.target.value)}
+          required
+        />
+      </label>
+      <button type="submit" disabled={loading}>
+        {loading ? "Salvando..." : "Criar Registro"}
+      </button>
+    </form>
+  );
+}

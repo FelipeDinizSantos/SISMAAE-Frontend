@@ -1,0 +1,17 @@
+.lista-registros {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.lista-registros li {
+  background: #f9fafc;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
