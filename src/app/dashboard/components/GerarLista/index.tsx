@@ -25,7 +25,7 @@ export default function GerarLista({
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) return;
-        
+
         const metodoDeBusca = parametrosDeBusca.split('-')[1];
 
         if (parametrosDeBusca === "MATERIAL") {
@@ -49,7 +49,7 @@ export default function GerarLista({
         if (parametrosDeBusca.split('-')[0] === "MODULO") {
             try {
                 const fetchData = async () => {
-                    if(!auxiliarBuscaEspecifica) return;
+                    if (!auxiliarBuscaEspecifica) return;
 
                     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos?${metodoDeBusca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}`, {
                         headers: { authorization: `Barear ${token}` }

@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
 
+import { useState } from "react";
 import "./FormRegistro.css";
 
 interface FormRegistroProps {

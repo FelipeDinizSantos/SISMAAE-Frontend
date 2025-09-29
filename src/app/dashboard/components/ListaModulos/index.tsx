@@ -3,7 +3,7 @@ import "./ListaModulos.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
-import MenuContexto from "../MenuContexto";
+import MenuContexto from "../../../../components/MenuContexto";
 
 interface ModuloEditado extends Modulo {
     editando?: boolean;
@@ -38,16 +38,18 @@ export default function ListaModulos(
         setModulos,
         setItens
     }
-        :
-        {
-            modulos: Modulo[],
-            setModulos: Dispatch<SetStateAction<Modulo[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-        }
+    :
+    {
+        modulos: Modulo[],
+        setModulos: Dispatch<SetStateAction<Modulo[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+    }
 ) {
     const [modulosEditaveis, setModulosEditaveis] = useState<ModuloEditado[]>([]);
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
+
+    // Estado para os menus dos itens da lista. (Botão Direito) 
     const [contextMenu, setContextMenu] = useState({
         visible: false,
         x: 0,

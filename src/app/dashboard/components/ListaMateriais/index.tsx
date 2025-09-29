@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
 import { Batalhao } from "@/interfaces/Batalhao.interface";
-import MenuContexto from "../MenuContexto";
+import MenuContexto from "../../../../components/MenuContexto";
 import Modal from "@/components/Modal";
 import FormRegistro from "../FormRegistro";
 import ListaRegistros from "../ListaRegistros";
@@ -33,6 +33,8 @@ export default function ListaMateriais(
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
 
+
+    // Estados para os menus dos itens da lista. (Botão Direito) 
     const [contextMenu, setContextMenu] = useState<{
         visible: boolean;
         x: number;
@@ -44,7 +46,6 @@ export default function ListaMateriais(
         y: 0,
         mat: null,
     });
-
     const [modal, setModal] = useState<{ type: "novo" | "listar" | null, materialId?: number }>({ type: null });
 
     const { podeEditar } = usePermissao();
@@ -157,7 +158,6 @@ export default function ListaMateriais(
                 obs: materiaisEditaveis[index].Obs,
             };
 
-            // só adiciona loc_id se foi alterado
             if (materiaisEditaveis[index].OM_Atual !== materiaisEditaveis[index].OM_Atual_Original) {
                 const novoLoc = batalhoes.find(
                     (bat) => bat.id === parseInt(materiaisEditaveis[index].OM_Atual)
@@ -330,7 +330,7 @@ export default function ListaMateriais(
                         onClose={() => setContextMenu({ ...contextMenu, visible: false })}
                         options={[
                             { label: "Criar Novo Registro", onClick: () => setModal({ type: "novo", materialId: contextMenu.mat!.id }) },
-                            { label: "Visualizar Registros", onClick: () => setModal({ type: "listar", materialId: contextMenu.mat!.id}) },
+                            { label: "Visualizar Registros", onClick: () => setModal({ type: "listar", materialId: contextMenu.mat!.id }) },
                         ]}
                     />
 
@@ -341,7 +341,7 @@ export default function ListaMateriais(
                     >
                         <FormRegistro
                             materialId={modal.materialId!}
-                            mecanicoId={user?.id || 0} 
+                            mecanicoId={user!.id}
                             onSuccess={() => setModal({ type: null })}
                         />
                     </Modal>
