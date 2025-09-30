@@ -4,12 +4,13 @@ import { useState } from "react";
 import "./FormRegistro.css";
 
 interface FormRegistroProps {
-  materialId: number;
-  mecanicoId: number;
+  materialId: number | null;
+  moduloId: number | null;
+  mecanicoId: number | null;
   onSuccess: () => void;
 }
 
-export default function FormRegistro({ materialId, mecanicoId, onSuccess }: FormRegistroProps) {
+export default function FormRegistro({ materialId, moduloId, mecanicoId, onSuccess }: FormRegistroProps) {
   const [acao, setAcao] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +20,7 @@ export default function FormRegistro({ materialId, mecanicoId, onSuccess }: Form
 
     const payload = {
       material_id: materialId,
-      modulo_id: null,
+      modulo_id: moduloId,
       acao,
       automatico: false,
       mecanico_id: mecanicoId,
@@ -56,6 +57,7 @@ export default function FormRegistro({ materialId, mecanicoId, onSuccess }: Form
         Ação:
         <input
           type="text"
+          placeholder="Ex.: Ajuste na antena"
           value={acao}
           onChange={(e) => setAcao(e.target.value)}
           required

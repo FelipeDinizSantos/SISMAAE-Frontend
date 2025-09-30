@@ -57,7 +57,7 @@ export default function RelatorioDisponibilidade() {
 
         const renomear: Record<string, string> = {
             "PEDESTAL": "Pedestal",
-            "QUADRIPÉ": "Quadripé"
+            "QUADRIPE": "Quadripé"
         };
 
         const modulosMap = modulos.reduce<

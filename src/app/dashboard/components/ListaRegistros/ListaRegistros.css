@@ -5,13 +5,78 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 0.4rem; 
+
+  p{
+    margin: .2rem 0;
+  }
+}
+
+.lista-registros::-webkit-scrollbar {
+  width: 8px;
+}
+.lista-registros::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+.lista-registros::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+.lista-registros::-webkit-scrollbar-thumb:hover {
+  background: #888;
 }
 
 .lista-registros li {
   background: #f9fafc;
   border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 0.8rem;
+  border-radius: 12px;
+  padding: 1rem;
   font-size: 0.9rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lista-registros li p.acao {
+  max-width: 80%;
+}
+
+.lista-registros li:hover {
+  cursor: pointer;
+  transform: translateY(-.5px);
+}
+
+.registro-badge {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+}
+
+.registro-badge.automatico {
+  background: #4caf50; 
+}
+
+.registro-badge.manual {
+  background: #e74c3c;
+}
+
+.lista-registros li strong {
+  color: #1a1a1a;
+}
+
+.lista-registros li small {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #666;
 }

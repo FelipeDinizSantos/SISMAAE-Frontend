@@ -14,10 +14,11 @@ interface Registro {
 }
 
 interface ListaRegistrosProps {
-  materialId: number;
+  itemId: number;
+  isMaterial: boolean; 
 }
 
-export default function ListaRegistros({ materialId }: ListaRegistrosProps) {
+export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosProps) {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +28,7 @@ export default function ListaRegistros({ materialId }: ListaRegistrosProps) {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/registros/materiais/${materialId}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/registros/${isMaterial ? 'materiais' : 'modulos'}/${itemId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -42,7 +43,7 @@ export default function ListaRegistros({ materialId }: ListaRegistrosProps) {
     };
 
     fetchRegistros();
-  }, [materialId]);
+  }, [itemId]);
 
   if (loading) return <p>Carregando registros...</p>;
 
@@ -52,9 +53,17 @@ export default function ListaRegistros({ materialId }: ListaRegistrosProps) {
     <ul className="lista-registros">
       {registros.map((r) => (
         <li key={r.id}>
-          <strong>Ação:</strong> {r.acao} <br />
-          <strong>Mecânico:</strong> {r.mecanico_posto + '. ' + r.mecanico_nome} | Automático: {r.automatico ? "Sim" : "Não"} <br />
-          <small>{new Date(r.data).toLocaleDateString()} </small>
+          <div className={`registro-badge ${r.automatico ? "automatico" : "manual"}`}>
+            {r.automatico ? "Automático" : "Manual"}
+          </div>
+          <p className="acao"><strong>Ação:</strong> {r.acao}</p>
+          {
+            r.mecanico_id &&
+            <p><strong>Mecânico:</strong> {r.mecanico_posto + ". " + r.mecanico_nome}</p>
+          }
+          <small>
+            {new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </small>
         </li>
       ))}
     </ul>

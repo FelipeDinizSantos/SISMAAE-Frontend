@@ -9,6 +9,7 @@ import Modal from "@/components/Modal";
 import FormRegistro from "../FormRegistro";
 import ListaRegistros from "../ListaRegistros";
 import { useAuth } from "@/context/AuthContext";
+import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
 
 interface MaterialEditado extends Material {
     editando?: boolean;
@@ -158,7 +159,10 @@ export default function ListaMateriais(
                 obs: materiaisEditaveis[index].Obs,
             };
 
+            let mudouOM = false;
+
             if (materiaisEditaveis[index].OM_Atual !== materiaisEditaveis[index].OM_Atual_Original) {
+                mudouOM = true;
                 const novoLoc = batalhoes.find(
                     (bat) => bat.id === parseInt(materiaisEditaveis[index].OM_Atual)
                 )?.id;
@@ -181,7 +185,38 @@ export default function ListaMateriais(
             }
 
             const response = await result.json();
-            console.log("Material atualizado com sucesso:", response);
+
+            // Cria registro automatico para mudança da OM_ATUAL
+            if (mudouOM) {
+                const omAnterior = batalhoes.find(
+                    b => String(b.id) === String(materiaisEditaveis[index].OM_Atual_Original)
+                )?.sigla || materiaisEditaveis[index].OM_Atual_Original;
+
+                const omNova = batalhoes.find(
+                    b => String(b.id) === String(materiaisEditaveis[index].OM_Atual)
+                )?.sigla || materiaisEditaveis[index].OM_Atual;
+
+                const acao = `TRANSFERÊNCIA DE CABIDE: ${omAnterior} → ${omNova}`;
+
+                await criarRegistroAutomatico({
+                    materialId: materiais[index].id,
+                    moduloId: null,
+                    acao,
+                });
+            }
+            // Cria registro automatico para mudança de DISPONIBILIDADE DO CABIDE
+            if (materiaisEditaveis[index].Disponibilidade !== materiaisEditaveis[index].disponibilidadeOriginal) {
+                const dispAnterior = materiaisEditaveis[index].disponibilidadeOriginal;
+                const dispNova = materiaisEditaveis[index].Disponibilidade;
+
+                const acao = `ALTERAÇÃO DE DISPONIBILIDADE: ${dispAnterior} → ${dispNova}`;
+
+                await criarRegistroAutomatico({
+                    materialId: materiais[index].id,
+                    moduloId: null,
+                    acao,
+                });
+            }
 
         } catch (error) {
             console.error("Erro ao atualizar material:", error);
@@ -329,11 +364,20 @@ export default function ListaMateriais(
                         visible={contextMenu.visible}
                         onClose={() => setContextMenu({ ...contextMenu, visible: false })}
                         options={[
-                            { label: "Criar Novo Registro", onClick: () => setModal({ type: "novo", materialId: contextMenu.mat!.id }) },
-                            { label: "Visualizar Registros", onClick: () => setModal({ type: "listar", materialId: contextMenu.mat!.id }) },
+                            ...(user?.perfil === "MECANICO"
+                                ? [
+                                    {
+                                        label: "Criar Novo Registro",
+                                        onClick: () => setModal({ type: "novo", materialId: contextMenu.mat!.id }),
+                                    },
+                                ]
+                                : []),
+                            {
+                                label: "Visualizar Registros",
+                                onClick: () => setModal({ type: "listar", materialId: contextMenu.mat!.id }),
+                            },
                         ]}
                     />
-
                     <Modal
                         visible={modal.type === "novo"}
                         title="Criar Registro"
@@ -341,7 +385,8 @@ export default function ListaMateriais(
                     >
                         <FormRegistro
                             materialId={modal.materialId!}
-                            mecanicoId={user!.id}
+                            moduloId={null}
+                            mecanicoId={user ? user.id : 0}
                             onSuccess={() => setModal({ type: null })}
                         />
                     </Modal>
@@ -351,7 +396,7 @@ export default function ListaMateriais(
                         title="Registros do Material"
                         onClose={() => setModal({ type: null })}
                     >
-                        <ListaRegistros materialId={modal.materialId!} />
+                        <ListaRegistros itemId={modal.materialId!} isMaterial />
                     </Modal>
                 </>
             ) : (

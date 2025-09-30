@@ -49,13 +49,6 @@ export default function ListaModulos(
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
 
-    // Estado para os menus dos itens da lista. (Botão Direito) 
-    const [contextMenu, setContextMenu] = useState({
-        visible: false,
-        x: 0,
-        y: 0,
-    });
-
     const { podeEditar } = usePermissao();
 
     useEffect(() => {
@@ -101,15 +94,6 @@ export default function ListaModulos(
             cabideSNSelecionado: mod.SN_do_Cabide,
         })));
     }, [modulos]);
-
-    const abrirMenu = (event: React.MouseEvent, idx: number) => {
-        event.preventDefault();
-        setContextMenu({
-            visible: true,
-            x: event.pageX,
-            y: event.pageY,
-        });
-    };
 
     const iniciarEdicao = (index: number) => {
         const novos = modulosEditaveis.map((mod, i) => {
@@ -318,7 +302,7 @@ export default function ListaModulos(
                         </thead>
                         <tbody>
                             {modulosEditaveis.map((mod, idx) => (
-                                <tr key={idx} onContextMenu={(e) => abrirMenu(e, idx)}>
+                                <tr key={idx}>
                                     <td>{mod.modulo}</td>
                                     <td>{mod.SN}</td>
                                     <td className={`status ${mod.Disponibilidade.toLowerCase()}`}>
@@ -431,16 +415,6 @@ export default function ListaModulos(
                             ))}
                         </tbody>
                     </table>
-                    <MenuContexto
-                        x={contextMenu.x}
-                        y={contextMenu.y}
-                        visible={contextMenu.visible}
-                        onClose={() => setContextMenu({ ...contextMenu, visible: false })}
-                        options={[
-                            { label: "Criar um Registro", onClick: () => console.log("Criar registro") },
-                            { label: "Visualizar Registros", onClick: () => console.log("Visualizar registros") },
-                        ]}
-                    />
                 </>
             ) : (
                 <p>Carregando módulos...</p>

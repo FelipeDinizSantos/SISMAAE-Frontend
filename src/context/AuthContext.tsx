@@ -7,8 +7,8 @@ type User = {
   id: number;
   pg: string;
   nome: string;
-  idt_militar: string; 
-  perfil: "ADMIN" |"COMANDO" | "COL" | "S4" | "MECANICO";
+  idt_militar: string;
+  perfil: "ADMIN" | "COMANDO" | "COL" | "S4" | "MECANICO";
 };
 
 type AuthContextType = {
@@ -61,14 +61,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (token: string) => {
     localStorage.setItem('token', token);
-    
+
     await fetchUser(token);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    setUser(null);
     router.push('/');
+    setUser(null);
   };
 
   return (
