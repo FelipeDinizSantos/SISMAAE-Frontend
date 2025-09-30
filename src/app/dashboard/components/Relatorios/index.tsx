@@ -3,12 +3,14 @@
 import { useState } from "react";
 import "./Relatorios.css";
 import RelatorioDisponibilidade from "./components/RelatorioDisponibilidade";
+import { useAuth } from "@/context/AuthContext";
 
 interface Relatorio {
   id: string;
   nome: string;
   descricao: string;
   componente: React.ReactNode;
+  disponivelPara: string[];
 }
 
 const relatoriosDisponiveis: Relatorio[] = [
@@ -17,30 +19,43 @@ const relatoriosDisponiveis: Relatorio[] = [
     nome: "Relatório de Disponibilidade",
     descricao: "Resumo da disponibilidade de radares",
     componente: <RelatorioDisponibilidade />,
+    disponivelPara: ["COL"],
   },
 ];
 
 export default function Relatorios() {
   const [relatorioSelecionado, setRelatorioSelecionado] = useState<string | null>(null);
+  const { user } = useAuth();
 
-  const relatorioAtivo = relatoriosDisponiveis.find(
+  const relatoriosPermitidos = relatoriosDisponiveis.filter((r) =>
+    user ? r.disponivelPara.includes(user.perfil) : false
+  );
+
+  const relatorioAtivo = relatoriosPermitidos.find(
     (r) => r.id === relatorioSelecionado
   );
 
   return (
     <div className="relatorios-container">
       <div className="relatorios-lista">
-        {relatoriosDisponiveis.map((relatorio) => (
-          <div
-            key={relatorio.id}
-            className={`relatorio-card ${relatorioSelecionado === relatorio.id ? "ativo" : ""
+        {relatoriosPermitidos.length > 0 ? (
+          relatoriosPermitidos.map((relatorio) => (
+            <div
+              key={relatorio.id}
+              className={`relatorio-card ${
+                relatorioSelecionado === relatorio.id ? "ativo" : ""
               }`}
-            onClick={() => setRelatorioSelecionado(relatorio.id)}
-          >
-            <h3>{relatorio.nome}</h3>
-            <p>{relatorio.descricao}</p>
-          </div>
-        ))}
+              onClick={() => setRelatorioSelecionado(relatorio.id)}
+            >
+              <h3>{relatorio.nome}</h3>
+              <p>{relatorio.descricao}</p>
+            </div>
+          ))
+        ) : (
+          <p className="sem-acesso">
+            Você não tem acesso a nenhum relatório disponível.
+          </p>
+        )}
       </div>
 
       <div className="relatorio-conteudo">
@@ -51,7 +66,9 @@ export default function Relatorios() {
             {relatorioAtivo.componente}
           </div>
         ) : (
-          <p className="placeholder">Selecione um relatório para visualizar.</p>
+          relatoriosPermitidos.length > 0 && (
+            <p className="placeholder">Selecione um relatório para visualizar.</p>
+          )
         )}
       </div>
     </div>

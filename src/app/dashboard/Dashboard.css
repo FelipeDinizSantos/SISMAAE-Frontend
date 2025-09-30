@@ -92,5 +92,33 @@
         font-weight: bold;
         color: #357abd;
     }
+}
 
+.tabs-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.tab-button {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.tab-button.active {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.info-paginacao {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
 }

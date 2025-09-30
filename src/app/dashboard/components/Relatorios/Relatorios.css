@@ -61,3 +61,13 @@
     margin-top: 2rem;
 }
 
+.sem-acesso {
+    text-align: center;
+    color: #d32f2f;
+    font-style: italic;
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid #d32f2f33;
+    border-radius: 8px;
+    background-color: #ffebee;
+}

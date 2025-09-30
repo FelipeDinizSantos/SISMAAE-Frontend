@@ -34,7 +34,6 @@ export default function ListaMateriais(
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
 
-
     // Estados para os menus dos itens da lista. (Botão Direito) 
     const [contextMenu, setContextMenu] = useState<{
         visible: boolean;
@@ -50,6 +49,17 @@ export default function ListaMateriais(
     const [modal, setModal] = useState<{ type: "novo" | "listar" | null, materialId?: number }>({ type: null });
 
     const { podeEditar } = usePermissao();
+    const { user } = useAuth();
+
+    // Paginação
+    const [paginaAtual, setPaginaAtual] = useState(0);
+    const itensPorPagina = 5;
+    const totalPaginas = Math.ceil(materiaisEditaveis.length / itensPorPagina);
+
+    const materiaisPaginados = materiaisEditaveis.slice(
+        paginaAtual * itensPorPagina,
+        (paginaAtual + 1) * itensPorPagina
+    );
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -74,8 +84,6 @@ export default function ListaMateriais(
     useEffect(() => {
         setMateriaisEditaveis(materiais.map(mat => ({ ...mat })));
     }, [materiais]);
-
-    const { user } = useAuth();
 
     const abrirMenu = (event: React.MouseEvent, idx: number, mat: Material) => {
         event.preventDefault();
@@ -184,7 +192,7 @@ export default function ListaMateriais(
                 throw new Error('Erro ao atualizar material');
             }
 
-            const response = await result.json();
+            await result.json();
 
             // Cria registro automatico para mudança da OM_ATUAL
             if (mudouOM) {
@@ -250,6 +258,7 @@ export default function ListaMateriais(
         };
         setMateriaisEditaveis(novosMateriais);
     };
+
     return (
         <div className="materiais-container">
             <h3>Lista de Materiais</h3>
@@ -268,95 +277,116 @@ export default function ListaMateriais(
                             </tr>
                         </thead>
                         <tbody>
-                            {materiaisEditaveis.map((mat, idx) => (
-                                <tr key={idx} onContextMenu={(e) => abrirMenu(e, idx, mat)}>
-                                    <td>{mat.Material}</td>
-                                    <td>{mat.SN}</td>
-                                    <td className={`status ${mat.Disponibilidade.toLowerCase()}`}>
-                                        {mat.editando ? (
-                                            <select
-                                                value={mat.Disponibilidade}
-                                                onChange={(e) => handleDisponibilidadeChange(
-                                                    idx,
-                                                    e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
-                                                )}
-                                                className="select-disponibilidade"
-                                            >
-                                                <option value="DISPONIVEL">DISPONIVEL</option>
-                                                <option value="DISP_C_RESTRICAO">DISP_C_RESTRICAO</option>
-                                                <option value="INDISPONIVEL">INDISPONIVEL</option>
-                                                <option value="MANUTENCAO">MANUTENCAO</option>
-                                            </select>
-                                        ) : (
-                                            <p>{mat.Disponibilidade}</p>
-                                        )}
-                                    </td>
-                                    <td>{mat.OM_Origem}</td>
-                                    <td>
-                                        {
-                                            mat.editando && podeEditar("materiais", "omAtual") ? (
+                            {materiaisPaginados.map((mat, idx) => {
+                                const realIndex = paginaAtual * itensPorPagina + idx;
+                                return (
+                                    <tr key={realIndex} onContextMenu={(e) => abrirMenu(e, realIndex, mat)}>
+                                        <td>{mat.Material}</td>
+                                        <td>{mat.SN}</td>
+                                        <td className={`status ${mat.Disponibilidade.toLowerCase()}`}>
+                                            {mat.editando ? (
                                                 <select
-                                                    value={mat.OM_Atual}
-                                                    onChange={(e) => handleOmAtualChange(
-                                                        idx,
-                                                        e.target.value
+                                                    value={mat.Disponibilidade}
+                                                    onChange={(e) => handleDisponibilidadeChange(
+                                                        realIndex,
+                                                        e.target.value as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO'
                                                     )}
                                                     className="select-disponibilidade"
                                                 >
-                                                    <option value="">Selecione</option>
-                                                    {batalhoes.map(b => (
-                                                        <option key={b.id} value={b.id}>{b.sigla}</option>
-                                                    ))}
+                                                    <option value="DISPONIVEL">DISPONIVEL</option>
+                                                    <option value="DISP_C_RESTRICAO">DISP_C_RESTRICAO</option>
+                                                    <option value="INDISPONIVEL">INDISPONIVEL</option>
+                                                    <option value="MANUTENCAO">MANUTENCAO</option>
                                                 </select>
                                             ) : (
-                                                <span>{batalhoes.find(b => String(b.id) === String(mat.OM_Atual))?.sigla || mat.OM_Atual}</span>
-                                            )
-                                        }
-                                    </td>
-                                    <td>
-                                        {mat.editando ? (
-                                            <input
-                                                type="text"
-                                                value={mat.Obs}
-                                                onChange={(e) => handleObsChange(idx, e.target.value)}
-                                                className="input-observacao"
-                                                placeholder="Digite a observação"
-                                            />
-                                        ) : (
-                                            <span>{mat.Obs}</span>
-                                        )}
-                                    </td>
-                                    <td>
-                                        {mat.editando ? (
-                                            <div className="botoes-edicao">
+                                                <p>{mat.Disponibilidade}</p>
+                                            )}
+                                        </td>
+                                        <td>{mat.OM_Origem}</td>
+                                        <td>
+                                            {
+                                                mat.editando && podeEditar("materiais", "omAtual") ? (
+                                                    <select
+                                                        value={mat.OM_Atual}
+                                                        onChange={(e) => handleOmAtualChange(
+                                                            realIndex,
+                                                            e.target.value
+                                                        )}
+                                                        className="select-disponibilidade"
+                                                    >
+                                                        <option value="">Selecione</option>
+                                                        {batalhoes.map(b => (
+                                                            <option key={b.id} value={b.id}>{b.sigla}</option>
+                                                        ))}
+                                                    </select>
+                                                ) : (
+                                                    <span>{batalhoes.find(b => String(b.id) === String(mat.OM_Atual))?.sigla || mat.OM_Atual}</span>
+                                                )
+                                            }
+                                        </td>
+                                        <td>
+                                            {mat.editando ? (
+                                                <input
+                                                    type="text"
+                                                    value={mat.Obs}
+                                                    onChange={(e) => handleObsChange(realIndex, e.target.value)}
+                                                    className="input-observacao"
+                                                    placeholder="Digite a observação"
+                                                />
+                                            ) : (
+                                                <span>{mat.Obs}</span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {mat.editando ? (
+                                                <div className="botoes-edicao">
+                                                    <button
+                                                        className="btn-confirmar"
+                                                        onClick={() => confirmarEdicao(realIndex)}
+                                                        title="Confirmar edição"
+                                                    >
+                                                        ✓
+                                                    </button>
+                                                    <button
+                                                        className="btn-cancelar"
+                                                        onClick={() => cancelarEdicao(realIndex)}
+                                                        title="Cancelar edição"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ) : (
                                                 <button
-                                                    className="btn-confirmar"
-                                                    onClick={() => confirmarEdicao(idx)}
-                                                    title="Confirmar edição"
+                                                    className="btn-editar"
+                                                    onClick={() => iniciarEdicao(realIndex)}
                                                 >
-                                                    ✓
+                                                    Editar
                                                 </button>
-                                                <button
-                                                    className="btn-cancelar"
-                                                    onClick={() => cancelarEdicao(idx)}
-                                                    title="Cancelar edição"
-                                                >
-                                                    ✕
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                className="btn-editar"
-                                                onClick={() => iniciarEdicao(idx)}
-                                            >
-                                                Editar
-                                            </button>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
+                                            )}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
+
+                    {/* Tabs/Paginação */}
+                    <div className="tabs-container">
+                        {Array.from({ length: totalPaginas }).map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setPaginaAtual(idx)}
+                                className={`tab-button ${idx === paginaAtual ? "active" : ""}`}
+                            >
+                                {idx + 1}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Info de quantos estão sendo exibidos */}
+                    <div className="info-paginacao">
+                        Mostrando {materiaisPaginados.length} de {materiaisEditaveis.length} materiais
+                    </div>
 
                     <MenuContexto
                         x={contextMenu.x}
