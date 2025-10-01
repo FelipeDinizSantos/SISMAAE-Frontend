@@ -194,6 +194,7 @@ export default function ListaMateriais(
 
             await result.json();
 
+            const usuario = `[${user?.pg}. ${user?.nome} | ${user?.batalhao}]`; 
             // Cria registro automatico para mudança da OM_ATUAL
             if (mudouOM) {
                 const omAnterior = batalhoes.find(
@@ -204,7 +205,7 @@ export default function ListaMateriais(
                     b => String(b.id) === String(materiaisEditaveis[index].OM_Atual)
                 )?.sigla || materiaisEditaveis[index].OM_Atual;
 
-                const acao = `TRANSFERÊNCIA DE CABIDE: ${omAnterior} → ${omNova}`;
+                const acao = `TRANSFERÊNCIA DE CABIDE: ${omAnterior} → ${omNova} - ${usuario}`;
 
                 await criarRegistroAutomatico({
                     materialId: materiais[index].id,
@@ -217,7 +218,7 @@ export default function ListaMateriais(
                 const dispAnterior = materiaisEditaveis[index].disponibilidadeOriginal;
                 const dispNova = materiaisEditaveis[index].Disponibilidade;
 
-                const acao = `ALTERAÇÃO DE DISPONIBILIDADE: ${dispAnterior} → ${dispNova}`;
+                const acao = `ALTERAÇÃO DE DISPONIBILIDADE: ${dispAnterior} → ${dispNova} - ${usuario}`;
 
                 await criarRegistroAutomatico({
                     materialId: materiais[index].id,

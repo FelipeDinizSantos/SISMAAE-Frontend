@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
 import "./ListaRegistros.css";
@@ -15,7 +16,7 @@ interface Registro {
 
 interface ListaRegistrosProps {
   itemId: number;
-  isMaterial: boolean; 
+  isMaterial: boolean;
 }
 
 export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosProps) {
@@ -62,7 +63,7 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
             <p><strong>Mecânico:</strong> {r.mecanico_posto + ". " + r.mecanico_nome}</p>
           }
           <small>
-            {new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <em>{new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</em>
           </small>
         </li>
       ))}
