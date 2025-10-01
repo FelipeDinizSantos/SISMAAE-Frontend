@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import GraficoStatus from "../../../../../../components/GraficoStatus";
 
 import "./RelatorioDisponibilidade.css";
-import MapaDispRadares from "../MapaDispRadares";
+import MapaDispRadares from "./components/MapaDispRadares";
 
 export default function RelatorioDisponibilidade() {
     const [materiais, setMateriais] = useState<Material[]>([]);
@@ -105,11 +105,11 @@ export default function RelatorioDisponibilidade() {
             {/* --- Materiais --- */}
             <div className="relatorio-conteudo-flex">
                 <div className="grafico-area">
-                    <GraficoStatus itens={materiais} titulo="Disponibilidade de Materiais" />
+                    <GraficoStatus itens={materiais} titulo="Relação de Disponibilidades" />
                 </div>
 
                 <div className="indices-area">
-                    <h3>Índice de Materiais</h3>
+                    <h3>Índice de Radares</h3>
                     <ul>
                         <li>
                             <span className="cor disponivel"></span> Disponíveis:{" "}

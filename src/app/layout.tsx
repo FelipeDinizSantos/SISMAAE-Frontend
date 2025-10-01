@@ -25,7 +25,7 @@ export const metadata = {
   title: 'Quadro de Chamados Técnicos',
   description: 'Sem Descrição',
   icons: {
-    icon: '/img/logo_batalhao.jpg',
+    icon: '/img/logo_batalhao.jpeg',
   },
 };
 

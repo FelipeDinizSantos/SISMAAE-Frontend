@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ListaMateriais from "../ListaMateriais";
 import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
@@ -22,6 +22,8 @@ export default function GerarLista({
     setMateriais: Dispatch<SetStateAction<Material[]>>
     materiais: Material[]
 }) {
+    const [reload, setReload] = useState(false);
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -44,6 +46,7 @@ export default function GerarLista({
             };
 
             fetchMateriais();
+            if(reload) setReload(false);
         }
 
         if (parametrosDeBusca.split('-')[0] === "MODULO") {
@@ -57,19 +60,18 @@ export default function GerarLista({
 
                     let data = await res.json();
 
-                    console.log(data);
-
                     setItens(data.modulos);
                     setModulos(data.modulos);
                 }
 
                 fetchData();
+                if(reload) setReload(false);
             } catch (error) {
                 console.error("Erro ao buscar modulos", error);
             }
         }
 
-    }, [parametrosDeBusca, auxiliarBuscaEspecifica]);
+    }, [parametrosDeBusca, auxiliarBuscaEspecifica, reload]);
 
     return (
         <>
@@ -79,6 +81,7 @@ export default function GerarLista({
                         materiais={materiais}
                         setMateriais={setMateriais}
                         setItens={setItens}
+                        setReload={setReload}
                     />
                 )
             }
@@ -89,6 +92,7 @@ export default function GerarLista({
                         modulos={modulos}
                         setItens={setItens}
                         setModulos={setModulos}
+                        setReload={setReload}
                     />
                 )
             }

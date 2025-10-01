@@ -6,10 +6,11 @@ import { usePermissao } from "@/hooks/usePermissao";
 import { Batalhao } from "@/interfaces/Batalhao.interface";
 import MenuContexto from "../../../../components/MenuContexto";
 import Modal from "@/components/Modal";
-import FormRegistro from "../FormRegistro";
+import FormRegistro from "../CriarRegistro";
 import ListaRegistros from "../ListaRegistros";
 import { useAuth } from "@/context/AuthContext";
 import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
+import MenuManipulacaoTabela from "../MenuManipulacaoTabela";
 
 interface MaterialEditado extends Material {
     editando?: boolean;
@@ -22,14 +23,16 @@ export default function ListaMateriais(
     {
         materiais,
         setMateriais,
-        setItens
+        setItens,
+        setReload
     }
-        :
-        {
-            materiais: Material[],
-            setMateriais: Dispatch<SetStateAction<Material[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-        }
+    :
+    {
+        materiais: Material[],
+        setMateriais: Dispatch<SetStateAction<Material[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+        setReload: Dispatch<SetStateAction<boolean>>
+    }
 ) {
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
@@ -194,7 +197,10 @@ export default function ListaMateriais(
 
             await result.json();
 
-            const usuario = `[${user?.pg}. ${user?.nome} | ${user?.batalhao}]`; 
+            // ========================================================================
+            // AREA PARA MANIPULAÇÃO DE REGISTROS REFERENTE A ATUALIZAÇÃO DE MATERIAIS  
+            // ========================================================================
+
             // Cria registro automatico para mudança da OM_ATUAL
             if (mudouOM) {
                 const omAnterior = batalhoes.find(
@@ -205,12 +211,13 @@ export default function ListaMateriais(
                     b => String(b.id) === String(materiaisEditaveis[index].OM_Atual)
                 )?.sigla || materiaisEditaveis[index].OM_Atual;
 
-                const acao = `TRANSFERÊNCIA DE CABIDE: ${omAnterior} → ${omNova} - ${usuario}`;
+                const acao = `TRANSFERÊNCIA DE CABIDE: ${omAnterior} → ${omNova}`;
 
                 await criarRegistroAutomatico({
                     materialId: materiais[index].id,
                     moduloId: null,
                     acao,
+                    user
                 });
             }
             // Cria registro automatico para mudança de DISPONIBILIDADE DO CABIDE
@@ -218,12 +225,27 @@ export default function ListaMateriais(
                 const dispAnterior = materiaisEditaveis[index].disponibilidadeOriginal;
                 const dispNova = materiaisEditaveis[index].Disponibilidade;
 
-                const acao = `ALTERAÇÃO DE DISPONIBILIDADE: ${dispAnterior} → ${dispNova} - ${usuario}`;
+                const acao = `ALTERAÇÃO DE DISPONIBILIDADE: ${dispAnterior} → ${dispNova}`;
 
                 await criarRegistroAutomatico({
                     materialId: materiais[index].id,
                     moduloId: null,
                     acao,
+                    user
+                });
+            }
+            // Cria registro automatico para mudança de OBSERVAÇÃO
+            if (materiaisEditaveis[index].Obs !== materiaisEditaveis[index].obsOriginal) {
+                const obsAnterior = materiaisEditaveis[index].obsOriginal;
+                const obsNova = materiaisEditaveis[index].Obs;
+
+                const acao = `ALTERAÇÃO DE OBSERVAÇÃO: ${obsAnterior} → ${obsNova}`;
+
+                await criarRegistroAutomatico({
+                    materialId: materiais[index].id,
+                    moduloId: null,
+                    acao,
+                    user
                 });
             }
 
@@ -262,7 +284,13 @@ export default function ListaMateriais(
 
     return (
         <div className="materiais-container">
-            <h3>Lista de Materiais</h3>
+            <nav>
+                <h3>Lista de Materiais</h3>
+                <MenuManipulacaoTabela
+                    handleReload={() => setReload(true)}
+                />
+            </nav>
+
             {materiaisEditaveis.length > 0 ? (
                 <>
                     <table className="materiais-tabela">

@@ -1,12 +1,18 @@
-export default async function criarRegistroAutomatico({ materialId = null, moduloId = null, acao }: {
+import { useAuth } from "@/context/AuthContext";
+import { User } from "@/interfaces/Usuario.interface";
+
+export default async function criarRegistroAutomatico({ materialId = null, moduloId = null, acao, user }: {
     materialId: number | null;
     moduloId: number | null;
     acao: string;
+    user: User | null
 }) {
+    const usuario = `[${user?.pg}. ${user?.nome} (${user?.perfil}) | ${user?.batalhao}]`;
+
     const payload = {
         material_id: materialId,
         modulo_id: moduloId,
-        acao,
+        acao: acao + " - " + usuario,
         automatico: true,
     };
 

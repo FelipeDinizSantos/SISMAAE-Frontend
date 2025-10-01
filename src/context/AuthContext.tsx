@@ -2,15 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-
-type User = {
-  id: number;
-  pg: string;
-  nome: string;
-  idt_militar: string;
-  batalhao: string;
-  perfil: "ADMIN" | "COMANDO" | "COL" | "S4" | "MECANICO";
-};
+import { User } from '@/interfaces/Usuario.interface';
 
 type AuthContextType = {
   user: User | null;

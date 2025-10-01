@@ -1,9 +1,10 @@
+import "../ListaMateriais/ListaMateriais.css"; // USA A MESMA ESTILIZAÇÃO DE "LISTAMATERIAIS"
+
 import { Material } from "@/interfaces/Material.interface";
-import "./ListaModulos.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
-import MenuContexto from "../../../../components/MenuContexto";
+import MenuManipulacaoTabela from "../MenuManipulacaoTabela";
 
 interface ModuloEditado extends Modulo {
     editando?: boolean;
@@ -36,14 +37,16 @@ export default function ListaModulos(
     {
         modulos,
         setModulos,
-        setItens
+        setItens,
+        setReload
     }
-        :
-        {
-            modulos: Modulo[],
-            setModulos: Dispatch<SetStateAction<Modulo[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-        }
+    :
+    {
+        modulos: Modulo[],
+        setModulos: Dispatch<SetStateAction<Modulo[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
+        setReload: Dispatch<SetStateAction<boolean>>
+    }
 ) {
     const [modulosEditaveis, setModulosEditaveis] = useState<ModuloEditado[]>([]);
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
@@ -56,7 +59,7 @@ export default function ListaModulos(
     const itensPorPagina = 5;
     const totalPaginas = Math.ceil(modulosEditaveis.length / itensPorPagina);
 
-    const modulosPaginados = modulosEditaveis.slice(
+    let modulosPaginados = modulosEditaveis.slice(
         paginaAtual * itensPorPagina,
         (paginaAtual + 1) * itensPorPagina
     );
@@ -292,7 +295,13 @@ export default function ListaModulos(
 
     return (
         <div className="materiais-container">
-            <h3>Lista de Módulos</h3>
+            <nav>
+                <h3>Lista de Modulos</h3>
+                <MenuManipulacaoTabela
+                    handleReload={() => setReload(true)}
+                />
+            </nav>
+
             {modulosEditaveis.length > 0 ? (
                 <>
                     <table className="materiais-tabela">

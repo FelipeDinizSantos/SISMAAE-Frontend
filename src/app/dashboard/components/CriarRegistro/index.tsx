@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import "./FormRegistro.css";
+import "./CriarRegistro.css";
 
 interface FormRegistroProps {
   materialId: number | null;
@@ -10,7 +10,7 @@ interface FormRegistroProps {
   onSuccess: () => void;
 }
 
-export default function FormRegistro({ materialId, moduloId, mecanicoId, onSuccess }: FormRegistroProps) {
+export default function CriarRegistro({ materialId, moduloId, mecanicoId, onSuccess }: FormRegistroProps) {
   const [acao, setAcao] = useState("");
   const [loading, setLoading] = useState(false);
 
