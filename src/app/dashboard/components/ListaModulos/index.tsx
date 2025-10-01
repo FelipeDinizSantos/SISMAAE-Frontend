@@ -5,6 +5,12 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
 import MenuManipulacaoTabela from "../MenuManipulacaoTabela";
+import MenuContexto from "@/components/MenuContexto";
+import Modal from "@/components/Modal";
+import FormRegistro from "../CriarRegistro";
+import ListaRegistros from "../ListaRegistros";
+import { useAuth } from "@/context/AuthContext";
+import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
 
 interface ModuloEditado extends Modulo {
     editando?: boolean;
@@ -40,19 +46,34 @@ export default function ListaModulos(
         setItens,
         setReload
     }
-    :
-    {
-        modulos: Modulo[],
-        setModulos: Dispatch<SetStateAction<Modulo[]>>,
-        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
-        setReload: Dispatch<SetStateAction<boolean>>
-    }
+        :
+        {
+            modulos: Modulo[],
+            setModulos: Dispatch<SetStateAction<Modulo[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
+            setReload: Dispatch<SetStateAction<boolean>>
+        }
 ) {
     const [modulosEditaveis, setModulosEditaveis] = useState<ModuloEditado[]>([]);
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
 
     const { podeEditar } = usePermissao();
+    const { user } = useAuth();
+
+    // Estados para os menus dos itens da lista. (Botão Direito) 
+    const [contextMenu, setContextMenu] = useState<{
+        visible: boolean;
+        x: number;
+        y: number;
+        mod: Modulo | null;
+    }>({
+        visible: false,
+        x: 0,
+        y: 0,
+        mod: null,
+    });
+    const [modal, setModal] = useState<{ type: "novo" | "listar" | null, materialId?: number }>({ type: null });
 
     // Paginação
     const [paginaAtual, setPaginaAtual] = useState(0);
@@ -107,6 +128,16 @@ export default function ListaModulos(
             cabideSNSelecionado: mod.SN_do_Cabide,
         })));
     }, [modulos]);
+
+    const abrirMenu = (event: React.MouseEvent, idx: number, mod: Modulo) => {
+        event.preventDefault();
+        setContextMenu({
+            visible: true,
+            x: event.pageX,
+            y: event.pageY,
+            mod: mod
+        });
+    };
 
     const iniciarEdicao = (index: number) => {
         const novos = modulosEditaveis.map((mod, i) => {
@@ -197,8 +228,71 @@ export default function ListaModulos(
                 throw new Error('Erro ao atualizar módulo');
             }
 
-            const response = await result.json();
-            console.log("Módulo atualizado com sucesso:", response);
+            await result.json();
+
+            // ========================================================================
+            // AREA PARA MANIPULAÇÃO DE REGISTROS REFERENTE A ATUALIZAÇÃO DE MODULOS  
+            // ========================================================================
+            if (modulosEditaveis[index].OM_Atual_Id !== modulosEditaveis[index].omDestinoId) {
+                const omAnterior = batalhoes.find(
+                    b => String(b.id) === String(modulosEditaveis[index].OM_Atual_Id)
+                )?.sigla || modulosEditaveis[index].OM_Atual;
+
+                const omNova = batalhoes.find(
+                    b => String(b.id) === String(modulosEditaveis[index].omDestinoId)
+                )?.sigla || modulosEditaveis[index].omDestinoId;
+
+                const acao = `TRANSFERÊNCIA DE OM: ${omAnterior} → ${omNova}`;
+
+                await criarRegistroAutomatico({
+                    materialId: null,
+                    moduloId: modulos[index].id,
+                    acao,
+                    user
+                });
+            }
+            // Cria registro automatico para mudança de DISPONIBILIDADE DO MODULO
+            if (modulosEditaveis[index].Disponibilidade !== modulosEditaveis[index].disponibilidadeOriginal) {
+                const dispAnterior = modulosEditaveis[index].disponibilidadeOriginal;
+                const dispNova = modulosEditaveis[index].Disponibilidade;
+
+                const acao = `ALTERAÇÃO DE DISPONIBILIDADE: ${dispAnterior} → ${dispNova}`;
+
+                await criarRegistroAutomatico({
+                    materialId: null,
+                    moduloId: modulos[index].id,
+                    acao,
+                    user
+                });
+            }
+            // Cria registro automatico para mudança de OBSERVAÇÃO
+            if (modulosEditaveis[index].Obs !== modulosEditaveis[index].obsOriginal) {
+                const obsAnterior = modulosEditaveis[index].obsOriginal;
+                const obsNova = modulosEditaveis[index].Obs;
+
+                const acao = `ALTERAÇÃO DE OBSERVAÇÃO: ${obsAnterior} → ${obsNova}`;
+
+                await criarRegistroAutomatico({
+                    materialId: null,
+                    moduloId: modulos[index].id,
+                    acao,
+                    user
+                });
+            }
+            // Cria registro automatico para mudança de CABIDE
+            if (modulosEditaveis[index].cabideSNOriginal !== modulosEditaveis[index].cabideSNSelecionado) {
+                const cabideAnterior = modulosEditaveis[index].cabideSNOriginal;
+                const cabideNovo = modulosEditaveis[index].cabideSNSelecionado;
+
+                const acao = `TRANSFERÊNCIA DE CABIDE: ${cabideAnterior} → ${cabideNovo}`;
+
+                await criarRegistroAutomatico({
+                    materialId: null,
+                    moduloId: modulos[index].id,
+                    acao,
+                    user
+                });
+            }
 
             const novosModulos = [...modulos];
             const batalhaoOrigem = batalhoes.find(b => b.id === moduloEditado.omOrigemId);
@@ -323,7 +417,7 @@ export default function ListaModulos(
                             {modulosPaginados.map((mod, idx) => {
                                 const realIndex = paginaAtual * itensPorPagina + idx;
                                 return (
-                                    <tr key={realIndex}>
+                                    <tr key={realIndex} onContextMenu={(e) => abrirMenu(e, realIndex, mod)} >
                                         <td>{mod.modulo}</td>
                                         <td>{mod.SN}</td>
                                         <td className={`status ${mod.Disponibilidade.toLowerCase()}`}>
@@ -454,6 +548,47 @@ export default function ListaModulos(
                     <div className="info-paginacao">
                         Mostrando {modulosPaginados.length} de {modulosEditaveis.length} modulos
                     </div>
+
+                    <MenuContexto
+                        x={contextMenu.x}
+                        y={contextMenu.y}
+                        visible={contextMenu.visible}
+                        onClose={() => setContextMenu({ ...contextMenu, visible: false })}
+                        options={[
+                            ...(user?.perfil === "MECANICO"
+                                ? [
+                                    {
+                                        label: "Criar Novo Registro",
+                                        onClick: () => setModal({ type: "novo", materialId: contextMenu.mod!.id }),
+                                    },
+                                ]
+                                : []),
+                            {
+                                label: "Visualizar Registros",
+                                onClick: () => setModal({ type: "listar", materialId: contextMenu.mod!.id }),
+                            },
+                        ]}
+                    />
+                    <Modal
+                        visible={modal.type === "novo"}
+                        title="Criar Registro"
+                        onClose={() => setModal({ type: null })}
+                    >
+                        <FormRegistro
+                            moduloId={modal.materialId!}
+                            materialId={null}
+                            mecanicoId={user ? user.id : 0}
+                            onSuccess={() => setModal({ type: null })}
+                        />
+                    </Modal>
+
+                    <Modal
+                        visible={modal.type === "listar"}
+                        title="Registros do Material"
+                        onClose={() => setModal({ type: null })}
+                    >
+                        <ListaRegistros itemId={modal.materialId!} isMaterial={false} />
+                    </Modal>
                 </>
             ) : (
                 <p>Carregando módulos...</p>

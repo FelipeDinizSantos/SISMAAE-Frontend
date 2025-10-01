@@ -1,4 +1,3 @@
-import { useAuth } from "@/context/AuthContext";
 import { User } from "@/interfaces/Usuario.interface";
 
 export default async function criarRegistroAutomatico({ materialId = null, moduloId = null, acao, user }: {

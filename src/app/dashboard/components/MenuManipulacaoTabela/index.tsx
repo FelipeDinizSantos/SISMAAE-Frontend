@@ -16,7 +16,7 @@ export default function MenuManipulacaoTabela({ handleReload }: { handleReload: 
             <button 
                 className={`menu-btn ${animando ? "spin" : ""}`} 
                 onClick={handleClick} 
-                title="Recarregar lista"
+                title="Atualizar lista"
             >
                 <ReloadIcon />
             </button>

@@ -211,7 +211,7 @@ export default function ListaMateriais(
                     b => String(b.id) === String(materiaisEditaveis[index].OM_Atual)
                 )?.sigla || materiaisEditaveis[index].OM_Atual;
 
-                const acao = `TRANSFERÊNCIA DE CABIDE: ${omAnterior} → ${omNova}`;
+                const acao = `TRANSFERÊNCIA DE OM: ${omAnterior} → ${omNova}`;
 
                 await criarRegistroAutomatico({
                     materialId: materiais[index].id,
