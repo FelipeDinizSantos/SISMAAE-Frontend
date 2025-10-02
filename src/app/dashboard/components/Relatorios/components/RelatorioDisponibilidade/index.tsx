@@ -5,6 +5,7 @@ import GraficoStatus from "../../../../../../components/GraficoStatus";
 
 import "./RelatorioDisponibilidade.css";
 import MapaDispRadares from "./components/MapaDispRadares";
+import toast from "react-hot-toast";
 
 export default function RelatorioDisponibilidade() {
     const [materiais, setMateriais] = useState<Material[]>([]);
@@ -21,8 +22,12 @@ export default function RelatorioDisponibilidade() {
                 });
                 const data = await res.json();
                 setMateriais(data.materiais || []);
-            } catch (error) {
-                console.error("Erro ao buscar materiais:", error);
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    toast.error("Ocorreu um erro inesperado!");
+                }
             }
         };
 
@@ -33,8 +38,12 @@ export default function RelatorioDisponibilidade() {
                 });
                 const data = await res.json();
                 setModulos(data.modulos || []);
-            } catch (error) {
-                console.error("Erro ao buscar modulos:", error);
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    toast.error("Ocorreu um erro inesperado!");
+                }
             }
         };
 

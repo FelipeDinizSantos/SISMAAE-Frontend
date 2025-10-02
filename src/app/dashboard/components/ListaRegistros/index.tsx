@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import "./ListaRegistros.css";
+import toast from "react-hot-toast";
 
 interface Registro {
   id: number;
@@ -36,9 +37,13 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
           },
         });
         const data = await res.json();
-        setRegistros(data.Registros);
-      } catch (err) {
-        console.error(err);
+        setRegistros(data.registros);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message);
+        } else {
+          toast.error("Ocorreu um erro inesperado!");
+        }
       } finally {
         setLoading(false);
       }

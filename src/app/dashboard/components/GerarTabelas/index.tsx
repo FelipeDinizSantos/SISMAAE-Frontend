@@ -3,8 +3,9 @@ import ListaMateriais from "../ListaMateriais";
 import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import ListaModulos from "../ListaModulos";
+import toast from "react-hot-toast";
 
-export default function GerarLista({
+export default function GerarTabelas({
     parametrosDeBusca,
     setItens,
     auxiliarBuscaEspecifica,
@@ -40,13 +41,17 @@ export default function GerarLista({
 
                     setMateriais(data.materiais || []);
                     setItens(data.materiais || []);
-                } catch (error) {
-                    console.error("Erro ao buscar materiais:", error);
+                } catch (error: unknown) {
+                    if (error instanceof Error) {
+                        toast.error(error.message);
+                    } else {
+                        toast.error("Ocorreu um erro inesperado!");
+                    }
                 }
             };
 
             fetchMateriais();
-            if(reload) setReload(false);
+            if (reload) setReload(false);
         }
 
         if (parametrosDeBusca.split('-')[0] === "MODULO") {
@@ -65,9 +70,13 @@ export default function GerarLista({
                 }
 
                 fetchData();
-                if(reload) setReload(false);
-            } catch (error) {
-                console.error("Erro ao buscar modulos", error);
+                if (reload) setReload(false);
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    toast.error("Ocorreu um erro inesperado!");
+                }
             }
         }
 

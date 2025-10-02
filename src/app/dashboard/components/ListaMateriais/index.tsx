@@ -10,7 +10,7 @@ import FormRegistro from "../CriarRegistro";
 import ListaRegistros from "../ListaRegistros";
 import { useAuth } from "@/context/AuthContext";
 import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
-import MenuManipulacaoTabela from "../MenuManipulacaoTabela";
+import MenuManipulacaoTabela from "../FuncoesTabela";
 import { toast } from 'react-hot-toast';
 
 interface MaterialEditado extends Material {
@@ -77,8 +77,12 @@ export default function ListaMateriais(
                 if (!res.ok) throw new Error("Erro ao carregar batalhões");
                 const data = await res.json();
                 setBatalhoes(data.batalhoes);
-            } catch (err) {
-                console.error(err);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error("Ocorreu um erro inesperado!");
+                }
             }
         }
 
@@ -184,6 +188,7 @@ export default function ListaMateriais(
             }
 
             await result.json();
+            toast.success("Material editado");
 
             setItens(materiaisEditaveis =>
                 materiaisEditaveis.map((mat, i) =>

@@ -19,11 +19,12 @@ const montserrat = Montserrat({
     '800', // ExtraBold
     '900'  // Black
   ],
+  variable: "--font-montserrat",
   display: 'swap',
 })
 
 export const metadata = {
-  title: 'Quadro de Chamados Técnicos',
+  title: 'SISMAAE',
   description: 'Sem Descrição',
   icons: {
     icon: '/img/icon_logo_sistema.png',
@@ -37,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className={montserrat.className}>
+      <body className={`${montserrat.variable}`} suppressHydrationWarning>
         <AuthProvider>
           <header className="titulo-principal">
             <Link href="/dashboard">
@@ -46,27 +47,52 @@ export default function RootLayout({
                 alt="logo do batalhão"
                 width={450}
                 height={150}
+                priority
               />
             </Link>
           </header>
           {children}
         </AuthProvider>
         <Toaster
-          position="top-right" 
-          reverseOrder={false} 
+          position="top-right"
+          reverseOrder={false}
           toastOptions={{
             duration: 3000,
             style: {
               fontFamily: "inherit",
-              fontSize: "0.9rem",
-              borderRadius: "8px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-              padding: "0.8rem 1rem",
-              color: "#333",
-              display: "flex",
-              background: "#F9F9F9",
-              alignItems: "center",
-              justifyContent: "space-between",
+              fontSize: "0.95rem",
+              borderRadius: "12px",
+              padding: ".8rem",
+              fontWeight: 500,
+              color: "#fff",
+              boxShadow: "0 4px 10px #0000002d",
+            },
+            success: {
+              style: {
+                background: "#16a34a",
+              },
+              iconTheme: {
+                primary: "#fff",
+                secondary: "#16a34a",
+              },
+            },
+            error: {
+              style: {
+                background: "#dc2626",
+              },
+              iconTheme: {
+                primary: "#fff",
+                secondary: "#dc2626",
+              },
+            },
+            loading: {
+              style: {
+                background: "#2563eb",
+              },
+              iconTheme: {
+                primary: "#fff",
+                secondary: "#2563eb",
+              },
             },
           }}
         />

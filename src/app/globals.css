@@ -1,14 +1,16 @@
-#__next-build-watcher,
-#__next-error-overlay,
-.nextjs-portal {
-    display: none !important;
-}
+/* nextjs-portal {
+  display: none !important; 
+} */
 
 html,
 body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-montserrat), sans-serif;
 }
 
 a {

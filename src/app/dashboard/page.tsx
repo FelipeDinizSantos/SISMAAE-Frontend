@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import MenuLateral from "./components/MenuLateral";
 import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
-import GerarLista from "./components/GerarLista";
+import GerarLista from "./components/GerarTabelas";
 import Relatorios from "./components/Relatorios";
 
 export default function DashboardPage() {

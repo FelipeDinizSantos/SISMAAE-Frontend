@@ -4,13 +4,14 @@ import { Material } from "@/interfaces/Material.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
-import MenuManipulacaoTabela from "../MenuManipulacaoTabela";
+import MenuManipulacaoTabela from "../FuncoesTabela";
 import MenuContexto from "@/components/MenuContexto";
 import Modal from "@/components/Modal";
 import FormRegistro from "../CriarRegistro";
 import ListaRegistros from "../ListaRegistros";
 import { useAuth } from "@/context/AuthContext";
 import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
+import toast from "react-hot-toast";
 
 interface ModuloEditado extends Modulo {
     editando?: boolean;
@@ -97,8 +98,12 @@ export default function ListaModulos(
                 if (!res.ok) throw new Error("Erro ao carregar batalhões");
                 const data = await res.json();
                 setBatalhoes(data.batalhoes);
-            } catch (err) {
-                console.error(err);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error("Ocorreu um erro inesperado!");
+                }
             }
         };
 
@@ -110,8 +115,12 @@ export default function ListaModulos(
                 if (!res.ok) throw new Error("Erro ao carregar cabides");
                 const data = await res.json();
                 setCabidesDisponiveis(data.materiais);
-            } catch (err) {
-                console.error(err);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    toast.error(err.message);
+                } else {
+                    toast.error("Ocorreu um erro inesperado!");
+                }
             }
         };
 
@@ -219,6 +228,7 @@ export default function ListaModulos(
             }
 
             await result.json();
+            toast.success("Modulo editado");
 
             // ========================================================================
             // AREA PARA MANIPULAÇÃO DE REGISTROS REFERENTE A ATUALIZAÇÃO DE MODULOS  
@@ -320,8 +330,13 @@ export default function ListaModulos(
             };
             setModulosEditaveis(novosEditaveis);
 
-        } catch (error) {
-            console.error("Erro ao atualizar módulo:", error);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("Ocorreu um erro inesperado!");
+            }
+
             cancelarEdicao(index);
         }
     };

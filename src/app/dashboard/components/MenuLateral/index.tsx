@@ -4,6 +4,7 @@ import "./MenuLateral.css";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Batalhao } from "@/interfaces/Batalhao.interface";
+import toast from "react-hot-toast";
 
 export default function MenuLateral({
     itens,
@@ -32,7 +33,7 @@ export default function MenuLateral({
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) return;
-        
+
         try {
             let fetchData = async () => {
                 let resBatalhoes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/batalhoes`, {
@@ -42,19 +43,23 @@ export default function MenuLateral({
                 let dataBatalhoes = await resBatalhoes.json();
 
                 setlistaBatalhoes(dataBatalhoes.batalhoes);
-            
-            let resCabide = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais`, {
+
+                let resCabide = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais`, {
                     headers: { authorization: `Barear ${token}` }
                 });
 
                 let dataCabide = await resCabide.json();
-                
+
                 setlistaCabide(dataCabide.materiais);
             }
 
             fetchData();
-        } catch (error) {
-            console.error("Erro ao buscar modulos:", error);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("Ocorreu um erro inesperado!");
+            }
         }
     }, []);
 

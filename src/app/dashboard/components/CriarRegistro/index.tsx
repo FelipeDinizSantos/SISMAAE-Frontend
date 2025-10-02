@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import "./CriarRegistro.css";
+import toast from "react-hot-toast";
 
 interface FormRegistroProps {
   materialId: number | null;
@@ -42,10 +43,16 @@ export default function CriarRegistro({ materialId, moduloId, mecanicoId, onSucc
       if (!res.ok) throw new Error("Erro ao criar registro");
 
       setAcao("");
+
+      toast.success("Registro criado")
+
       onSuccess();
-    } catch (err) {
-      console.error(err);
-      alert("Falha ao salvar registro.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Ocorreu um erro inesperado!");
+      }
     } finally {
       setLoading(false);
     }

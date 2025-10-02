@@ -5,6 +5,7 @@ import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps
 
 import "./MapaDispRadares.css";
 import { regiao } from "@/interfaces/Regiao.interface";
+import toast from "react-hot-toast";
 
 const geoUrl =
   "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
@@ -55,12 +56,12 @@ export default function MapaDispRadares() {
         let regioes: regiao[] = data.regioes;
 
         let novasDivisoes = [...divisoesCoords];
-        
+
         novasDivisoes.map((div, index) => {
           regioes.forEach((regiao) => {
             if (regiao.nome === div.nome.toUpperCase()) {
               novasDivisoes[index] = {
-                ...div, 
+                ...div,
                 total: regiao.total,
                 ativos: regiao.ativos
               };
@@ -69,8 +70,12 @@ export default function MapaDispRadares() {
         });
 
         setDivisoesCoords(novasDivisoes);
-      } catch (error) {
-        console.log(error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro inesperado!");
+        }
       }
     }
 
