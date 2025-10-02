@@ -11,6 +11,7 @@ interface Registro {
   mecanico_id: number;
   mecanico_nome: string;
   mecanico_posto: string;
+  perfil: string; 
   data: string;
 }
 
@@ -35,6 +36,7 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
           },
         });
         const data = await res.json();
+        console.log(data);
         setRegistros(data.Registros);
       } catch (err) {
         console.error(err);
@@ -60,7 +62,7 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
           <p className="acao"><strong>Ação:</strong> {r.acao}</p>
           {
             r.mecanico_id &&
-            <p><strong>Mecânico:</strong> {r.mecanico_posto + ". " + r.mecanico_nome}</p>
+            <p><strong>Criado por:</strong> {r.mecanico_posto + ". " + r.mecanico_nome}</p>
           }
           <small>
             <em>{new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</em>

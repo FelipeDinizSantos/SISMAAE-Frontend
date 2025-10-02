@@ -423,7 +423,7 @@ export default function ListaMateriais(
                         visible={contextMenu.visible}
                         onClose={() => setContextMenu({ ...contextMenu, visible: false })}
                         options={[
-                            ...(user?.perfil === "MECANICO"
+                            ...(["MECANICO", "COL"].includes(user!.perfil)  
                                 ? [
                                     {
                                         label: "Criar Novo Registro",
