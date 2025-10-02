@@ -67,7 +67,7 @@ export default function DashboardPage() {
                     <div className="contexto-usuario">
                         <p className="user-info">
                             {user.pg}. {user.nome} <br />
-                            <strong>{user.perfil}</strong>
+                            <strong>{user.batalhao} - {user.perfil}</strong>
                         </p>
                         <button className="btn-logout" onClick={handleLogout}>Sair</button>
                     </div>
