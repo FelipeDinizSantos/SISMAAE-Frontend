@@ -1,15 +1,15 @@
-.materiais-container{
+.materiais-container {
     display: flex;
     flex-direction: column;
     gap: .5rem;
 
-    nav{
+    nav {
         display: flex;
         align-items: center;
         gap: .5em;
     }
 
-    h3:first-child{ 
+    h3:first-child {
         margin: 0;
     }
 }
@@ -19,8 +19,7 @@
     border-collapse: collapse;
     background: #f9f9f9;
     border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .materiais-tabela thead {
@@ -61,19 +60,22 @@
     padding: .4rem;
     border-radius: 3px;
 }
-.status.disp_c_restricao  p {
+
+.status.disp_c_restricao p {
     background: #fff3cd;
     color: #856404;
     padding: .4rem;
     border-radius: 3px;
 }
-.status.indisponivel  p {
+
+.status.indisponivel p {
     background: #f8d7da;
     color: #721c24;
     padding: .4rem;
     border-radius: 3px;
 }
-.status.manutencao  p {
+
+.status.manutencao p {
     background: #d1ecf1;
     color: #0c5460;
     padding: .4rem;
@@ -99,7 +101,8 @@
     padding: 5px;
 }
 
-.btn-confirmar, .btn-cancelar {
+.btn-confirmar,
+.btn-cancelar {
     padding: 5px 8px;
     border: none;
     border-radius: 4px;
@@ -144,8 +147,6 @@
 .status.editing {
     background-color: #f5f5f5;
     padding: .4rem;
-
-
 }
 
 .input-observacao {
@@ -166,4 +167,34 @@
 
 .materiais-tabela td:nth-child(6) {
     min-width: 150px;
+}
+
+.acoes-container {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-acoes {
+    display: flex;  
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-acoes:hover {
+    background: #357abd;
+}
+
+.acoes-container .context-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    z-index: 10000;
 }

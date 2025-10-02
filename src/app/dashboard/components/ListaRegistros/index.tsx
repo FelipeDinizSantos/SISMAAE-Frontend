@@ -11,7 +11,7 @@ interface Registro {
   mecanico_id: number;
   mecanico_nome: string;
   mecanico_posto: string;
-  perfil: string; 
+  perfil: string;
   data: string;
 }
 
@@ -36,7 +36,6 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
           },
         });
         const data = await res.json();
-        console.log(data);
         setRegistros(data.Registros);
       } catch (err) {
         console.error(err);

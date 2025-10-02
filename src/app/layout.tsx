@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Montserrat } from 'next/font/google'
 import Link from "next/link";
+import { Toaster } from 'react-hot-toast';
 
 import { AuthProvider } from '../context/AuthContext';
 import Image from "next/image";
@@ -50,6 +51,25 @@ export default function RootLayout({
           </header>
           {children}
         </AuthProvider>
+        <Toaster
+          position="top-right" 
+          reverseOrder={false} 
+          toastOptions={{
+            duration: 3000,
+            style: {
+              fontFamily: "inherit",
+              fontSize: "0.9rem",
+              borderRadius: "8px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+              padding: "0.8rem 1rem",
+              color: "#333",
+              display: "flex",
+              background: "#F9F9F9",
+              alignItems: "center",
+              justifyContent: "space-between",
+            },
+          }}
+        />
       </body>
     </html>
   );

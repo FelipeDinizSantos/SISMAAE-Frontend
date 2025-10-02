@@ -23,7 +23,6 @@ export default function MenuContexto({ x, y, visible, onClose, options }: MenuCo
   return (
     <ul
       className="context-menu"
-      style={{ top: y, left: x, position: "absolute" }}
     >
       {options.map((opt, idx) => (
         <li

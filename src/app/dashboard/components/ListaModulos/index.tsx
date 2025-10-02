@@ -73,7 +73,7 @@ export default function ListaModulos(
         y: 0,
         mod: null,
     });
-    const [modal, setModal] = useState<{ type: "novo" | "listar" | null, materialId?: number }>({ type: null });
+    const [modal, setModal] = useState<{ type: "novo" | "listar" | "editar" | null, materialId?: number }>({ type: null });
 
     // Paginação
     const [paginaAtual, setPaginaAtual] = useState(0);
@@ -128,16 +128,6 @@ export default function ListaModulos(
             cabideSNSelecionado: mod.SN_do_Cabide,
         })));
     }, [modulos]);
-
-    const abrirMenu = (event: React.MouseEvent, idx: number, mod: Modulo) => {
-        event.preventDefault();
-        setContextMenu({
-            visible: true,
-            x: event.pageX,
-            y: event.pageY,
-            mod: mod
-        });
-    };
 
     const iniciarEdicao = (index: number) => {
         const novos = modulosEditaveis.map((mod, i) => {
@@ -417,7 +407,7 @@ export default function ListaModulos(
                             {modulosPaginados.map((mod, idx) => {
                                 const realIndex = paginaAtual * itensPorPagina + idx;
                                 return (
-                                    <tr key={realIndex} onContextMenu={(e) => abrirMenu(e, realIndex, mod)} >
+                                    <tr key={realIndex}>
                                         <td>{mod.modulo}</td>
                                         <td>{mod.SN}</td>
                                         <td className={`status ${mod.Disponibilidade.toLowerCase()}`}>
@@ -518,12 +508,53 @@ export default function ListaModulos(
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <button
-                                                    className="btn-editar"
-                                                    onClick={() => iniciarEdicao(realIndex)}
-                                                >
-                                                    Editar
-                                                </button>
+                                                <div className="acoes-container">
+                                                    <button
+                                                        className={`btn-acoes`}
+                                                        onClick={() =>
+                                                            setContextMenu({
+                                                                visible:
+                                                                    contextMenu.visible && contextMenu.mod?.id === mod.id
+                                                                        ? false
+                                                                        : true,
+                                                                x: 0,
+                                                                y: 0,
+                                                                mod,
+                                                            })
+                                                        }
+                                                    >
+                                                        Gerenciar
+                                                    </button>
+
+                                                    {contextMenu.visible && contextMenu.mod?.id === mod.id && (
+                                                        <MenuContexto
+                                                            x={0}
+                                                            y={0}
+                                                            visible={contextMenu.visible}
+                                                            onClose={() => setContextMenu({ ...contextMenu, visible: false })}
+                                                            options={[
+                                                                {
+                                                                    label: "Editar",
+                                                                    onClick: () => iniciarEdicao(realIndex),
+                                                                },
+                                                                ...(["MECANICO", "COL"].includes(user!.perfil)
+                                                                    ? [
+                                                                        {
+                                                                            label: "Criar Novo Registro",
+                                                                            onClick: () =>
+                                                                                setModal({ type: "novo", materialId: mod.id }),
+                                                                        },
+                                                                    ]
+                                                                    : []),
+                                                                {
+                                                                    label: "Visualizar Registros",
+                                                                    onClick: () =>
+                                                                        setModal({ type: "listar", materialId: mod.id }),
+                                                                },
+                                                            ]}
+                                                        />
+                                                    )}
+                                                </div>
                                             )}
                                         </td>
                                     </tr>
@@ -549,26 +580,7 @@ export default function ListaModulos(
                         Mostrando {modulosPaginados.length} de {modulosEditaveis.length} modulos
                     </div>
 
-                    <MenuContexto
-                        x={contextMenu.x}
-                        y={contextMenu.y}
-                        visible={contextMenu.visible}
-                        onClose={() => setContextMenu({ ...contextMenu, visible: false })}
-                        options={[
-                            ...(user?.perfil === "MECANICO"
-                                ? [
-                                    {
-                                        label: "Criar Novo Registro",
-                                        onClick: () => setModal({ type: "novo", materialId: contextMenu.mod!.id }),
-                                    },
-                                ]
-                                : []),
-                            {
-                                label: "Visualizar Registros",
-                                onClick: () => setModal({ type: "listar", materialId: contextMenu.mod!.id }),
-                            },
-                        ]}
-                    />
+                    {/* Modais de exibição */}
                     <Modal
                         visible={modal.type === "novo"}
                         title="Criar Registro"

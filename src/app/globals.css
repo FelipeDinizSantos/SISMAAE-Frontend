@@ -1,16 +1,17 @@
 #__next-build-watcher,
 #__next-error-overlay,
 .nextjs-portal {
-  display: none !important;
+    display: none !important;
 }
 
-html, body{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+html,
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-a{
+a {
     text-decoration: none;
     color: inherit;
 }
@@ -123,12 +124,12 @@ button[type="submit"]:hover {
     background-color: #1d4ed8;
 }
 
-header{
+header {
     display: flex;
     justify-content: center;
     padding: 1rem;
 }
 
-.logo{
+.logo {
     margin-bottom: 2rem;
 }

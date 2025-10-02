@@ -11,6 +11,7 @@ import ListaRegistros from "../ListaRegistros";
 import { useAuth } from "@/context/AuthContext";
 import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
 import MenuManipulacaoTabela from "../MenuManipulacaoTabela";
+import { toast } from 'react-hot-toast';
 
 interface MaterialEditado extends Material {
     editando?: boolean;
@@ -26,13 +27,13 @@ export default function ListaMateriais(
         setItens,
         setReload
     }
-    :
-    {
-        materiais: Material[],
-        setMateriais: Dispatch<SetStateAction<Material[]>>,
-        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-        setReload: Dispatch<SetStateAction<boolean>>
-    }
+        :
+        {
+            materiais: Material[],
+            setMateriais: Dispatch<SetStateAction<Material[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+            setReload: Dispatch<SetStateAction<boolean>>
+        }
 ) {
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
@@ -49,7 +50,7 @@ export default function ListaMateriais(
         y: 0,
         mat: null,
     });
-    const [modal, setModal] = useState<{ type: "novo" | "listar" | null, materialId?: number }>({ type: null });
+    const [modal, setModal] = useState<{ type: "novo" | "listar" | "editar" | null, materialId?: number }>({ type: null });
 
     const { podeEditar } = usePermissao();
     const { user } = useAuth();
@@ -87,16 +88,6 @@ export default function ListaMateriais(
     useEffect(() => {
         setMateriaisEditaveis(materiais.map(mat => ({ ...mat })));
     }, [materiais]);
-
-    const abrirMenu = (event: React.MouseEvent, idx: number, mat: Material) => {
-        event.preventDefault();
-        setContextMenu({
-            visible: true,
-            x: event.pageX,
-            y: event.pageY,
-            mat: mat
-        });
-    };
 
     const iniciarEdicao = (index: number) => {
         const novosMateriais = materiaisEditaveis.map((mat, i) => {
@@ -155,11 +146,6 @@ export default function ListaMateriais(
                 i === index ? materialSemPropriedadesEditaveis : mat
             )
         );
-        setItens(materiaisEditaveis =>
-            materiaisEditaveis.map((mat, i) =>
-                i === index ? materialSemPropriedadesEditaveis : mat
-            )
-        );
 
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -191,11 +177,19 @@ export default function ListaMateriais(
                 body: JSON.stringify(body)
             });
 
+
             if (!result.ok) {
-                throw new Error('Erro ao atualizar material');
+                const erro = await result.json();
+                throw new Error(erro.erro || "Erro inesperado.");
             }
 
             await result.json();
+
+            setItens(materiaisEditaveis =>
+                materiaisEditaveis.map((mat, i) =>
+                    i === index ? materialSemPropriedadesEditaveis : mat
+                )
+            );
 
             // ========================================================================
             // AREA PARA MANIPULAÇÃO DE REGISTROS REFERENTE A ATUALIZAÇÃO DE MATERIAIS  
@@ -249,9 +243,14 @@ export default function ListaMateriais(
                 });
             }
 
-        } catch (error) {
-            console.error("Erro ao atualizar material:", error);
+        } catch (error: unknown) {
             cancelarEdicao(index);
+
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("Ocorreu um erro inesperado!");
+            }
         }
     };
 
@@ -309,7 +308,7 @@ export default function ListaMateriais(
                             {materiaisPaginados.map((mat, idx) => {
                                 const realIndex = paginaAtual * itensPorPagina + idx;
                                 return (
-                                    <tr key={realIndex} onContextMenu={(e) => abrirMenu(e, realIndex, mat)}>
+                                    <tr key={realIndex}>
                                         <td>{mat.Material}</td>
                                         <td>{mat.SN}</td>
                                         <td className={`status ${mat.Disponibilidade.toLowerCase()}`}>
@@ -333,25 +332,22 @@ export default function ListaMateriais(
                                         </td>
                                         <td>{mat.OM_Origem}</td>
                                         <td>
-                                            {
-                                                mat.editando && podeEditar("materiais", "omAtual") ? (
-                                                    <select
-                                                        value={mat.OM_Atual}
-                                                        onChange={(e) => handleOmAtualChange(
-                                                            realIndex,
-                                                            e.target.value
-                                                        )}
-                                                        className="select-disponibilidade"
-                                                    >
-                                                        <option value="">Selecione</option>
-                                                        {batalhoes.map(b => (
-                                                            <option key={b.id} value={b.id}>{b.sigla}</option>
-                                                        ))}
-                                                    </select>
-                                                ) : (
-                                                    <span>{batalhoes.find(b => String(b.id) === String(mat.OM_Atual))?.sigla || mat.OM_Atual}</span>
-                                                )
-                                            }
+                                            {mat.editando && podeEditar("materiais", "omAtual") ? (
+                                                <select
+                                                    value={mat.OM_Atual}
+                                                    onChange={(e) => handleOmAtualChange(realIndex, e.target.value)}
+                                                    className="select-disponibilidade"
+                                                >
+                                                    <option value="">Selecione</option>
+                                                    {batalhoes.map(b => (
+                                                        <option key={b.id} value={b.id}>{b.sigla}</option>
+                                                    ))}
+                                                </select>
+                                            ) : (
+                                                <span>
+                                                    {batalhoes.find(b => String(b.id) === String(mat.OM_Atual))?.sigla || mat.OM_Atual}
+                                                </span>
+                                            )}
                                         </td>
                                         <td>
                                             {mat.editando ? (
@@ -385,16 +381,57 @@ export default function ListaMateriais(
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <button
-                                                    className="btn-editar"
-                                                    onClick={() => iniciarEdicao(realIndex)}
-                                                >
-                                                    Editar
-                                                </button>
+                                                <div className="acoes-container">
+                                                    <button
+                                                        className={`btn-acoes`}
+                                                        onClick={() =>
+                                                            setContextMenu({
+                                                                visible:
+                                                                    contextMenu.visible && contextMenu.mat?.id === mat.id
+                                                                        ? false
+                                                                        : true,
+                                                                x: 0,
+                                                                y: 0,
+                                                                mat,
+                                                            })
+                                                        }
+                                                    >
+                                                        Gerenciar
+                                                    </button>
+
+                                                    {contextMenu.visible && contextMenu.mat?.id === mat.id && (
+                                                        <MenuContexto
+                                                            x={0}
+                                                            y={0}
+                                                            visible={contextMenu.visible}
+                                                            onClose={() => setContextMenu({ ...contextMenu, visible: false })}
+                                                            options={[
+                                                                {
+                                                                    label: "Editar",
+                                                                    onClick: () => iniciarEdicao(realIndex),
+                                                                },
+                                                                ...(["MECANICO", "COL"].includes(user!.perfil)
+                                                                    ? [
+                                                                        {
+                                                                            label: "Criar Novo Registro",
+                                                                            onClick: () =>
+                                                                                setModal({ type: "novo", materialId: mat.id }),
+                                                                        },
+                                                                    ]
+                                                                    : []),
+                                                                {
+                                                                    label: "Visualizar Registros",
+                                                                    onClick: () =>
+                                                                        setModal({ type: "listar", materialId: mat.id }),
+                                                                },
+                                                            ]}
+                                                        />
+                                                    )}
+                                                </div>
                                             )}
                                         </td>
                                     </tr>
-                                )
+                                );
                             })}
                         </tbody>
                     </table>
@@ -417,26 +454,7 @@ export default function ListaMateriais(
                         Mostrando {materiaisPaginados.length} de {materiaisEditaveis.length} materiais
                     </div>
 
-                    <MenuContexto
-                        x={contextMenu.x}
-                        y={contextMenu.y}
-                        visible={contextMenu.visible}
-                        onClose={() => setContextMenu({ ...contextMenu, visible: false })}
-                        options={[
-                            ...(["MECANICO", "COL"].includes(user!.perfil)  
-                                ? [
-                                    {
-                                        label: "Criar Novo Registro",
-                                        onClick: () => setModal({ type: "novo", materialId: contextMenu.mat!.id }),
-                                    },
-                                ]
-                                : []),
-                            {
-                                label: "Visualizar Registros",
-                                onClick: () => setModal({ type: "listar", materialId: contextMenu.mat!.id }),
-                            },
-                        ]}
-                    />
+                    {/* Modais de exibição */}
                     <Modal
                         visible={modal.type === "novo"}
                         title="Criar Registro"
