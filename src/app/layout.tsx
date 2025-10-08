@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className={`${montserrat.variable}`} suppressHydrationWarning>
         <AuthProvider>
           <header className="titulo-principal">
-            <Link href="/dashboard">
+            <Link href="/login">
               <Image
                 src="/img/logo_batalhao.jpeg"
                 alt="logo do batalhão"

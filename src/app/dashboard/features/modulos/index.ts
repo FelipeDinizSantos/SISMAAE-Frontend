@@ -1,0 +1,1 @@
+export { default as ListaModulos } from "./components/ListaModulos"

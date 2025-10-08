@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import ListaMateriais from "../ListaMateriais";
+
 import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
-import ListaModulos from "../ListaModulos";
 import toast from "react-hot-toast";
+import { ListaMateriais } from "../../features/materiais";
+import { ListaModulos } from "../../features/modulos";
 
 export default function GerarTabelas({
     parametrosDeBusca,

@@ -1,0 +1,1 @@
+export { default as ListaMateriais } from "./components/ListaMateriais";

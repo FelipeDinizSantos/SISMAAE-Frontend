@@ -198,3 +198,49 @@
     margin-top: 4px;
     z-index: 10000;
 }
+
+.menu-manip-container {
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    border-radius: 5px;
+    padding: .2em;
+    width: 100%;
+}
+
+.menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: .2rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.menu-btn:hover {
+    color: #007bff;
+}
+
+.menu-btn:active {
+    transform: scale(0.95);
+}
+
+.menu-btn.spin svg {
+    animation: spin 0.4s linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

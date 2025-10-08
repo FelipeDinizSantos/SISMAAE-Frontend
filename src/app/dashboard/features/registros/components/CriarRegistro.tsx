@@ -1,15 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import "./CriarRegistro.css";
-import toast from "react-hot-toast";
+import "../styles.css";
 
-interface FormRegistroProps {
-  materialId: number | null;
-  moduloId: number | null;
-  mecanicoId: number | null;
-  onSuccess: () => void;
-}
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { FormRegistroProps } from "../interfaces";
 
 export default function CriarRegistro({ materialId, moduloId, mecanicoId, onSuccess }: FormRegistroProps) {
   const [acao, setAcao] = useState("");

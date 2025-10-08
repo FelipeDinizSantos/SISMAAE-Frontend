@@ -1,17 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import "./Relatorios.css";
-import RelatorioDisponibilidade from "./components/RelatorioDisponibilidade";
-import { useAuth } from "@/context/AuthContext";
+import "../styles.css";
 
-interface Relatorio {
-  id: string;
-  nome: string;
-  descricao: string;
-  componente: React.ReactNode;
-  disponivelPara: string[];
-}
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import RelatorioDisponibilidade from "./RelatorioDisponibilidade";
+import { Relatorio } from "../interfaces";
 
 const relatoriosDisponiveis: Relatorio[] = [
   {
@@ -42,9 +36,8 @@ export default function Relatorios() {
           relatoriosPermitidos.map((relatorio) => (
             <div
               key={relatorio.id}
-              className={`relatorio-card ${
-                relatorioSelecionado === relatorio.id ? "ativo" : ""
-              }`}
+              className={`relatorio-card ${relatorioSelecionado === relatorio.id ? "ativo" : ""
+                }`}
               onClick={() => setRelatorioSelecionado(relatorio.id)}
             >
               <h3>{relatorio.nome}</h3>

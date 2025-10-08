@@ -1,11 +1,12 @@
+import "../styles.css";
+
 import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { useEffect, useState, useMemo } from "react";
-import GraficoStatus from "../../../../../../components/GraficoStatus";
 
-import "./RelatorioDisponibilidade.css";
-import MapaDispRadares from "./components/MapaDispRadares";
 import toast from "react-hot-toast";
+import GraficoStatus from "@/components/GraficoStatus";
+import MapaDisponibilidadeRadares from "./MapaDisponibilidadeRadares";
 
 export default function RelatorioDisponibilidade() {
     const [materiais, setMateriais] = useState<Material[]>([]);
@@ -174,7 +175,7 @@ export default function RelatorioDisponibilidade() {
             {/* --- Mapa --- */}
             <div className="mapa-conteudo">
                 <h3>Mapa de Disponibilidade de Radares</h3>
-                <MapaDispRadares />
+                <MapaDisponibilidadeRadares />
             </div>
         </div>
     );

@@ -1,25 +1,10 @@
 "use client";
 
+import "../styles.css";
+
 import { useEffect, useState } from "react";
-
-import "./ListaRegistros.css";
 import toast from "react-hot-toast";
-
-interface Registro {
-  id: number;
-  acao: string;
-  automatico: boolean;
-  mecanico_id: number;
-  mecanico_nome: string;
-  mecanico_posto: string;
-  perfil: string;
-  data: string;
-}
-
-interface ListaRegistrosProps {
-  itemId: number;
-  isMaterial: boolean;
-}
+import { ListaRegistrosProps, Registro } from "../interfaces";
 
 export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosProps) {
   const [registros, setRegistros] = useState<Registro[]>([]);

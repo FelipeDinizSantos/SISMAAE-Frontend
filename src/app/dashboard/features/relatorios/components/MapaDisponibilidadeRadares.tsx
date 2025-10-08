@@ -1,14 +1,13 @@
 "use client";
 
+import "../styles.css";
+
 import { useEffect, useState } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
-
-import "./MapaDispRadares.css";
 import { regiao } from "@/interfaces/Regiao.interface";
 import toast from "react-hot-toast";
 
-const geoUrl =
-  "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
+const geoUrl = "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
 
 const regioes: Record<string, number> = {
   "Acre": 1, "Amazonas": 1, "Rondônia": 1, "Roraima": 1, "Pará": 1, "Amapá": 1, "Maranhão": 1,
@@ -29,7 +28,7 @@ const cores = [
   "#83da83ff", "#d0d27eff", "#99ff99", "#b2b3c3ff", "#9b9ceaff", "#696be9ff",
 ];
 
-export default function MapaDispRadares() {
+export default function MapaDisponibilidadeRadares() {
   const [hoverDiv, setHoverDiv] = useState<number | null>(null);
   const [divisoesCoords, setDivisoesCoords] = useState<{ id: number; nome: string; coords: [number, number]; total: number; ativos: number }[]>(
     [

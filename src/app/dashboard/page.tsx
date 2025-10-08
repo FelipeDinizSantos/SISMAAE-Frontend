@@ -9,7 +9,7 @@ import MenuLateral from "./components/MenuLateral";
 import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import GerarLista from "./components/GerarTabelas";
-import Relatorios from "./components/Relatorios";
+import { Relatorios } from "./features/relatorios";
 
 export default function DashboardPage() {
     const router = useRouter();

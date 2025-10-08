@@ -1,44 +1,19 @@
-import "../ListaMateriais/ListaMateriais.css"; // USA A MESMA ESTILIZAÇÃO DE "LISTAMATERIAIS"
+import "../styles.css"; // USA A MESMA ESTILIZAÇÃO DE "LISTAMATERIAIS"
 
 import { Material } from "@/interfaces/Material.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
-import MenuManipulacaoTabela from "../FuncoesTabela";
+import MenuManipulacaoTabela from "./FuncoesTabela";
 import MenuContexto from "@/components/MenuContexto";
 import Modal from "@/components/Modal";
-import FormRegistro from "../CriarRegistro";
-import ListaRegistros from "../ListaRegistros";
+import { CriarRegistro } from "../../registros/index";
+import { ListaRegistros } from "../../registros/index";
 import { useAuth } from "@/context/AuthContext";
 import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
 import toast from "react-hot-toast";
-
-interface ModuloEditado extends Modulo {
-    editando?: boolean;
-    disponibilidadeOriginal?: string;
-    obsOriginal?: string;
-    omOrigemId?: number;
-    omDestinoId?: number;
-    cabideSNOriginal?: string;
-    cabideSNSelecionado?: string;
-    semCabide?: string;
-}
-
-interface Batalhao {
-    id: number;
-    nome: string;
-    sigla: string;
-}
-
-interface MaterialAPI {
-    id: number;
-    Material: string;
-    SN: string;
-    Disponibilidade: string;
-    OM_Origem: string;
-    OM_Atual: string;
-    Obs: string;
-}
+import { MaterialAPI, ModuloEditado } from "../interfaces";
+import { Batalhao } from "@/interfaces/Batalhao.interface";
 
 export default function ListaModulos(
     {
@@ -47,13 +22,13 @@ export default function ListaModulos(
         setItens,
         setReload
     }
-        :
-        {
-            modulos: Modulo[],
-            setModulos: Dispatch<SetStateAction<Modulo[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
-            setReload: Dispatch<SetStateAction<boolean>>
-        }
+    :
+    {
+        modulos: Modulo[],
+        setModulos: Dispatch<SetStateAction<Modulo[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
+        setReload: Dispatch<SetStateAction<boolean>>
+    }
 ) {
     const [modulosEditaveis, setModulosEditaveis] = useState<ModuloEditado[]>([]);
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
@@ -601,7 +576,7 @@ export default function ListaModulos(
                         title="Criar Registro"
                         onClose={() => setModal({ type: null })}
                     >
-                        <FormRegistro
+                        <CriarRegistro
                             moduloId={modal.materialId!}
                             materialId={null}
                             mecanicoId={user ? user.id : 0}

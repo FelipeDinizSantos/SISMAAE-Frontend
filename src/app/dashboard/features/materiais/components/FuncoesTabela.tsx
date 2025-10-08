@@ -1,6 +1,7 @@
+import "../styles.css";
+
 import { IoReloadSharp as ReloadIcon } from "react-icons/io5";
 import { useState } from "react";
-import "./FuncoesTabela.css";
 import toast from "react-hot-toast";
 
 export default function FuncoesTabela({ handleReload }: { handleReload: () => void }) {

@@ -1,24 +1,19 @@
+import "../styles.css";
+
 import { Material } from "@/interfaces/Material.interface";
-import "./ListaMateriais.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
 import { Batalhao } from "@/interfaces/Batalhao.interface";
-import MenuContexto from "../../../../components/MenuContexto";
 import Modal from "@/components/Modal";
-import FormRegistro from "../CriarRegistro";
-import ListaRegistros from "../ListaRegistros";
+import { CriarRegistro } from "../../registros/index";
+import { ListaRegistros } from "../../registros/index";
 import { useAuth } from "@/context/AuthContext";
 import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
-import MenuManipulacaoTabela from "../FuncoesTabela";
+import MenuManipulacaoTabela from "./FuncoesTabela";
 import { toast } from 'react-hot-toast';
-
-interface MaterialEditado extends Material {
-    editando?: boolean;
-    disponibilidadeOriginal?: string;
-    obsOriginal?: string;
-    OM_Atual_Original?: string;
-}
+import MenuContexto from "@/components/MenuContexto";
+import { MaterialEditado } from "../interfaces";
 
 export default function ListaMateriais(
     {
@@ -27,13 +22,13 @@ export default function ListaMateriais(
         setItens,
         setReload
     }
-        :
-        {
-            materiais: Material[],
-            setMateriais: Dispatch<SetStateAction<Material[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-            setReload: Dispatch<SetStateAction<boolean>>
-        }
+    :
+    {
+        materiais: Material[],
+        setMateriais: Dispatch<SetStateAction<Material[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+        setReload: Dispatch<SetStateAction<boolean>>
+    }
 ) {
     const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
     const [materiaisEditaveis, setMateriaisEditaveis] = useState<MaterialEditado[]>([]);
@@ -465,7 +460,7 @@ export default function ListaMateriais(
                         title="Criar Registro"
                         onClose={() => setModal({ type: null })}
                     >
-                        <FormRegistro
+                        <CriarRegistro
                             materialId={modal.materialId!}
                             moduloId={null}
                             mecanicoId={user ? user.id : 0}
