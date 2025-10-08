@@ -5,6 +5,7 @@ import { Modulo } from "@/interfaces/Modulo.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Batalhao } from "@/interfaces/Batalhao.interface";
 import toast from "react-hot-toast";
+import { useBatalhao } from "@/hooks/useBatalhao";
 
 export default function MenuLateral({
     itens,
@@ -26,24 +27,17 @@ export default function MenuLateral({
         auxiliarBuscaEspecifica: string;
         setAuxiliarBuscaEspecifica: Dispatch<SetStateAction<string>>
     }) {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
     const [filtroGeralValue, setFiltroGeralValue] = useState('');
-    const [listaBatalhoes, setlistaBatalhoes] = useState<Batalhao[]>([]);
+    const { batalhoes } = useBatalhao(token);
     const [listaCabide, setlistaCabide] = useState<Material[]>([]);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
 
         try {
             let fetchData = async () => {
-                let resBatalhoes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/batalhoes`, {
-                    headers: { authorization: `Barear ${token}` }
-                });
-
-                let dataBatalhoes = await resBatalhoes.json();
-
-                setlistaBatalhoes(dataBatalhoes.batalhoes);
-
                 let resCabide = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais`, {
                     headers: { authorization: `Barear ${token}` }
                 });
@@ -209,7 +203,7 @@ export default function MenuLateral({
                             value={auxiliarBuscaEspecifica}
                         >
                             <option value="">Selecione</option>
-                            {listaBatalhoes.map((batalhao) => (
+                            {batalhoes.map((batalhao) => (
                                 <option key={batalhao.id} value={batalhao.sigla}>
                                     {batalhao.sigla}
                                 </option>

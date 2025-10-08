@@ -10,10 +10,11 @@ import Modal from "@/components/Modal";
 import { CriarRegistro } from "../../registros/index";
 import { ListaRegistros } from "../../registros/index";
 import { useAuth } from "@/context/AuthContext";
-import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
 import toast from "react-hot-toast";
 import { MaterialAPI, ModuloEditado } from "../interfaces";
-import { Batalhao } from "@/interfaces/Batalhao.interface";
+import { useEdicaoModulos } from "../hooks/useEdicaoModulos";
+import { useBatalhao } from "@/hooks/useBatalhao";
+import { usePaginacao } from "@/hooks/usePaginacao";
 
 export default function ListaModulos(
     {
@@ -22,21 +23,21 @@ export default function ListaModulos(
         setItens,
         setReload
     }
-    :
-    {
-        modulos: Modulo[],
-        setModulos: Dispatch<SetStateAction<Modulo[]>>,
-        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
-        setReload: Dispatch<SetStateAction<boolean>>
-    }
+        :
+        {
+            modulos: Modulo[],
+            setModulos: Dispatch<SetStateAction<Modulo[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
+            setReload: Dispatch<SetStateAction<boolean>>
+        }
 ) {
-    const [modulosEditaveis, setModulosEditaveis] = useState<ModuloEditado[]>([]);
-    const [batalhoes, setBatalhoes] = useState<Batalhao[]>([]);
-    const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
     const { podeEditar } = usePermissao();
     const { user } = useAuth();
 
+    const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
     // Estados para os menus dos itens da lista. (Botão Direito) 
     const [contextMenu, setContextMenu] = useState<{
         visible: boolean;
@@ -49,39 +50,11 @@ export default function ListaModulos(
         y: 0,
         mod: null,
     });
+
     const [modal, setModal] = useState<{ type: "novo" | "listar" | "editar" | null, materialId?: number }>({ type: null });
-
-    // Paginação
-    const [paginaAtual, setPaginaAtual] = useState(0);
-    const itensPorPagina = 5;
-    const totalPaginas = Math.ceil(modulosEditaveis.length / itensPorPagina);
-
-    let modulosPaginados = modulosEditaveis.slice(
-        paginaAtual * itensPorPagina,
-        (paginaAtual + 1) * itensPorPagina
-    );
+    const { batalhoes } = useBatalhao(token);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const fetchBatalhoes = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/batalhoes`, {
-                    headers: { 'Authorization': `Barear ${token}` }
-                });
-                if (!res.ok) throw new Error("Erro ao carregar batalhões");
-                const data = await res.json();
-                setBatalhoes(data.batalhoes);
-            } catch (err: unknown) {
-                if (err instanceof Error) {
-                    toast.error(err.message);
-                } else {
-                    toast.error("Ocorreu um erro inesperado!");
-                }
-            }
-        };
-
         const fetchCabides = async () => {
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
@@ -99,9 +72,14 @@ export default function ListaModulos(
             }
         };
 
-        fetchBatalhoes();
         fetchCabides();
     }, []);
+
+    const { modulosEditaveis, setModulosEditaveis, iniciarEdicao, cancelarEdicao, confirmarEdicao } =
+        useEdicaoModulos(modulos, setModulos, batalhoes, user, setItens, cabidesDisponiveis);
+
+    const itensPorPagina = 5;
+    const { itensPaginados, paginaAtual, setPaginaAtual, totalPaginas } = usePaginacao(itensPorPagina, modulosEditaveis);
 
     useEffect(() => {
         setModulosEditaveis(modulos.map(mod => ({
@@ -112,209 +90,6 @@ export default function ListaModulos(
             cabideSNSelecionado: mod.SN_do_Cabide,
         })));
     }, [modulos]);
-
-    const iniciarEdicao = (index: number) => {
-        const novos = modulosEditaveis.map((mod, i) => {
-            if (mod.editando && i !== index) {
-                return {
-                    ...mod,
-                    editando: false,
-                    Disponibilidade: mod.disponibilidadeOriginal as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO',
-                    Obs: mod.obsOriginal || '',
-                    omOrigemId: mod.OM_Origem_Id,
-                    omDestinoId: mod.OM_Atual_Id,
-                    cabideSNSelecionado: mod.cabideSNOriginal
-                };
-            }
-
-            if (i === index) {
-                return {
-                    ...mod,
-                    editando: true,
-                    disponibilidadeOriginal: mod.Disponibilidade,
-                    obsOriginal: mod.Obs,
-                    omOrigemId: mod.OM_Origem_Id,
-                    omDestinoId: mod.OM_Atual_Id,
-                    cabideSNOriginal: mod.SN_do_Cabide,
-                    cabideSNSelecionado: mod.SN_do_Cabide
-                };
-            }
-
-            return mod;
-        });
-
-        setModulosEditaveis(novos);
-    };
-
-    const cancelarEdicao = (index: number) => {
-        const novos = [...modulosEditaveis];
-        novos[index] = {
-            ...novos[index],
-            editando: false,
-            Disponibilidade: novos[index].disponibilidadeOriginal as 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO',
-            Obs: novos[index].obsOriginal || '',
-            omOrigemId: novos[index].OM_Origem_Id,
-            omDestinoId: novos[index].OM_Atual_Id,
-            cabideSNSelecionado: novos[index].cabideSNOriginal
-        };
-        setModulosEditaveis(novos);
-    };
-
-    const confirmarEdicao = async (index: number) => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        try {
-            const moduloEditado = modulosEditaveis[index];
-
-            if (moduloEditado.cabideSNSelecionado === "Sem Cabide") {
-                modulos[index].Disponibilidade_do_Cabide = " ";
-            }
-
-            let corpoRequisicaoComCabide;
-
-            if (moduloEditado.cabideSNSelecionado === "Sem Cabide") {
-                corpoRequisicaoComCabide = {
-                    status: moduloEditado.Disponibilidade,
-                    obs: moduloEditado.Obs,
-                    loc_id: moduloEditado.omDestinoId,
-                    isSemCabide: true,
-                }
-            } else {
-                corpoRequisicaoComCabide = {
-                    status: moduloEditado.Disponibilidade,
-                    obs: moduloEditado.Obs,
-                    loc_id: moduloEditado.omDestinoId,
-                    cabideSN: moduloEditado.cabideSNSelecionado,
-                }
-            }
-
-            const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos/${modulos[index].id}`, {
-                method: "PUT",
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(corpoRequisicaoComCabide)
-            });
-
-            if (!result.ok) {
-                throw new Error('Erro ao atualizar módulo');
-            }
-
-            await result.json();
-            toast.success("Modulo editado");
-
-            // ========================================================================
-            // AREA PARA MANIPULAÇÃO DE REGISTROS REFERENTE A ATUALIZAÇÃO DE MODULOS  
-            // ========================================================================
-            if (modulosEditaveis[index].OM_Atual_Id !== modulosEditaveis[index].omDestinoId) {
-                const omAnterior = batalhoes.find(
-                    b => String(b.id) === String(modulosEditaveis[index].OM_Atual_Id)
-                )?.sigla || modulosEditaveis[index].OM_Atual;
-
-                const omNova = batalhoes.find(
-                    b => String(b.id) === String(modulosEditaveis[index].omDestinoId)
-                )?.sigla || modulosEditaveis[index].omDestinoId;
-
-                const acao = `TRANSFERÊNCIA DE OM: ${omAnterior} → ${omNova}`;
-
-                await criarRegistroAutomatico({
-                    materialId: null,
-                    moduloId: modulos[index].id,
-                    acao,
-                    user
-                });
-            }
-            // Cria registro automatico para mudança de DISPONIBILIDADE DO MODULO
-            if (modulosEditaveis[index].Disponibilidade !== modulosEditaveis[index].disponibilidadeOriginal) {
-                const dispAnterior = modulosEditaveis[index].disponibilidadeOriginal;
-                const dispNova = modulosEditaveis[index].Disponibilidade;
-
-                const acao = `ALTERAÇÃO DE DISPONIBILIDADE: ${dispAnterior} → ${dispNova}`;
-
-                await criarRegistroAutomatico({
-                    materialId: null,
-                    moduloId: modulos[index].id,
-                    acao,
-                    user
-                });
-            }
-            // Cria registro automatico para mudança de OBSERVAÇÃO
-            if (modulosEditaveis[index].Obs !== modulosEditaveis[index].obsOriginal) {
-                const obsAnterior = modulosEditaveis[index].obsOriginal;
-                const obsNova = modulosEditaveis[index].Obs;
-
-                const acao = `ALTERAÇÃO DE OBSERVAÇÃO: ${obsAnterior} → ${obsNova}`;
-
-                await criarRegistroAutomatico({
-                    materialId: null,
-                    moduloId: modulos[index].id,
-                    acao,
-                    user
-                });
-            }
-            // Cria registro automatico para mudança de CABIDE
-            if (modulosEditaveis[index].cabideSNOriginal !== modulosEditaveis[index].cabideSNSelecionado) {
-                const cabideAnterior = modulosEditaveis[index].cabideSNOriginal;
-                const cabideNovo = modulosEditaveis[index].cabideSNSelecionado;
-
-                const acao = `TRANSFERÊNCIA DE CABIDE: ${cabideAnterior} → ${cabideNovo}`;
-
-                await criarRegistroAutomatico({
-                    materialId: null,
-                    moduloId: modulos[index].id,
-                    acao,
-                    user
-                });
-            }
-
-            const novosModulos = [...modulos];
-            const batalhaoOrigem = batalhoes.find(b => b.id === moduloEditado.omOrigemId);
-            const batalhaoDestino = batalhoes.find(b => b.id === moduloEditado.omDestinoId);
-
-            const cabideSelecionado = cabidesDisponiveis.find(cabide =>
-                cabide.SN === moduloEditado.cabideSNSelecionado
-            );
-
-            novosModulos[index] = {
-                ...novosModulos[index],
-                Disponibilidade: moduloEditado.Disponibilidade,
-                Obs: moduloEditado.Obs,
-                OM_Origem_Id: moduloEditado.omOrigemId!,
-                OM_Atual_Id: moduloEditado.omDestinoId!,
-                OM_Origem: batalhaoOrigem?.sigla || novosModulos[index].OM_Origem,
-                OM_Atual: batalhaoDestino?.sigla || novosModulos[index].OM_Atual,
-                SN_do_Cabide: moduloEditado.cabideSNSelecionado || novosModulos[index].SN_do_Cabide,
-                Disponibilidade_do_Cabide: cabideSelecionado?.Disponibilidade || novosModulos[index].Disponibilidade_do_Cabide
-            };
-
-            setModulos(novosModulos);
-            setItens(novosModulos);
-
-            const novosEditaveis = [...modulosEditaveis];
-            novosEditaveis[index] = {
-                ...novosEditaveis[index],
-                editando: false,
-                OM_Origem_Id: moduloEditado.omOrigemId!,
-                OM_Atual_Id: moduloEditado.omDestinoId!,
-                OM_Origem: batalhaoOrigem?.sigla || novosEditaveis[index].OM_Origem,
-                OM_Atual: batalhaoDestino?.sigla || novosEditaveis[index].OM_Atual,
-                SN_do_Cabide: moduloEditado.cabideSNSelecionado || novosEditaveis[index].SN_do_Cabide,
-                Disponibilidade_do_Cabide: cabideSelecionado?.Disponibilidade || novosEditaveis[index].Disponibilidade_do_Cabide
-            };
-            setModulosEditaveis(novosEditaveis);
-
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(error.message);
-            } else {
-                toast.error("Ocorreu um erro inesperado!");
-            }
-
-            cancelarEdicao(index);
-        }
-    };
 
     const handleDisponibilidadeChange = (
         index: number,
@@ -394,7 +169,7 @@ export default function ListaModulos(
                             </tr>
                         </thead>
                         <tbody>
-                            {modulosPaginados.map((mod, idx) => {
+                            {itensPaginados.map((mod, idx) => {
                                 const realIndex = paginaAtual * itensPorPagina + idx;
                                 return (
                                     <tr key={realIndex}>
@@ -567,7 +342,7 @@ export default function ListaModulos(
 
                     {/* Info de quantos estão sendo exibidos */}
                     <div className="info-paginacao">
-                        Mostrando {modulosPaginados.length} de {modulosEditaveis.length} modulos
+                        Mostrando {itensPaginados.length} de {modulosEditaveis.length} modulos
                     </div>
 
                     {/* Modais de exibição */}
