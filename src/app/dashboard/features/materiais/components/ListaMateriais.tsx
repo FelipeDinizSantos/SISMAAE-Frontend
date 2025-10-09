@@ -13,6 +13,7 @@ import MenuContexto from "@/components/MenuContexto";
 import { useEdicaoMateriais } from "../hooks/useEdicaoMateriais";
 import { useBatalhao } from "@/hooks/useBatalhao";
 import { usePaginacao } from "@/hooks/usePaginacao";
+import useModal from "../../../../../hooks/useModal";
 
 export default function ListaMateriais(
     {
@@ -21,17 +22,17 @@ export default function ListaMateriais(
         setItens,
         setReload
     }
-        :
-        {
-            materiais: Material[],
-            setMateriais: Dispatch<SetStateAction<Material[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-            setReload: Dispatch<SetStateAction<boolean>>
-        }
+    :
+    {
+        materiais: Material[],
+        setMateriais: Dispatch<SetStateAction<Material[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+        setReload: Dispatch<SetStateAction<boolean>>
+    }
 ) {
     const token = localStorage.getItem('token');
     if (!token) return;
-    
+
     const { podeEditar } = usePermissao();
     const { user } = useAuth();
 
@@ -52,8 +53,8 @@ export default function ListaMateriais(
         mat: null,
     });
 
-    const [modal, setModal] = useState<{ type: "novo" | "listar" | "editar" | null, materialId?: number }>({ type: null });
-
+    const { modal, abrirModal, abrirModalListar, fecharModal } = useModal();
+ 
     const itensPorPagina = 5;
     const { itensPaginados, paginaAtual, setPaginaAtual, totalPaginas } = usePaginacao(itensPorPagina, materiaisEditaveis);
 
@@ -221,15 +222,13 @@ export default function ListaMateriais(
                                                                     ? [
                                                                         {
                                                                             label: "Criar Novo Registro",
-                                                                            onClick: () =>
-                                                                                setModal({ type: "novo", materialId: mat.id }),
+                                                                            onClick: () => abrirModal(mat.id),
                                                                         },
                                                                     ]
                                                                     : []),
                                                                 {
                                                                     label: "Visualizar Registros",
-                                                                    onClick: () =>
-                                                                        setModal({ type: "listar", materialId: mat.id }),
+                                                                    onClick: () => abrirModalListar(mat.id),
                                                                 },
                                                             ]}
                                                         />
@@ -265,22 +264,22 @@ export default function ListaMateriais(
                     <Modal
                         visible={modal.type === "novo"}
                         title="Criar Registro"
-                        onClose={() => setModal({ type: null })}
+                        onClose={() => fecharModal()}
                     >
                         <CriarRegistro
-                            materialId={modal.materialId!}
+                            materialId={modal.itemId!}
                             moduloId={null}
                             mecanicoId={user ? user.id : 0}
-                            onSuccess={() => setModal({ type: null })}
+                            onSuccess={() => fecharModal()}
                         />
                     </Modal>
 
                     <Modal
                         visible={modal.type === "listar"}
                         title="Registros do Material"
-                        onClose={() => setModal({ type: null })}
+                        onClose={() => fecharModal()}
                     >
-                        <ListaRegistros itemId={modal.materialId!} isMaterial />
+                        <ListaRegistros itemId={modal.itemId!} isMaterial />
                     </Modal>
                 </>
             ) : (

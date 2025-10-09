@@ -1,4 +1,4 @@
-import "../styles.css"; // USA A MESMA ESTILIZAÇÃO DE "LISTAMATERIAIS"
+import "../styles.css";
 
 import { Material } from "@/interfaces/Material.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -10,11 +10,12 @@ import Modal from "@/components/Modal";
 import { CriarRegistro } from "../../registros/index";
 import { ListaRegistros } from "../../registros/index";
 import { useAuth } from "@/context/AuthContext";
-import toast from "react-hot-toast";
-import { MaterialAPI, ModuloEditado } from "../interfaces";
+import { ModuloEditado } from "../interfaces";
 import { useEdicaoModulos } from "../hooks/useEdicaoModulos";
 import { useBatalhao } from "@/hooks/useBatalhao";
 import { usePaginacao } from "@/hooks/usePaginacao";
+import useModal from "@/hooks/useModal";
+import useCabides from "../../../../../hooks/useCabides";
 
 export default function ListaModulos(
     {
@@ -23,13 +24,13 @@ export default function ListaModulos(
         setItens,
         setReload
     }
-        :
-        {
-            modulos: Modulo[],
-            setModulos: Dispatch<SetStateAction<Modulo[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
-            setReload: Dispatch<SetStateAction<boolean>>
-        }
+    :
+    {
+        modulos: Modulo[],
+        setModulos: Dispatch<SetStateAction<Modulo[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
+        setReload: Dispatch<SetStateAction<boolean>>
+    }
 ) {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -37,7 +38,6 @@ export default function ListaModulos(
     const { podeEditar } = usePermissao();
     const { user } = useAuth();
 
-    const [cabidesDisponiveis, setCabidesDisponiveis] = useState<MaterialAPI[]>([]);
     // Estados para os menus dos itens da lista. (Botão Direito) 
     const [contextMenu, setContextMenu] = useState<{
         visible: boolean;
@@ -51,32 +51,12 @@ export default function ListaModulos(
         mod: null,
     });
 
-    const [modal, setModal] = useState<{ type: "novo" | "listar" | "editar" | null, materialId?: number }>({ type: null });
+    const { modal, abrirModal, abrirModalListar, fecharModal } = useModal();
     const { batalhoes } = useBatalhao(token);
-
-    useEffect(() => {
-        const fetchCabides = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
-                    headers: { 'Authorization': `Barear ${token}` }
-                });
-                if (!res.ok) throw new Error("Erro ao carregar cabides");
-                const data = await res.json();
-                setCabidesDisponiveis(data.materiais);
-            } catch (err: unknown) {
-                if (err instanceof Error) {
-                    toast.error(err.message);
-                } else {
-                    toast.error("Ocorreu um erro inesperado!");
-                }
-            }
-        };
-
-        fetchCabides();
-    }, []);
+    const { cabides } = useCabides(token);
 
     const { modulosEditaveis, setModulosEditaveis, iniciarEdicao, cancelarEdicao, confirmarEdicao } =
-        useEdicaoModulos(modulos, setModulos, batalhoes, user, setItens, cabidesDisponiveis);
+        useEdicaoModulos(modulos, setModulos, batalhoes, user, setItens, cabides);
 
     const itensPorPagina = 5;
     const { itensPaginados, paginaAtual, setPaginaAtual, totalPaginas } = usePaginacao(itensPorPagina, modulosEditaveis);
@@ -124,7 +104,7 @@ export default function ListaModulos(
     const handleCabideChange = (index: number, novoSN: string) => {
         const novos = [...modulosEditaveis];
 
-        const cabideSelecionado = cabidesDisponiveis.find(cabide => cabide.SN === novoSN);
+        const cabideSelecionado = cabides.find(cabide => cabide.SN === novoSN);
 
         novos[index] = {
             ...novos[index],
@@ -227,7 +207,7 @@ export default function ListaModulos(
                                                 >
                                                     <option value="">Selecione um cabide</option>
                                                     <option value="Sem Cabide">Sem Cabide</option>
-                                                    {cabidesDisponiveis.map(cabide => (
+                                                    {cabides.map(cabide => (
                                                         <option key={cabide.id} value={cabide.SN}>
                                                             {cabide.SN} - {cabide.Material}
                                                         </option>
@@ -306,15 +286,13 @@ export default function ListaModulos(
                                                                     ? [
                                                                         {
                                                                             label: "Criar Novo Registro",
-                                                                            onClick: () =>
-                                                                                setModal({ type: "novo", materialId: mod.id }),
+                                                                            onClick: () => abrirModal(mod.id),
                                                                         },
                                                                     ]
                                                                     : []),
                                                                 {
                                                                     label: "Visualizar Registros",
-                                                                    onClick: () =>
-                                                                        setModal({ type: "listar", materialId: mod.id }),
+                                                                    onClick: () => abrirModalListar(mod.id),
                                                                 },
                                                             ]}
                                                         />
@@ -327,6 +305,7 @@ export default function ListaModulos(
                             })}
                         </tbody>
                     </table>
+
                     {/* Tabs/Paginação */}
                     <div className="tabs-container">
                         {Array.from({ length: totalPaginas }).map((_, idx) => (
@@ -349,22 +328,22 @@ export default function ListaModulos(
                     <Modal
                         visible={modal.type === "novo"}
                         title="Criar Registro"
-                        onClose={() => setModal({ type: null })}
+                        onClose={fecharModal}
                     >
                         <CriarRegistro
-                            moduloId={modal.materialId!}
+                            moduloId={modal.itemId!}
                             materialId={null}
                             mecanicoId={user ? user.id : 0}
-                            onSuccess={() => setModal({ type: null })}
+                            onSuccess={fecharModal}
                         />
                     </Modal>
 
                     <Modal
                         visible={modal.type === "listar"}
                         title="Registros do Material"
-                        onClose={() => setModal({ type: null })}
+                        onClose={fecharModal}
                     >
-                        <ListaRegistros itemId={modal.materialId!} isMaterial={false} />
+                        <ListaRegistros itemId={modal.itemId!} isMaterial={false} />
                     </Modal>
                 </>
             ) : (

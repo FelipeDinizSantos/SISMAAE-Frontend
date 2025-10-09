@@ -23,7 +23,7 @@ export default function DashboardPage() {
     const [contextoLista, setContextoLista] = useState<string>('MATERIAL');
 
     // STATES DE CONTROLE DAS BUSCAS DO MENU LATERAL
-    const [buscaGeral, setBuscaGeral] = useState('');
+    const [buscaGeral, setBuscaGeral] = useState<"MODULO" | "MATERIAL" | "">('MATERIAL');
     const [buscaEspecifica, setBuscaEspecifica] = useState('');
     const [auxiliarBuscaEspecifica, setAuxiliarBuscaEspecifica] = useState('');
 

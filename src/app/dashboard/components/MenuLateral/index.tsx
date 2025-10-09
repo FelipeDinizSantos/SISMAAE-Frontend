@@ -1,11 +1,11 @@
+import "./MenuLateral.css";
+
 import { Material } from "@/interfaces/Material.interface";
 import GraficoStatus from "../../../../components/GraficoStatus";
-import "./MenuLateral.css";
 import { Modulo } from "@/interfaces/Modulo.interface";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Batalhao } from "@/interfaces/Batalhao.interface";
-import toast from "react-hot-toast";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useBatalhao } from "@/hooks/useBatalhao";
+import useCabides from "@/hooks/useCabides";
 
 export default function MenuLateral({
     itens,
@@ -20,8 +20,8 @@ export default function MenuLateral({
     {
         itens: Material[] | Modulo[]
         setContextoLista: Dispatch<SetStateAction<string>>
-        buscaGeral: string;
-        setBuscaGeral: Dispatch<SetStateAction<string>>
+        buscaGeral: "MODULO" | "MATERIAL" | "";
+        setBuscaGeral: Dispatch<SetStateAction<"MODULO" | "MATERIAL" | "">>
         buscaEspecifica: string;
         setBuscaEspecifica: Dispatch<SetStateAction<string>>
         auxiliarBuscaEspecifica: string;
@@ -32,30 +32,7 @@ export default function MenuLateral({
 
     const [filtroGeralValue, setFiltroGeralValue] = useState('');
     const { batalhoes } = useBatalhao(token);
-    const [listaCabide, setlistaCabide] = useState<Material[]>([]);
-
-    useEffect(() => {
-
-        try {
-            let fetchData = async () => {
-                let resCabide = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais`, {
-                    headers: { authorization: `Barear ${token}` }
-                });
-
-                let dataCabide = await resCabide.json();
-
-                setlistaCabide(dataCabide.materiais);
-            }
-
-            fetchData();
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(error.message);
-            } else {
-                toast.error("Ocorreu um erro inesperado!");
-            }
-        }
-    }, []);
+    const { cabides } = useCabides(token);
 
     const opcoesModulos = [
         "antena",
@@ -133,7 +110,7 @@ export default function MenuLateral({
                     id="filtro"
                     name="filtro-geral"
                     onChange={handleBuscaGeral}
-                    value={filtroGeralValue} // Controlar o valor
+                    value={filtroGeralValue}
                 >
                     <option value="">Materiais</option>
                     <option value="MODULO">Módulos</option>
@@ -147,6 +124,16 @@ export default function MenuLateral({
                             <option value="">Selecione</option>
                             <option value="NOME">Nome</option>
                             <option value="CABIDE">Cabide</option>
+                            <option value="ATUAL">OM Atual</option>
+                        </select>
+                    </>
+                )}
+
+                {buscaGeral === "MATERIAL" && (
+                    <>
+                        <label htmlFor="filtro-especifico">Método da busca</label>
+                        <select id="filtro-especifico" name="filtro-especifico" onChange={handleBuscaEspecifica}>
+                            <option value="">Selecione</option>
                             <option value="ATUAL">OM Atual</option>
                         </select>
                     </>
@@ -183,7 +170,7 @@ export default function MenuLateral({
                             value={auxiliarBuscaEspecifica}
                         >
                             <option value="">Selecione</option>
-                            {listaCabide.map((cabide) => (
+                            {cabides.map((cabide) => (
                                 <option key={cabide.id} value={cabide.SN}>
                                     {cabide.SN}
                                 </option>
@@ -193,7 +180,7 @@ export default function MenuLateral({
                 )}
 
                 {/* Select 3 - OM atual */}
-                {buscaGeral === "MODULO" && buscaEspecifica === "ATUAL" && (
+                {buscaEspecifica === "ATUAL" && (
                     <>
                         <label htmlFor="filtro-auxiliar-especifico">Qual OM?</label>
                         <select
