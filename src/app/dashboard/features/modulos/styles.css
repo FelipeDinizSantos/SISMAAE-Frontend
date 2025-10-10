@@ -244,3 +244,9 @@
         transform: rotate(360deg);
     }
 }
+
+.lista-vazia {
+    text-align: center;
+    margin-top: 2rem;
+    color: #666;
+}

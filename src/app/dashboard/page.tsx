@@ -10,10 +10,10 @@ import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import GerarLista from "./components/GerarTabelas";
 import { Relatorios } from "./features/relatorios";
+import { fstat } from "fs";
 
 export default function DashboardPage() {
     const router = useRouter();
-
     const { user, isAuthenticated, logout } = useAuth();
 
     // STATES DE CONTROLE DOS DADOS DAS TABELAS
@@ -23,7 +23,7 @@ export default function DashboardPage() {
     const [contextoLista, setContextoLista] = useState<string>('MATERIAL');
 
     // STATES DE CONTROLE DAS BUSCAS DO MENU LATERAL
-    const [buscaGeral, setBuscaGeral] = useState<"MODULO" | "MATERIAL" | "">('MATERIAL');
+    const [buscaGeral, setBuscaGeral] = useState<'MODULO' | 'MATERIAL' | ''>('MATERIAL');
     const [buscaEspecifica, setBuscaEspecifica] = useState('');
     const [auxiliarBuscaEspecifica, setAuxiliarBuscaEspecifica] = useState('');
 
@@ -57,7 +57,7 @@ export default function DashboardPage() {
 
     const handleLogout = () => {
         let sair = confirm("Deseja realmente sair?");
-        if (sair) logout()
+        if (sair) logout();
     };
 
     return (
@@ -87,7 +87,7 @@ export default function DashboardPage() {
                         className={activeTab === "relatorios" ? "active" : ""}
                         onClick={() => setActiveTab("relatorios")}
                     >
-                        Relatórios
+                        Relatorios
                     </li>
                 </ul>
             </header>

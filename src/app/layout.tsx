@@ -25,7 +25,7 @@ const montserrat = Montserrat({
 
 export const metadata = {
   title: 'SISMAAE',
-  description: 'Sem Descrição',
+  description: 'Sistama Manuteção Antiáerea',
   icons: {
     icon: '/img/icon_logo_sistema.png',
   },
@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className={`${montserrat.variable}`} suppressHydrationWarning>
         <AuthProvider>
           <header className="titulo-principal">
-            <Link href="/login">
+            <Link href="/dashboard">
               <Image
                 src="/img/logo_batalhao.jpeg"
                 alt="logo do batalhão"

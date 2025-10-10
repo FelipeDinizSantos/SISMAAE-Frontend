@@ -24,13 +24,13 @@ export default function ListaModulos(
         setItens,
         setReload
     }
-    :
-    {
-        modulos: Modulo[],
-        setModulos: Dispatch<SetStateAction<Modulo[]>>,
-        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
-        setReload: Dispatch<SetStateAction<boolean>>
-    }
+        :
+        {
+            modulos: Modulo[],
+            setModulos: Dispatch<SetStateAction<Modulo[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>,
+            setReload: Dispatch<SetStateAction<boolean>>
+        }
 ) {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -51,6 +51,8 @@ export default function ListaModulos(
         mod: null,
     });
 
+    const [loading, setLoading] = useState(true);
+
     const { modal, abrirModal, abrirModalListar, fecharModal } = useModal();
     const { batalhoes } = useBatalhao(token);
     const { cabides } = useCabides(token);
@@ -69,6 +71,8 @@ export default function ListaModulos(
             omDestinoId: mod.OM_Atual_Id,
             cabideSNSelecionado: mod.SN_do_Cabide,
         })));
+
+        setLoading(false);
     }, [modulos]);
 
     const handleDisponibilidadeChange = (
@@ -131,7 +135,19 @@ export default function ListaModulos(
                 />
             </nav>
 
-            {modulosEditaveis.length > 0 ? (
+            {loading ? (
+                <>
+                    <div className="lista-vazia">
+                        <p>Carregando...</p>
+                    </div>
+                </>
+            ) : modulosEditaveis.length === 0 ? (
+                <>
+                    <div className="lista-vazia">
+                        <p>Nenhum material encontrado.</p>
+                    </div>
+                </>
+            ) : (
                 <>
                     <table className="materiais-tabela">
                         <thead>
@@ -346,8 +362,6 @@ export default function ListaModulos(
                         <ListaRegistros itemId={modal.itemId!} isMaterial={false} />
                     </Modal>
                 </>
-            ) : (
-                <p>Carregando módulos...</p>
             )}
         </div>
     )

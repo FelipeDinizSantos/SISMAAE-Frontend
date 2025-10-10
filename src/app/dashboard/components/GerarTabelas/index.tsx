@@ -1,3 +1,5 @@
+'use client';
+
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { Material } from "@/interfaces/Material.interface";
@@ -30,18 +32,32 @@ export default function GerarTabelas({
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const metodoDeBusca = parametrosDeBusca.split('-')[1];
+        const [metodoDeBusca, busca] = parametrosDeBusca.split('-');
 
-        if (parametrosDeBusca === "MATERIAL") {
+        if (metodoDeBusca === "MATERIAL") {
             const fetchMateriais = async () => {
                 try {
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
-                        headers: { authorization: `Barear ${token}` }
-                    });
-                    const data = await res.json();
+                    if (busca) {
+                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais?${busca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}`, {
+                            headers: { authorization: `Barear ${token}` }
+                        });
 
-                    setMateriais(data.materiais || []);
-                    setItens(data.materiais || []);
+                        const data = await res.json();
+                        const materiais = data.materiais || [];
+
+                        setMateriais(materiais);
+                        setItens(materiais);
+                    }
+                    if (!busca) {
+                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
+                            headers: { authorization: `Barear ${token}` }
+                        });
+                        const data = await res.json();
+                        const materiais = data.materiais || [];
+
+                        setMateriais(materiais);
+                        setItens(materiais);
+                    }
                 } catch (error: unknown) {
                     if (error instanceof Error) {
                         toast.error(error.message);
@@ -86,7 +102,7 @@ export default function GerarTabelas({
     return (
         <>
             {
-                parametrosDeBusca === "MATERIAL" && (
+                parametrosDeBusca.split('-')[0] === "MATERIAL" && (
                     <ListaMateriais
                         materiais={materiais}
                         setMateriais={setMateriais}

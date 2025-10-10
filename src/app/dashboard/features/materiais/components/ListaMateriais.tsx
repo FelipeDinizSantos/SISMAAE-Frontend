@@ -1,3 +1,5 @@
+'use client';
+
 import "../styles.css";
 
 import { Material } from "@/interfaces/Material.interface";
@@ -22,13 +24,13 @@ export default function ListaMateriais(
         setItens,
         setReload
     }
-    :
-    {
-        materiais: Material[],
-        setMateriais: Dispatch<SetStateAction<Material[]>>,
-        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-        setReload: Dispatch<SetStateAction<boolean>>
-    }
+        :
+        {
+            materiais: Material[],
+            setMateriais: Dispatch<SetStateAction<Material[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+            setReload: Dispatch<SetStateAction<boolean>>
+        }
 ) {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -54,12 +56,15 @@ export default function ListaMateriais(
     });
 
     const { modal, abrirModal, abrirModalListar, fecharModal } = useModal();
- 
+
     const itensPorPagina = 5;
     const { itensPaginados, paginaAtual, setPaginaAtual, totalPaginas } = usePaginacao(itensPorPagina, materiaisEditaveis);
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         setMateriaisEditaveis(materiais.map(mat => ({ ...mat })));
+        setLoading(false);
     }, [materiais]);
 
     const handleDisponibilidadeChange = (index: number, novoValor: 'DISPONIVEL' | 'DISP_C_RESTRICAO' | 'INDISPONIVEL' | 'MANUTENCAO') => {
@@ -98,7 +103,15 @@ export default function ListaMateriais(
                 />
             </nav>
 
-            {materiaisEditaveis.length > 0 ? (
+            {loading ? (
+                <p>Carregando...</p>
+            ) : materiaisEditaveis.length === 0 ? (
+                <>
+                    <div className="lista-vazia">
+                        <p>Nenhum material encontrado.</p>
+                    </div>
+                </>
+            ) : (
                 <>
                     <table className="materiais-tabela">
                         <thead>
@@ -282,8 +295,6 @@ export default function ListaMateriais(
                         <ListaRegistros itemId={modal.itemId!} isMaterial />
                     </Modal>
                 </>
-            ) : (
-                <p>Carregando materiais...</p>
             )}
         </div>
     )

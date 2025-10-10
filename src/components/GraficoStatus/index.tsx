@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { Material } from '@/interfaces/Material.interface';
 import { Modulo } from '@/interfaces/Modulo.interface';
@@ -11,6 +11,12 @@ Chart.register(...registerables);
 export default function GraficoStatus({ itens, titulo = 'Distribuição de Status' }:{itens:Material[] | Modulo[]; titulo?:string}) {
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstance = useRef<Chart<'pie'> | null>(null);
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(()=>{
+        if(itens) setLoading(false)
+    }, [itens]);
 
     useEffect(() => {
         if (!chartRef.current || itens.length === 0) return;
@@ -34,13 +40,13 @@ export default function GraficoStatus({ itens, titulo = 'Distribuição de Statu
                         statusCount.DISPONIVEL,
                         statusCount.DISP_C_RESTRICAO,
                         statusCount.INDISPONIVEL,
-                        statusCount.MANUTENCAO
+                        statusCount.MANUTENCAO,
                     ],
                     backgroundColor: [
                         '#4CAF50', 
                         '#FFC107', 
                         '#F44336', 
-                        '#2196F3'  
+                        '#2196F3', 
                     ],
                     borderWidth: 1,
                 },
@@ -79,7 +85,11 @@ export default function GraficoStatus({ itens, titulo = 'Distribuição de Statu
     }, [itens]);
 
     if (itens.length === 0) {
-        return <div className="grafico-container">Carregando dados para o gráfico...</div>;
+        return <div className='grafico-container'>Sem dados para o gráfico.</div>
+    }
+
+    if(loading){
+        return <div className="grafico-container">Carregando dados para o gráfico...</div>
     }
 
     return (

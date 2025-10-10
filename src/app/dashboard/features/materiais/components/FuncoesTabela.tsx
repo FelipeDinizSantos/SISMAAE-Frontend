@@ -12,7 +12,6 @@ export default function FuncoesTabela({ handleReload }: { handleReload: () => vo
         handleReload();
 
         toast.success("Dados atualizados");
-
         setTimeout(() => setAnimando(false), 600); 
     };
 

@@ -1,3 +1,5 @@
+'use client';
+
 import "./MenuLateral.css";
 
 import { Material } from "@/interfaces/Material.interface";
@@ -54,9 +56,12 @@ export default function MenuLateral({
             case "MODULO":
                 setBuscaGeral("MODULO")
                 break;
-            default:
+            case "MATERIAL":
                 setBuscaGeral("MATERIAL")
                 setContextoLista("MATERIAL")
+                break;
+            default:
+                return;
         }
 
         setBuscaEspecifica('');
@@ -65,6 +70,7 @@ export default function MenuLateral({
 
     const handleBuscaEspecifica = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setBuscaEspecifica(event.target.value);
+
         switch (event.target.value) {
             case "NOME":
                 setBuscaEspecifica("NOME");
@@ -74,6 +80,9 @@ export default function MenuLateral({
                 break;
             case "ATUAL":
                 setBuscaEspecifica("ATUAL");
+                break;
+            case "DISPONIBILIDADE":
+                setBuscaEspecifica("DISPONIBILIDADE");
                 break;
             default:
                 setBuscaEspecifica('');
@@ -85,18 +94,26 @@ export default function MenuLateral({
     const handleAuxiliarBuscaEspecifica = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setAuxiliarBuscaEspecifica(event.target.value);
 
-        if (buscaEspecifica === "NOME") setContextoLista("MODULO-NOME");
-        if (buscaEspecifica === "CABIDE") setContextoLista("MODULO-CABIDE");
-        if (buscaEspecifica === "ATUAL") setContextoLista("MODULO-ATUAL");
+        if (buscaGeral === "MATERIAL") {
+            if (buscaEspecifica === "ATUAL") setContextoLista("MATERIAL-ATUAL");
+            if (buscaEspecifica === "DISPONIBILIDADE") setContextoLista("MATERIAL-DISPONIBILIDADE");
+        }
+        if (buscaGeral === "MODULO") {
+            if (buscaEspecifica === "NOME") setContextoLista("MODULO-NOME");
+            if (buscaEspecifica === "CABIDE") setContextoLista("MODULO-CABIDE");
+            if (buscaEspecifica === "ATUAL") setContextoLista("MODULO-ATUAL");
+        }
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setContextoLista('MATERIAL');
-        setBuscaGeral('');
+
         setBuscaEspecifica('');
         setAuxiliarBuscaEspecifica('');
         setFiltroGeralValue('');
+
+        setContextoLista('MATERIAL');
+        setBuscaGeral('MATERIAL');
     }
 
     return (
@@ -112,29 +129,50 @@ export default function MenuLateral({
                     onChange={handleBuscaGeral}
                     value={filtroGeralValue}
                 >
-                    <option value="">Materiais</option>
+                    <option value="MATERIAL">Materiais</option>
                     <option value="MODULO">Módulos</option>
                 </select>
 
                 {/* Select 2 */}
-                {buscaGeral === "MODULO" && (
-                    <>
-                        <label htmlFor="filtro-especifico">Método da busca</label>
-                        <select id="filtro-especifico" name="filtro-especifico" onChange={handleBuscaEspecifica}>
-                            <option value="">Selecione</option>
-                            <option value="NOME">Nome</option>
-                            <option value="CABIDE">Cabide</option>
-                            <option value="ATUAL">OM Atual</option>
-                        </select>
-                    </>
-                )}
+                <>
+                    <label htmlFor="filtro-especifico">Método da busca</label>
+                    <select 
+                        id="filtro-especifico" 
+                        name="filtro-especifico"
+                        value={buscaEspecifica} 
+                        onChange={handleBuscaEspecifica}>
+                        <option value="">Selecione</option>
+                        {buscaGeral === "MODULO" && (
+                            <>
+                                <option value="NOME">Nome</option>
+                                <option value="CABIDE">Cabide</option>
+                                <option value="ATUAL">OM Atual</option>
+                            </>
+                        )}
+                        {buscaGeral === "MATERIAL" && (
+                            <>
+                                <option value="ATUAL">OM Atual</option>
+                                <option value="DISPONIBILIDADE">Disponibilidade</option>
+                            </>
+                        )}
+                    </select>
+                </>
 
-                {buscaGeral === "MATERIAL" && (
+                {/* Select 3 - material - disponibilidade */}
+                {buscaGeral === "MATERIAL" && buscaEspecifica === "DISPONIBILIDADE" && (
                     <>
-                        <label htmlFor="filtro-especifico">Método da busca</label>
-                        <select id="filtro-especifico" name="filtro-especifico" onChange={handleBuscaEspecifica}>
+                        <label htmlFor="filtro-auxiliar-especifico">Qual disponibilidade?</label>
+                        <select
+                            id="filtro-auxiliar-especifico"
+                            name="filtro-auxiliar-especifico"
+                            onChange={handleAuxiliarBuscaEspecifica}
+                            value={auxiliarBuscaEspecifica}
+                        >
                             <option value="">Selecione</option>
-                            <option value="ATUAL">OM Atual</option>
+                            <option value="DISPONIVEL">Disponivel</option>
+                            <option value="INDISPONIVEL">Indisponível</option>
+                            <option value="DISP_C_RESTRICAO">Disponível com Restrição</option>
+                            <option value="MANUTENCAO">Manutenção</option>
                         </select>
                     </>
                 )}
