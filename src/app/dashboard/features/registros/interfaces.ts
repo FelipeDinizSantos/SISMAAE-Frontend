@@ -12,6 +12,7 @@ export interface Registro {
   mecanico_id: number;
   mecanico_nome: string;
   mecanico_posto: string;
+  mecanico_batalhao: string;
   perfil: string;
   data: string;
 }

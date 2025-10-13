@@ -51,7 +51,9 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
           <p className="acao"><strong>Ação:</strong> {r.acao}</p>
           {
             r.mecanico_id &&
-            <p><strong>Criado por:</strong> {r.mecanico_posto + ". " + r.mecanico_nome}</p>
+            <p>
+              <strong>Criado por:</strong> {`${r.mecanico_posto}. ${r.mecanico_nome} - ${r.mecanico_batalhao} (${r.perfil})`}
+            </p>
           }
           <small>
             <em>{new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</em>

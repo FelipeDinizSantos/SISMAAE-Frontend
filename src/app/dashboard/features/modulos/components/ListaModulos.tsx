@@ -4,7 +4,6 @@ import { Material } from "@/interfaces/Material.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import { usePermissao } from "@/hooks/usePermissao";
-import MenuManipulacaoTabela from "./FuncoesTabela";
 import MenuContexto from "@/components/MenuContexto";
 import Modal from "@/components/Modal";
 import { CriarRegistro } from "../../registros/index";
@@ -16,6 +15,7 @@ import { useBatalhao } from "@/hooks/useBatalhao";
 import { usePaginacao } from "@/hooks/usePaginacao";
 import useModal from "@/hooks/useModal";
 import useCabides from "../../../../../hooks/useCabides";
+import FuncoesTabela from "@/app/dashboard/components/FuncoesTabela";
 
 export default function ListaModulos(
     {
@@ -130,7 +130,9 @@ export default function ListaModulos(
         <div className="materiais-container">
             <nav>
                 <h3>Lista de Modulos</h3>
-                <MenuManipulacaoTabela
+                <FuncoesTabela
+                    itensEditaveis={modulosEditaveis}
+                    setItensEditaveis={setModulosEditaveis}
                     handleReload={() => setReload(true)}
                 />
             </nav>

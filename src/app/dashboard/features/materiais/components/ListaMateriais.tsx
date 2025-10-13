@@ -10,12 +10,12 @@ import Modal from "@/components/Modal";
 import { CriarRegistro } from "../../registros/index";
 import { ListaRegistros } from "../../registros/index";
 import { useAuth } from "@/context/AuthContext";
-import MenuManipulacaoTabela from "./FuncoesTabela";
 import MenuContexto from "@/components/MenuContexto";
 import { useEdicaoMateriais } from "../hooks/useEdicaoMateriais";
 import { useBatalhao } from "@/hooks/useBatalhao";
 import { usePaginacao } from "@/hooks/usePaginacao";
 import useModal from "../../../../../hooks/useModal";
+import FuncoesTabela from "@/app/dashboard/components/FuncoesTabela";
 
 export default function ListaMateriais(
     {
@@ -24,13 +24,13 @@ export default function ListaMateriais(
         setItens,
         setReload
     }
-        :
-        {
-            materiais: Material[],
-            setMateriais: Dispatch<SetStateAction<Material[]>>,
-            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-            setReload: Dispatch<SetStateAction<boolean>>
-        }
+    :
+    {
+        materiais: Material[],
+        setMateriais: Dispatch<SetStateAction<Material[]>>,
+        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+        setReload: Dispatch<SetStateAction<boolean>>
+    }
 ) {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -98,7 +98,9 @@ export default function ListaMateriais(
         <div className="materiais-container">
             <nav>
                 <h3>Lista de Materiais</h3>
-                <MenuManipulacaoTabela
+                <FuncoesTabela
+                    itensEditaveis={materiaisEditaveis}
+                    setItensEditaveis={setMateriaisEditaveis}
                     handleReload={() => setReload(true)}
                 />
             </nav>

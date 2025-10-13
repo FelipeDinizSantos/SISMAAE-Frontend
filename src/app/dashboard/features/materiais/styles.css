@@ -201,6 +201,7 @@
 
 .menu-manip-container {
     display: flex;
+    gap: .5rem;
     flex: 1;
     justify-content: flex-start;
     border-radius: 5px;
@@ -250,4 +251,3 @@
     margin-top: 2rem;
     color: #666;
 }
-
