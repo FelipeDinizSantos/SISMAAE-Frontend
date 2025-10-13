@@ -356,7 +356,7 @@ export default function ListaModulos(
 
                     <Modal
                         visible={modal.type === "listar"}
-                        title="Registros do Material"
+                        title="Registros do módulo"
                         onClose={fecharModal}
                     >
                         <ListaRegistros itemId={modal.itemId!} isMaterial={false} />
