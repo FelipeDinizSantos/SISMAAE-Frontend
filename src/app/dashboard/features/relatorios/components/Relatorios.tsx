@@ -10,8 +10,15 @@ import { Relatorio } from "../interfaces";
 const relatoriosDisponiveis: Relatorio[] = [
   {
     id: "relatorio-disp-radares",
-    nome: "Relatório de Disponibilidade",
+    nome: "Relatório Disponibilidade de Radares",
     descricao: "Resumo da disponibilidade de radares",
+    componente: <RelatorioDisponibilidade />,
+    disponivelPara: ["COL"],
+  },
+  {
+    id: "relatorio-disp-modulos",
+    nome: "Relatório Disponibilidade de Módulos",
+    descricao: "Resumo da disponibilidade de módulos",
     componente: <RelatorioDisponibilidade />,
     disponivelPara: ["COL"],
   },

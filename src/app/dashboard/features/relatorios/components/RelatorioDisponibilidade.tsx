@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import GraficoStatus from "@/components/GraficoStatus";
 import MapaDisponibilidadeRadares from "./MapaDisponibilidadeRadares";
 
-export default function RelatorioDisponibilidade() {
+export default function RelatorioDisponibilidade({isModulos}:{isModulos?: boolean}) {
     const [materiais, setMateriais] = useState<Material[]>([]);
     const [modulos, setModulos] = useState<Modulo[]>([]);
 
@@ -16,21 +16,28 @@ export default function RelatorioDisponibilidade() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const fetchMateriais = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
-                    headers: { authorization: `Bearer ${token}` },
-                });
-                const data = await res.json();
-                setMateriais(data.materiais || []);
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    toast.error(error.message);
-                } else {
-                    toast.error("Ocorreu um erro inesperado!");
+        console.log(isModulos);
+
+        if (!isModulos) {
+            const fetchMateriais = async () => {
+                try {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
+                        headers: { authorization: `Bearer ${token}` },
+                    });
+                    const data = await res.json();
+                    setMateriais(data.materiais || []);
+                } catch (error: unknown) {
+                    if (error instanceof Error) {
+                        toast.error(error.message);
+                    } else {
+                        toast.error("Ocorreu um erro inesperado!");
+                    }
                 }
-            }
-        };
+            };
+
+
+            fetchMateriais();
+        }
 
         const fetchModulos = async () => {
             try {
@@ -48,7 +55,6 @@ export default function RelatorioDisponibilidade() {
             }
         };
 
-        fetchMateriais();
         fetchModulos();
     }, []);
 
@@ -114,38 +120,44 @@ export default function RelatorioDisponibilidade() {
         <div className="relatorio-bloco">
             {/* --- Materiais --- */}
             <div className="relatorio-conteudo-flex">
-                <div className="grafico-area">
-                    <GraficoStatus itens={materiais} titulo="Relação de Disponibilidades" />
-                </div>
 
-                <div className="indices-area">
-                    <h3>Índice de Radares</h3>
-                    <ul>
-                        <li>
-                            <span className="cor disponivel"></span> Disponíveis:{" "}
-                            <strong>{indicesMateriais.disponiveis}</strong>{" "}
-                            <em>{percent(indicesMateriais.disponiveis, indicesMateriais.total)}</em>
-                        </li>
-                        <li>
-                            <span className="cor restricao"></span> Disp. c/ Restrição:{" "}
-                            <strong>{indicesMateriais.restricao}</strong>{" "}
-                            <em>{percent(indicesMateriais.restricao, indicesMateriais.total)}</em>
-                        </li>
-                        <li>
-                            <span className="cor indisponivel"></span> Indisponíveis:{" "}
-                            <strong>{indicesMateriais.indisponiveis}</strong>{" "}
-                            <em>{percent(indicesMateriais.indisponiveis, indicesMateriais.total)}</em>
-                        </li>
-                        <li>
-                            <span className="cor manutencao"></span> Em Manutenção:{" "}
-                            <strong>{indicesMateriais.manutencao}</strong>{" "}
-                            <em>{percent(indicesMateriais.manutencao, indicesMateriais.total)}</em>
-                        </li>
-                        <li className="total">
-                            Total: <strong>{indicesMateriais.total}</strong>
-                        </li>
-                    </ul>
-                </div>
+                {
+                    !isModulos && (
+                        <>
+                            <div className="grafico-area">
+                                <GraficoStatus itens={materiais} titulo="Relação de Disponibilidades" />
+                            </div>
+                            <div className="indices-area">
+                                <h3>Índice de Radares</h3>
+                                <ul>
+                                    <li>
+                                        <span className="cor disponivel"></span> Disponíveis:{" "}
+                                        <strong>{indicesMateriais.disponiveis}</strong>{" "}
+                                        <em>{percent(indicesMateriais.disponiveis, indicesMateriais.total)}</em>
+                                    </li>
+                                    <li>
+                                        <span className="cor restricao"></span> Disp. c/ Restrição:{" "}
+                                        <strong>{indicesMateriais.restricao}</strong>{" "}
+                                        <em>{percent(indicesMateriais.restricao, indicesMateriais.total)}</em>
+                                    </li>
+                                    <li>
+                                        <span className="cor indisponivel"></span> Indisponíveis:{" "}
+                                        <strong>{indicesMateriais.indisponiveis}</strong>{" "}
+                                        <em>{percent(indicesMateriais.indisponiveis, indicesMateriais.total)}</em>
+                                    </li>
+                                    <li>
+                                        <span className="cor manutencao"></span> Em Manutenção:{" "}
+                                        <strong>{indicesMateriais.manutencao}</strong>{" "}
+                                        <em>{percent(indicesMateriais.manutencao, indicesMateriais.total)}</em>
+                                    </li>
+                                    <li className="total">
+                                        Total: <strong>{indicesMateriais.total}</strong>
+                                    </li>
+                                </ul>
+                            </div>
+                        </>
+                    )
+                }
             </div>
 
             {/* indispPorModulos */}
