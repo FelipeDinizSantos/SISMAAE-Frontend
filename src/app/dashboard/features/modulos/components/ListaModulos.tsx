@@ -150,7 +150,7 @@ export default function ListaModulos(
                     </div>
                 </>
             ) : (
-                <>
+                <div className="tabela-wrapper">
                     <table className="materiais-tabela">
                         <thead>
                             <tr>
@@ -363,7 +363,7 @@ export default function ListaModulos(
                     >
                         <ListaRegistros itemId={modal.itemId!} isMaterial={false} />
                     </Modal>
-                </>
+                </div>
             )}
         </div>
     )

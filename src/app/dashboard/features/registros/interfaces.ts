@@ -7,6 +7,7 @@ export interface FormRegistroProps {
 
 export interface Registro {
   id: number;
+  cod: string; 
   acao: string;
   automatico: boolean;
   mecanico_id: number;

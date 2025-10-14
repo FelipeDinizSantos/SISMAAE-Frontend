@@ -10,6 +10,25 @@ body {
     height: 100% !important;
 }
 
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
 a {
     text-decoration: none;
     color: inherit;

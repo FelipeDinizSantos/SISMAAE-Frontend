@@ -45,8 +45,13 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
     <ul className="lista-registros">
       {registros.map((r) => (
         <li key={r.id}>
-          <div className={`registro-badge ${r.automatico ? "automatico" : "manual"}`}>
-            {r.automatico ? "Automático" : "Manual"}
+          <div className="registros-infos">
+            <div className="codigo">
+              {r.cod}
+            </div>
+            <div className={`registro-badge ${r.automatico ? "automatico" : "manual"}`}>
+              {r.automatico ? "Automático" : "Manual"}
+            </div>
           </div>
           <p className="acao"><strong>Ação:</strong> {r.acao}</p>
           {

@@ -24,13 +24,13 @@ export default function ListaMateriais(
         setItens,
         setReload
     }
-    :
-    {
-        materiais: Material[],
-        setMateriais: Dispatch<SetStateAction<Material[]>>,
-        setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
-        setReload: Dispatch<SetStateAction<boolean>>
-    }
+        :
+        {
+            materiais: Material[],
+            setMateriais: Dispatch<SetStateAction<Material[]>>,
+            setItens: Dispatch<SetStateAction<Material[] | Modulo[]>>
+            setReload: Dispatch<SetStateAction<boolean>>
+        }
 ) {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -98,12 +98,13 @@ export default function ListaMateriais(
         <div className="materiais-container">
             <nav>
                 <h3>Lista de Materiais</h3>
-                <FuncoesTabela
-                    itensEditaveis={materiaisEditaveis}
-                    setItensEditaveis={setMateriaisEditaveis}
-                    handleReload={() => setReload(true)}
-                />
             </nav>
+
+            <FuncoesTabela
+                itensEditaveis={materiaisEditaveis}
+                setItensEditaveis={setMateriaisEditaveis}
+                handleReload={() => setReload(true)}
+            />
 
             {loading ? (
                 <p>Carregando...</p>
@@ -114,7 +115,7 @@ export default function ListaMateriais(
                     </div>
                 </>
             ) : (
-                <>
+                <div className="tabela-wrapper">
                     <table className="materiais-tabela">
                         <thead>
                             <tr>
@@ -296,7 +297,7 @@ export default function ListaMateriais(
                     >
                         <ListaRegistros itemId={modal.itemId!} isMaterial />
                     </Modal>
-                </>
+                </ div>
             )}
         </div>
     )
