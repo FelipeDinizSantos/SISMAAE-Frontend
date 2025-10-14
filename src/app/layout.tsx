@@ -57,7 +57,7 @@ export default function RootLayout({
           position="top-right"
           reverseOrder={false}
           toastOptions={{
-            duration: 3000,
+            duration: 1500,
             style: {
               fontFamily: "inherit",
               fontSize: "0.95rem",

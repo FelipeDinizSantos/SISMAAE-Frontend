@@ -15,13 +15,6 @@ const relatoriosDisponiveis: Relatorio[] = [
     componente: <RelatorioDisponibilidade />,
     disponivelPara: ["COL"],
   },
-  {
-    id: "relatorio-disp-modulos",
-    nome: "Relatório Disponibilidade de Módulos",
-    descricao: "Resumo da disponibilidade de módulos",
-    componente: <RelatorioDisponibilidade />,
-    disponivelPara: ["COL"],
-  },
 ];
 
 export default function Relatorios() {

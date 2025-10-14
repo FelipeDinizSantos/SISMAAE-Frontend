@@ -99,7 +99,7 @@ export default function MenuLateral({
             if (buscaEspecifica === "DISPONIBILIDADE") setContextoLista("MATERIAL-DISPONIBILIDADE");
         }
         if (buscaGeral === "MODULO") {
-            if (buscaEspecifica === "NOME") setContextoLista("MODULO-NOME");
+            if (buscaEspecifica === "NOME") setContextoLista("MODULO-MODULO");
             if (buscaEspecifica === "CABIDE") setContextoLista("MODULO-CABIDE");
             if (buscaEspecifica === "ATUAL") setContextoLista("MODULO-ATUAL");
         }

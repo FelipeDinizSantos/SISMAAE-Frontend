@@ -76,7 +76,7 @@ export default function GerarTabelas({
                 const fetchData = async () => {
                     if (!auxiliarBuscaEspecifica) return;
 
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos?${metodoDeBusca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}`, {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos?${busca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}`, {
                         headers: { authorization: `Barear ${token}` }
                     });
 

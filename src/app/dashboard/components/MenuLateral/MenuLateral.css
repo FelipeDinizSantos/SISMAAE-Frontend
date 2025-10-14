@@ -3,6 +3,7 @@ section.menu-lateral {
     overflow-y: scroll;
     width: 25%;
     min-width: 220px;
+    height: 100vh !important;
     padding: 1.5rem;
     background: #f9f9f9;
     border-right: 1px solid #ddd;
