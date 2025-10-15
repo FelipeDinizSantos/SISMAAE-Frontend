@@ -130,12 +130,13 @@ export default function ListaModulos(
         <div className="materiais-container">
             <nav>
                 <h3>Lista de Modulos</h3>
-                <FuncoesTabela
-                    itensEditaveis={modulosEditaveis}
-                    setItensEditaveis={setModulosEditaveis}
-                    handleReload={() => setReload(true)}
-                />
             </nav>
+            
+            <FuncoesTabela
+                itensEditaveis={modulosEditaveis}
+                setItensEditaveis={setModulosEditaveis}
+                handleReload={() => setReload(true)}
+            />
 
             {loading ? (
                 <>

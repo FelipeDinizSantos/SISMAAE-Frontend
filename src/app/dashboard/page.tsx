@@ -10,7 +10,14 @@ import { Material } from "@/interfaces/Material.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
 import GerarLista from "./components/GerarTabelas";
 import { Relatorios } from "./features/relatorios";
-import { fstat } from "fs";
+import { Role } from "@/interfaces/Role.interface";
+import { ControleRegistros } from "./features/controleRegistros";
+
+interface TabConfig {
+    key: "materiais" | "relatorios" | "registros";
+    label: string;
+    allowed: Role[];
+}
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -28,7 +35,13 @@ export default function DashboardPage() {
     const [auxiliarBuscaEspecifica, setAuxiliarBuscaEspecifica] = useState('');
 
     // STATE DE TAB ATIVA
-    const [activeTab, setActiveTab] = useState<"materiais" | "relatorios">("materiais");
+    const [activeTab, setActiveTab] = useState<"materiais" | "relatorios" | "registros">("materiais");
+
+    const tabs: readonly TabConfig[] = [
+        { key: "materiais", label: "Materiais", allowed: ["ADMIN", "COMANDO", "COL", "S4", "MECANICO"] },
+        { key: "relatorios", label: "Relatórios", allowed: ["ADMIN", "COMANDO", "COL", "S4", "MECANICO"] },
+        { key: "registros", label: "Controle de registros", allowed: ["ADMIN", "COMANDO", "COL"] }
+    ];
 
     useEffect(() => {
         if (!isAuthenticated) router.push('/');
@@ -55,6 +68,16 @@ export default function DashboardPage() {
         fetchMateriais();
     }, []);
 
+    const availableTabs = tabs.filter(tab => user && tab.allowed.includes(user.perfil as Role));
+
+    useEffect(() => {
+        if (user && !availableTabs.some(tab => tab.key === activeTab)) {
+            if (availableTabs.length > 0) {
+                setActiveTab(availableTabs[0].key);
+            }
+        }
+    }, [user]);
+
     const handleLogout = () => {
         let sair = confirm("Deseja realmente sair?");
         if (sair) logout();
@@ -75,20 +98,17 @@ export default function DashboardPage() {
                     <p>Carregando usuário...</p>
                 )}
 
-                {/* Tabs no header */}
+                {/* Tabs dinâmicas */}
                 <ul className="tabs-menu">
-                    <li
-                        className={activeTab === "materiais" ? "active" : ""}
-                        onClick={() => setActiveTab("materiais")}
-                    >
-                        Materiais
-                    </li>
-                    <li
-                        className={activeTab === "relatorios" ? "active" : ""}
-                        onClick={() => setActiveTab("relatorios")}
-                    >
-                        Relatorios
-                    </li>
+                    {availableTabs.map(tab => (
+                        <li
+                            key={tab.key}
+                            className={activeTab === tab.key ? "active" : ""}
+                            onClick={() => setActiveTab(tab.key)}
+                        >
+                            {tab.label}
+                        </li>
+                    ))}
                 </ul>
             </header>
 
@@ -120,9 +140,9 @@ export default function DashboardPage() {
                     </>
                 )}
 
-                {activeTab === "relatorios" && (
-                    <Relatorios />
-                )}
+                {activeTab === "relatorios" && <Relatorios />}
+
+                {activeTab === "registros" && <ControleRegistros />}
             </main>
         </>
     );

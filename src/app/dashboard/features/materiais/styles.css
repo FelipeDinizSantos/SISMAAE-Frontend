@@ -24,7 +24,7 @@
 
 .tabela-wrapper{
     width: 100%;
-    overflow: auto;
+    /* overflow-y: auto; */
 }
 
 .materiais-tabela thead {
