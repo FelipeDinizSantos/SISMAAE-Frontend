@@ -22,6 +22,11 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.tabela-wrapper{
+    width: 100%;
+    overflow: auto;
+}
+
 .materiais-tabela thead {
     background: #e0e0e0;
     text-align: center;
@@ -250,15 +255,4 @@
     text-align: center;
     margin-top: 2rem;
     color: #666;
-}
-
-.tabela-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch; 
-}
-
-.materiais-tabela {
-    min-width: 900px; 
-    border-collapse: collapse;
 }

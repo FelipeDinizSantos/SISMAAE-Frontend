@@ -61,7 +61,9 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
             </p>
           }
           <small>
-            <em>{new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</em>
+            <p className="data-criacao-registro">
+              <em>{new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</em>
+            </p>
           </small>
         </li>
       ))}

@@ -15,9 +15,7 @@
 }
 
 .materiais-tabela {
-    display: block;
-    width: 80%;
-    overflow: auto;
+    width: 100%;
     border-collapse: collapse;
     background: #f9f9f9;
     border-radius: 8px;
