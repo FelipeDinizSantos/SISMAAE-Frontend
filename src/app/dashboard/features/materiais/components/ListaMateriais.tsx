@@ -1,6 +1,6 @@
 'use client';
 
-import "../styles.css";
+import "../../../../../styles/tableView.style.css";
 
 import { Material } from "@/interfaces/Material.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -95,7 +95,7 @@ export default function ListaMateriais(
     };
 
     return (
-        <div className="materiais-container">
+        <div className="table-view-container">
             <nav>
                 <h3>Lista de Materiais</h3>
             </nav>
@@ -116,7 +116,7 @@ export default function ListaMateriais(
                 </>
             ) : (
                 <div className="tabela-wrapper">
-                    <table className="materiais-tabela">
+                    <table className="table-view">
                         <thead>
                             <tr>
                                 <th>Material</th>

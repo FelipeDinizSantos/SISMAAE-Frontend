@@ -7,8 +7,6 @@ export default function useRegistros(token: string) {
 
     useEffect(() => {
         const fetchRegistros = async () => {
-            console.log("pass!");
-
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/registros`, {
                     headers: {

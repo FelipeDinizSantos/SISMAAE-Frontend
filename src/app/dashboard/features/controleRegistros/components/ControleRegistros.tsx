@@ -119,7 +119,7 @@ export default function ControleRegistros() {
                       </td>
                       <td>
                         <small>{r.mecanico_posto}</small> <br />
-                        {r.mecanico_nome} 
+                        {r.mecanico_nome}
                       </td>
                       <td>{r.mecanico_batalhao}</td>
                       <td>{formatarDataExibicao(r.data)}</td>

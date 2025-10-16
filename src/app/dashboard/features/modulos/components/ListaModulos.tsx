@@ -1,4 +1,4 @@
-import "../styles.css";
+import "../../../../../styles/tableView.style.css";
 
 import { Material } from "@/interfaces/Material.interface";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -127,11 +127,11 @@ export default function ListaModulos(
     };
 
     return (
-        <div className="materiais-container">
+        <div className="table-view-container">
             <nav>
                 <h3>Lista de Modulos</h3>
             </nav>
-            
+
             <FuncoesTabela
                 itensEditaveis={modulosEditaveis}
                 setItensEditaveis={setModulosEditaveis}
@@ -152,7 +152,7 @@ export default function ListaModulos(
                 </>
             ) : (
                 <div className="tabela-wrapper">
-                    <table className="materiais-tabela">
+                    <table className="table-view">
                         <thead>
                             <tr>
                                 <th>Módulo</th>

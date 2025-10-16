@@ -31,7 +31,7 @@ export default function MenuLateral({
     }) {
     const token = localStorage.getItem('token');
     if (!token) return;
-
+    
     const [filtroGeralValue, setFiltroGeralValue] = useState('');
     const { batalhoes } = useBatalhao(token);
     const { cabides } = useCabides(token);
@@ -136,10 +136,10 @@ export default function MenuLateral({
                 {/* Select 2 */}
                 <>
                     <label htmlFor="filtro-especifico">Método da busca</label>
-                    <select 
-                        id="filtro-especifico" 
+                    <select
+                        id="filtro-especifico"
                         name="filtro-especifico"
-                        value={buscaEspecifica} 
+                        value={buscaEspecifica}
                         onChange={handleBuscaEspecifica}>
                         <option value="">Selecione</option>
                         {buscaGeral === "MODULO" && (
