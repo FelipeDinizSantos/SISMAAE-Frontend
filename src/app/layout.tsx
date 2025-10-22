@@ -2,7 +2,6 @@ import "./globals.css";
 import { Montserrat } from 'next/font/google'
 import Link from "next/link";
 import { Toaster } from 'react-hot-toast';
-
 import { AuthProvider } from '../context/AuthContext';
 import Image from "next/image";
 

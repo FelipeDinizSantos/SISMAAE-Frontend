@@ -11,6 +11,7 @@ import MapaDisponibilidadeRadares from "./MapaDisponibilidadeRadares";
 export default function RelatorioDisponibilidade() {
     const [materiais, setMateriais] = useState<Material[]>([]);
     const [modulos, setModulos] = useState<Modulo[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -52,6 +53,7 @@ export default function RelatorioDisponibilidade() {
         };
 
         fetchModulos();
+        setLoading(false);
     }, []);
 
     const indicesMateriais = useMemo(() => {
@@ -112,74 +114,78 @@ export default function RelatorioDisponibilidade() {
     const percent = (valor: number, total: number) =>
         total > 0 ? ((valor / total) * 100).toFixed(1) + "%" : "-";
 
-    return (
-        <div className="relatorio-bloco">
-            {/* --- Materiais --- */}
-            <div className="relatorio-conteudo-flex">
-                <>
-                    <div className="grafico-area">
-                        <GraficoStatus itens={materiais} titulo="Relação de Disponibilidades" />
-                    </div>
+    if (loading) {
+        return <p>Montando relatório ...</p>
+    } else {
+        return (
+            <div className="relatorio-bloco">
+                {/* --- Materiais --- */}
+                <div className="relatorio-conteudo-flex">
+                    <>
+                        <div className="grafico-area">
+                            <GraficoStatus itens={materiais} titulo="Relação de Disponibilidades" />
+                        </div>
+                        <div className="indices-area">
+                            <h3>Índice de Radares</h3>
+                            <ul>
+                                <li>
+                                    <span className="cor disponivel"></span> Disponíveis:{" "}
+                                    <strong>{indicesMateriais.disponiveis}</strong>{" "}
+                                    <em>{percent(indicesMateriais.disponiveis, indicesMateriais.total)}</em>
+                                </li>
+                                <li>
+                                    <span className="cor restricao"></span> Disp. c/ Restrição:{" "}
+                                    <strong>{indicesMateriais.restricao}</strong>{" "}
+                                    <em>{percent(indicesMateriais.restricao, indicesMateriais.total)}</em>
+                                </li>
+                                <li>
+                                    <span className="cor indisponivel"></span> Indisponíveis:{" "}
+                                    <strong>{indicesMateriais.indisponiveis}</strong>{" "}
+                                    <em>{percent(indicesMateriais.indisponiveis, indicesMateriais.total)}</em>
+                                </li>
+                                <li>
+                                    <span className="cor manutencao"></span> Em Manutenção:{" "}
+                                    <strong>{indicesMateriais.manutencao}</strong>{" "}
+                                    <em>{percent(indicesMateriais.manutencao, indicesMateriais.total)}</em>
+                                </li>
+                                <li className="total">
+                                    Total: <strong>{indicesMateriais.total}</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </>
+                </div>
+
+                {/* indispPorModulos */}
+                <div className="relatorio-conteudo-flex">
                     <div className="indices-area">
-                        <h3>Índice de Radares</h3>
+                        <h3>Indisponibilidade de Módulos</h3>
                         <ul>
-                            <li>
-                                <span className="cor disponivel"></span> Disponíveis:{" "}
-                                <strong>{indicesMateriais.disponiveis}</strong>{" "}
-                                <em>{percent(indicesMateriais.disponiveis, indicesMateriais.total)}</em>
-                            </li>
-                            <li>
-                                <span className="cor restricao"></span> Disp. c/ Restrição:{" "}
-                                <strong>{indicesMateriais.restricao}</strong>{" "}
-                                <em>{percent(indicesMateriais.restricao, indicesMateriais.total)}</em>
-                            </li>
-                            <li>
-                                <span className="cor indisponivel"></span> Indisponíveis:{" "}
-                                <strong>{indicesMateriais.indisponiveis}</strong>{" "}
-                                <em>{percent(indicesMateriais.indisponiveis, indicesMateriais.total)}</em>
-                            </li>
-                            <li>
-                                <span className="cor manutencao"></span> Em Manutenção:{" "}
-                                <strong>{indicesMateriais.manutencao}</strong>{" "}
-                                <em>{percent(indicesMateriais.manutencao, indicesMateriais.total)}</em>
-                            </li>
+                            {
+                                indispPorModulos.modulosLista.map((modulo: { nome: string, qtd: number, total: number }) => {
+                                    return (
+                                        <li key={modulo.nome}>
+                                            <span className="cor indisponivel"></span> {modulo.nome}:{" "}
+                                            <strong>{modulo.qtd}</strong>{" "}
+                                            <em>{percent(modulo.qtd, modulo.total)}</em>
+                                        </li>
+                                    )
+                                })
+                            }
+
                             <li className="total">
-                                Total: <strong>{indicesMateriais.total}</strong>
+                                Total: <strong>{indispPorModulos.totalModulosIndisp}</strong>
                             </li>
                         </ul>
                     </div>
-                </>
-            </div>
+                </div>
 
-            {/* indispPorModulos */}
-            <div className="relatorio-conteudo-flex">
-                <div className="indices-area">
-                    <h3>Indisponibilidade de Módulos</h3>
-                    <ul>
-                        {
-                            indispPorModulos.modulosLista.map((modulo: { nome: string, qtd: number, total: number }) => {
-                                return (
-                                    <li key={modulo.nome}>
-                                        <span className="cor indisponivel"></span> {modulo.nome}:{" "}
-                                        <strong>{modulo.qtd}</strong>{" "}
-                                        <em>{percent(modulo.qtd, modulo.total)}</em>
-                                    </li>
-                                )
-                            })
-                        }
-
-                        <li className="total">
-                            Total: <strong>{indispPorModulos.totalModulosIndisp}</strong>
-                        </li>
-                    </ul>
+                {/* --- Mapa --- */}
+                <div className="mapa-conteudo">
+                    <h3>Mapa de Disponibilidade de Radares</h3>
+                    <MapaDisponibilidadeRadares />
                 </div>
             </div>
-
-            {/* --- Mapa --- */}
-            <div className="mapa-conteudo">
-                <h3>Mapa de Disponibilidade de Radares</h3>
-                <MapaDisponibilidadeRadares />
-            </div>
-        </div>
-    );
+        );
+    }
 }
