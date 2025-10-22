@@ -1,37 +1,37 @@
 html,
 body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: var(--font-montserrat), sans-serif;
-    height: 100% !important;
+  font-family: var(--font-montserrat), sans-serif;
+  height: 100% !important;
 }
 
 body::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 body::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 8px;
+  background: transparent;
+  border-radius: 8px;
 }
 
 body::-webkit-scrollbar-thumb {
-    background: #bbb;
-    border-radius: 8px;
-    transition: background 0.3s;
+  background: #bbb;
+  border-radius: 8px;
+  transition: background 0.3s;
 }
 
 body::-webkit-scrollbar-thumb:hover {
-    background: #888;
+  background: #888;
 }
 
 a {
-    text-decoration: none;
-    color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 
 /* 
@@ -39,31 +39,31 @@ a {
 */
 
 .container {
-    display: flex;
-    justify-content: center;
-    padding: 1rem 0;
-    position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+  position: relative;
 }
 
 .inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 80%;
 }
 
 .card {
-    position: relative;
-    width: 100%;
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
+  position: relative;
+  width: 100%;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .card-content {
-    padding: 2rem;
+  padding: 2rem;
 }
 
 /* 
@@ -71,9 +71,9 @@ a {
 */
 
 .title {
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    font-weight: 600;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 /* 
@@ -81,45 +81,45 @@ a {
 */
 
 .form-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
 .form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .form-group {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-    padding: 0.625rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    background-color: #f9fafb;
-    color: #111827;
-    font-size: 0.875rem;
+  padding: 0.625rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+  color: #111827;
+  font-size: 0.875rem;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
 }
 
 /* 
@@ -127,27 +127,27 @@ a {
 */
 
 button[type="submit"] {
-    width: 100%;
-    background-color: #2563eb;
-    color: white;
-    padding: 0.625rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    font-size: 0.875rem;
-    border: none;
-    cursor: pointer;
+  width: 100%;
+  background-color: #2563eb;
+  color: white;
+  padding: 0.625rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
 }
 
 button[type="submit"]:hover {
-    background-color: #1d4ed8;
+  background-color: #1d4ed8;
 }
 
 header {
-    display: flex;
-    justify-content: center;
-    padding: 1rem;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
 }
 
 .logo {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }

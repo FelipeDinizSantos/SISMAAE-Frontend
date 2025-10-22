@@ -38,7 +38,6 @@
 
 .password-input-wrapper {
   display: flex;
-  align-items: center;
   border: 1px solid #ccc;
   border-radius: 4px;
   overflow: hidden;

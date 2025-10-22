@@ -1,0 +1,1 @@
+export {default as SelecaoMateriais} from "./components/SelecaoMateriais";

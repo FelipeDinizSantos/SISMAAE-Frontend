@@ -17,7 +17,7 @@ export default function LoginPage() {
   useEffect(() => {
     const jaLogado = localStorage.getItem('token');
     if (jaLogado) {
-      router.push('/dashboard');
+      router.push('dashboard/');
     }
   }, [router]);
 

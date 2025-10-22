@@ -1,1 +1,0 @@
-export { default as ControleRegistros } from "./components/ControleRegistros";
