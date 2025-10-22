@@ -4,7 +4,10 @@ import { CiAlignLeft as Order, CiRedo as ReloadIcon } from "react-icons/ci";
 import { Dispatch, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 
-export default function FuncoesTabela<T extends { Disponibilidade: "DISPONIVEL" | "INDISPONIVEL" | "DISP_C_RESTRICAO" | "MANUTENCAO" }>({
+export default function FuncoesTabela<T extends {
+    Disponibilidade: "DISPONIVEL" | "INDISPONIVEL" | "DISP_C_RESTRICAO" | "MANUTENCAO",
+    SN: string
+}>({
     handleReload,
     itensEditaveis,
     setItensEditaveis
@@ -43,6 +46,21 @@ export default function FuncoesTabela<T extends { Disponibilidade: "DISPONIVEL" 
         toast.success("Lista ordenada por disponibilidade");
     };
 
+    const handleOrdenarSnClick = () => {
+        // Ordena alfabeticamente pelo campo SN
+        const materiaisOrdenados = [...itensEditaveis].sort((a, b) => {
+            const snA = a.SN?.toUpperCase() ?? "";
+            const snB = b.SN?.toUpperCase() ?? "";
+            return snB.localeCompare(snA, "pt-BR", { numeric: true });
+        });
+
+        setItensEditaveis(materiaisOrdenados);
+
+        toast.success(
+            `Lista ordenada por número de série ("Z–A")`
+        );
+    }
+
     return (
         <div className="menu-manip-container">
             <button
@@ -58,6 +76,13 @@ export default function FuncoesTabela<T extends { Disponibilidade: "DISPONIVEL" 
                 title="Ordernar por disponibilidade"
             >
                 <Order />
+            </button>
+            <button
+                className={`menu-btn`}
+                onClick={handleOrdenarSnClick}
+                title="Ordernar por número de serie"
+            >
+                SN
             </button>
         </div>
     );
