@@ -16,24 +16,24 @@ const geoUrl =
   "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson";
 
 const regioes: Record<string, number> = {
-  "Acre": 1,
-  "Amazonas": 1,
-  "Rondônia": 1,
-  "Roraima": 1,
-  "Pará": 1,
-  "Amapá": 1,
-  "Maranhão": 1,
+  Acre: 1,
+  Amazonas: 1,
+  Rondônia: 1,
+  Roraima: 1,
+  Pará: 1,
+  Amapá: 1,
+  Maranhão: 1,
 
-  "Tocantins": 2,
-  "Goiás": 2,
-  "Piauí": 2,
-  "Ceará": 2,
+  Tocantins: 2,
+  Goiás: 2,
+  Piauí: 2,
+  Ceará: 2,
   "Rio Grande do Norte": 2,
-  "Paraíba": 2,
-  "Pernambuco": 2,
-  "Alagoas": 2,
-  "Sergipe": 2,
-  "Bahia": 2,
+  Paraíba: 2,
+  Pernambuco: 2,
+  Alagoas: 2,
+  Sergipe: 2,
+  Bahia: 2,
   "Distrito Federal": 2,
   "Minas Gerais": 2,
 
@@ -45,7 +45,7 @@ const regioes: Record<string, number> = {
   "Rio de Janeiro": 5,
   "Espírito Santo": 5,
 
-  "Paraná": 6,
+  Paraná: 6,
   "Santa Catarina": 6,
   "Rio Grande do Sul": 6,
 };
@@ -126,7 +126,7 @@ export default function MapaDisponibilidadeRadares() {
       <div className="mapa-legend-circulos">
         <div className="mapa-legend-circulos-item">
           <span className="circulo disponivel"></span>
-          Radares disponíveis
+          Radares disponíveis / disponíveis com restrição 
         </div>
         <div className="mapa-legend-circulos-item">
           <span className="circulo indisponivel"></span>

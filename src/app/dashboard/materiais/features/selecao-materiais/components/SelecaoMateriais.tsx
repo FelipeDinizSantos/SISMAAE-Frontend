@@ -16,17 +16,17 @@ export default function SelecaoMateriais({
     {
       nome: "Radar",
       key: "radar",
-      descricao: "Radares e seus módulos de vigilância aérea responsáveis pela detecção e rastreamento de alvos.",
+      descricao: "Radares e módulos de vigilância aérea responsáveis pela detecção e rastreamento de alvos.",
     },
     {
       nome: "RBS",
       key: "rbs",
-      descricao: "Sistema lançador de mísseis de defesa antiaérea e seus componentes.",
+      descricao: "Sistema lançador de mísseis e componentesde defesa antiaérea.",
     },
     {
-      nome: "COL",
+      nome: "COAAe",
       key: "col",
-      descricao: "Viaturas e seus equipamentos de comunicação e enlace operacional.",
+      descricao: "Viaturas e equipamentos de comunicação e enlace operacional.",
     },
   ];
 

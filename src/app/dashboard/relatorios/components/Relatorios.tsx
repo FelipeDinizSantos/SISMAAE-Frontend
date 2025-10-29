@@ -5,13 +5,21 @@ import "../styles.css";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import RelatorioDisponibilidade from "./RelatorioDisponibilidade";
+import RelatorioHistoricoDispRadares from "./RelatorioHistoricoDispRadares";
 import { Relatorio } from "../interfaces";
 
 const relatoriosDisponiveis: Relatorio[] = [
   {
+    id: "relatorio-historico-disp-radares",
+    nome: "Histórico de Disponibilidade de Radares",
+    descricao: "Acompanha a variação mensal da disponibilidade dos radares ao longo dos anos, permitindo análise comparativa entre períodos.",
+    componente: <RelatorioHistoricoDispRadares />,
+    disponivelPara: ["COL"]
+  },
+  {
     id: "relatorio-disp-radares",
     nome: "Relatório Disponibilidade de Radares",
-    descricao: "Resumo da disponibilidade de radares",
+    descricao: "Apresenta resumo detalhado da disponibilidade atual dos radares, facilitando a visualização do status operacional e suporte à tomada de decisão.",
     componente: <RelatorioDisponibilidade />,
     disponivelPara: ["COL"],
   },
@@ -54,7 +62,7 @@ export default function Relatorios() {
       <div className="relatorio-conteudo">
         {relatorioAtivo ? (
           <div className="relatorio-detalhes">
-            <h2>{relatorioAtivo.nome}</h2>
+            <h3>{relatorioAtivo.nome}</h3>
             <p>{relatorioAtivo.descricao}</p>
             {relatorioAtivo.componente}
           </div>
