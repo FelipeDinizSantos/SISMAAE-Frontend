@@ -1,5 +1,9 @@
 import "./FuncoesTabela.css";
-import { CiAlignLeft as Order, CiRedo as ReloadIcon } from "react-icons/ci";
+import {
+  LuRefreshCcw as ReloadIcon,
+  LuListFilter as DisponibilidadeIcon,
+  LuListOrdered as SerieIcon,
+} from "react-icons/lu";
 import { Dispatch, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -47,7 +51,6 @@ export default function FuncoesTabela<
   };
 
   const handleOrdenarSnClick = () => {
-    // Ordena alfabeticamente pelo campo SN
     const materiaisOrdenados = [...itensEditaveis].sort((a, b) => {
       const snA = a.SN?.toUpperCase() ?? "";
       const snB = b.SN?.toUpperCase() ?? "";
@@ -69,7 +72,7 @@ export default function FuncoesTabela<
   return (
     <div className="menu-manip-container">
       <button
-        className={`menu-btn`}
+        className="menu-btn"
         onClick={handleRecarregamentoClick}
         title="Atualizar lista"
       >
@@ -81,7 +84,7 @@ export default function FuncoesTabela<
         onClick={handleOrdenarClick}
         title="Ordenar por disponibilidade"
       >
-        <Order />
+        <DisponibilidadeIcon />
       </button>
 
       <button
@@ -89,7 +92,7 @@ export default function FuncoesTabela<
         onClick={handleOrdenarSnClick}
         title="Ordenar por número de série"
       >
-        SN
+        <SerieIcon />
       </button>
     </div>
   );
