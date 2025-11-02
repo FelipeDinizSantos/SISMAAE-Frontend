@@ -1,8 +1,14 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-import { User } from '@/interfaces/Usuario.interface';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { useRouter } from "next/navigation";
+import { User } from "@/interfaces/Usuario.interface";
 
 type AuthContextType = {
   user: User | null;
@@ -20,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       fetchUser(token);
     } else {
@@ -30,11 +36,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUser = async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuarios/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/usuarios/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!res.ok) {
         logout();
@@ -45,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(data.resultado[0]);
     } catch (error) {
-      console.error('Erro ao buscar usuário:', error);
+      console.error("Erro ao buscar usuário:", error);
       logout();
     } finally {
       setLoading(false);
@@ -53,15 +62,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (token: string) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
 
     await fetchUser(token);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    router.push('/');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (e) {
+      console.error("Erro ao fazer logout", e);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("materialSelecionado");
+      router.push("/");
+      setUser(null);
+    }
   };
 
   return (

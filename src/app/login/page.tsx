@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import './Login.css';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
-import toast from 'react-hot-toast';
+import "./Login.css";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   useEffect(() => {
-    const jaLogado = localStorage.getItem('token');
+    const jaLogado = localStorage.getItem("token");
     if (jaLogado) {
-      router.push('dashboard/');
+      router.push("dashboard/materiais");
     }
   }, [router]);
 
@@ -27,26 +27,26 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idtMilitar: email, senha }),
       });
 
-      const data = await response.json();
+      const data: { success: boolean; token: string; error?: any } =
+        await response.json();
 
       if (!response.ok) {
-        toast.error(data.error || 'Erro ao realizar login.');
+        toast.error(data.error || "Erro ao realizar login.");
         setLoading(false);
         return;
       }
 
-      await login(data.token);
-      router.push('/dashboard');
+      login(data.token);
+      router.push("/dashboard/materiais");
     } catch (err: any) {
-      toast.error(err.message)
+      console.error(err);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export default function LoginPage() {
                   <label htmlFor="password">Senha</label>
                   <div className="password-input-wrapper">
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       id="password"
                       placeholder="••••••••"
@@ -89,15 +89,17 @@ export default function LoginPage() {
                       type="button"
                       className="toggle-password"
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+                      aria-label={
+                        showPassword ? "Esconder senha" : "Mostrar senha"
+                      }
                     >
-                      {showPassword ? '🔓' : '🔒'}
+                      {showPassword ? "🔓" : "🔒"}
                     </button>
                   </div>
                 </div>
 
                 <button type="submit" disabled={loading}>
-                  {loading ? 'Entrando...' : 'Entrar'}
+                  {loading ? "Entrando..." : "Entrar"}
                 </button>
 
                 <p className="register-text">

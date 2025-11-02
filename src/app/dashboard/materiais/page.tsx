@@ -13,7 +13,7 @@ import { SelecaoMateriais } from "./features/selecao-materiais";
 
 export default function MateriaisPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   // STATES DE CONTROLE DOS DADOS DAS TABELAS
   const [itens, setItens] = useState<Material[] | Modulo[]>([]);
