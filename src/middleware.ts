@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { PROTECTED_ROUTES } from "./config/middleware";
+import { acessoRotas, PROTECTED_ROUTES } from "./config/middleware";
 import { verificarAuthToken } from "./utils/verificarAuthToken";
 
+// Middleware centralizado para toda aplicação.
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
@@ -19,11 +20,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Verifica e decodifica o token
   const user = await verificarAuthToken(token);
   if (!user) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
+
+  // Verifica as rotas que possuem nivel de acesso o comparando-o com do usuário logado. 
+  const allowedRoles = acessoRotas[pathname];
+  if (allowedRoles && !allowedRoles.includes(user.role as unknown as string))
+    return NextResponse.redirect(new URL("/nao-autorizado", req.url)); 
 
   // Analisar necessidade quando for implementar Barear de request padrão para o frontend
   const res = NextResponse.next();
@@ -32,7 +37,7 @@ export async function middleware(req: NextRequest) {
   return res;
 }
 
-// Rotas gatilho para o middleware 
+// Rotas gatilho para o middleware
 export const config = {
   matcher: ["/dashboard/:path*"],
 };
