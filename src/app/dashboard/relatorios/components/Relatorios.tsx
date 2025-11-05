@@ -12,21 +12,25 @@ const relatoriosDisponiveis: Relatorio[] = [
   {
     id: "relatorio-historico-disp-radares",
     nome: "Histórico de Disponibilidade de Radares",
-    descricao: "Acompanha a variação mensal da disponibilidade dos radares ao longo dos anos, permitindo análise comparativa entre períodos.",
+    descricao:
+      "Acompanha a variação mensal da disponibilidade dos radares ao longo dos anos, permitindo análise comparativa entre períodos.",
     componente: <RelatorioHistoricoDispRadares />,
-    disponivelPara: ["COL"]
+    disponivelPara: ["COL"],
   },
   {
     id: "relatorio-disp-radares",
     nome: "Relatório Disponibilidade de Radares",
-    descricao: "Apresenta resumo detalhado da disponibilidade atual dos radares, facilitando a visualização do status operacional e suporte à tomada de decisão.",
+    descricao:
+      "Apresenta resumo detalhado da disponibilidade atual dos radares, facilitando a visualização do status operacional e suporte à tomada de decisão.",
     componente: <RelatorioDisponibilidade />,
     disponivelPara: ["COL"],
   },
 ];
 
 export default function Relatorios() {
-  const [relatorioSelecionado, setRelatorioSelecionado] = useState<string | null>(null);
+  const [relatorioSelecionado, setRelatorioSelecionado] = useState<
+    string | null
+  >(null);
   const { user } = useAuth();
 
   const relatoriosPermitidos = relatoriosDisponiveis.filter((r) =>
@@ -44,8 +48,9 @@ export default function Relatorios() {
           relatoriosPermitidos.map((relatorio) => (
             <div
               key={relatorio.id}
-              className={`relatorio-card ${relatorioSelecionado === relatorio.id ? "ativo" : ""
-                }`}
+              className={`relatorio-card ${
+                relatorioSelecionado === relatorio.id ? "ativo" : ""
+              }`}
               onClick={() => setRelatorioSelecionado(relatorio.id)}
             >
               <h3>{relatorio.nome}</h3>
@@ -68,7 +73,9 @@ export default function Relatorios() {
           </div>
         ) : (
           relatoriosPermitidos.length > 0 && (
-            <p className="placeholder">Selecione um relatório para visualizar.</p>
+            <p className="placeholder">
+              Selecione um relatório para visualizar.
+            </p>
           )
         )}
       </div>

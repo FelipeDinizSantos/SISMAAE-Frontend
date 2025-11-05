@@ -1,9 +1,8 @@
 "use client";
 
 import "../styles.css";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { usePaginacao } from "@/hooks/usePaginacao";
-import { redirect } from "next/navigation";
 import useRegistros from "../hooks/useRegistros";
 import formatarDataExibicao from "@/utils/formatarDataExibicao";
 
@@ -13,11 +12,6 @@ export default function ControleRegistros() {
   const [dataAte, setDataAte] = useState("");
 
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    if (!token) redirect("/login");
-  }, [token]);
-
   const { registros } = useRegistros(token!);
 
   const registrosFiltrados = useMemo(() => {

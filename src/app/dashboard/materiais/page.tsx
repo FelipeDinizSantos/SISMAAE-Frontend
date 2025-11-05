@@ -2,8 +2,6 @@
 
 import "./Materiais.css";
 
-import { useAuth } from "../../../context/AuthContext";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import MenuLateral from "./components/MenuLateral";
 import { Material } from "@/interfaces/Material.interface";
@@ -12,9 +10,6 @@ import GerarLista from "./components/GerarTabelas";
 import { SelecaoMateriais } from "./features/selecao-materiais";
 
 export default function MateriaisPage() {
-  const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
-
   // STATES DE CONTROLE DOS DADOS DAS TABELAS
   const [itens, setItens] = useState<Material[] | Modulo[]>([]);
   const [materiais, setMateriais] = useState<Material[]>([]);
@@ -34,10 +29,6 @@ export default function MateriaisPage() {
   const [materialSelecionado, setMaterialSelecionado] = useState<
     "radar" | "rbs" | "col" | ""
   >(materialJaSelecionado as "radar" | "rbs" | "col" | "");
-
-  useEffect(() => {
-    if (!isAuthenticated) router.push("/");
-  }, [isAuthenticated]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
