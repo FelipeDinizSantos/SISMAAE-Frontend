@@ -6,21 +6,20 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ListaRegistrosProps, Registro } from "../interfaces";
 
-export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosProps) {
+export default function ListaRegistros({
+  itemId,
+  isMaterial,
+}: ListaRegistrosProps) {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRegistros = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
+        const res = await fetch(
+          `/api/registros/${isMaterial ? "materiais" : "modulos"}/${itemId}`
+        );
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/registros/${isMaterial ? 'materiais' : 'modulos'}/${itemId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
         const data = await res.json();
         setRegistros(data.registros);
       } catch (err: unknown) {
@@ -46,23 +45,33 @@ export default function ListaRegistros({ itemId, isMaterial }: ListaRegistrosPro
       {registros.map((r) => (
         <li key={r.id}>
           <div className="registros-infos">
-            <div className="codigo">
-              {r.cod}
-            </div>
-            <div className={`registro-badge ${r.automatico ? "automatico" : "manual"}`}>
+            <div className="codigo">{r.cod}</div>
+            <div
+              className={`registro-badge ${
+                r.automatico ? "automatico" : "manual"
+              }`}
+            >
               {r.automatico ? "Automático" : "Manual"}
             </div>
           </div>
-          <p className="acao"><strong>Ação:</strong> {r.acao}</p>
-          {
-            r.mecanico_id &&
+          <p className="acao">
+            <strong>Ação:</strong> {r.acao}
+          </p>
+          {r.mecanico_id && (
             <p>
-              <strong>Criado por:</strong> {`${r.mecanico_posto}. ${r.mecanico_nome} - ${r.mecanico_batalhao} (${r.perfil})`}
+              <strong>Criado por:</strong>{" "}
+              {`${r.mecanico_posto}. ${r.mecanico_nome} - ${r.mecanico_batalhao} (${r.perfil})`}
             </p>
-          }
+          )}
           <small>
             <p className="data-criacao-registro">
-              <em>{new Date(r.data).toLocaleDateString()} às {new Date(r.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</em>
+              <em>
+                {new Date(r.data).toLocaleDateString()} às{" "}
+                {new Date(r.data).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </em>
             </p>
           </small>
         </li>

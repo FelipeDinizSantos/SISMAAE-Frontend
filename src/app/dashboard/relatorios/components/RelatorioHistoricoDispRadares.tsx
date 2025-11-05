@@ -11,17 +11,9 @@ export default function RelatorioHistoricoDispRadares() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
     const fetchHistorico = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/relatorios/radares/historico-disp`,
-          {
-            headers: { authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await fetch(`/api/relatorios/radares/historico-disp`);
 
         const data = await res.json();
 
@@ -51,7 +43,10 @@ export default function RelatorioHistoricoDispRadares() {
         </p>
       ) : (
         <div className="relatorio-conteudo-flex">
-          <GraficoHistoricoDisp historico={historico} qtdRegistros={qtdRegistros} />
+          <GraficoHistoricoDisp
+            historico={historico}
+            qtdRegistros={qtdRegistros}
+          />
         </div>
       )}
     </div>

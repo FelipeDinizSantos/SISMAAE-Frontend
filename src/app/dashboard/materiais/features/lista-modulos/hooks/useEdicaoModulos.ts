@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from 'react-hot-toast';
 import { Batalhao } from "@/interfaces/Batalhao.interface";
 import { Modulo } from "@/interfaces/Modulo.interface";
-import criarRegistroAutomatico from "@/utils/criarRegistroAutomatico";
+import criarRegistroAutomatico from "@/lib/criarRegistroAutomatico";
 
 export function useEdicaoModulos(
     modulos: Modulo[],
@@ -64,9 +64,6 @@ export function useEdicaoModulos(
     };
 
     const confirmarEdicao = async (index: number) => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
         try {
             const moduloEditado = modulosEditaveis[index];
 
@@ -92,10 +89,9 @@ export function useEdicaoModulos(
                 }
             }
 
-            const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos/${modulos[index].id}`, {
+            const result = await fetch(`/api/modulos/${modulos[index].id}`, {
                 method: "PUT",
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(corpoRequisicaoComCabide)

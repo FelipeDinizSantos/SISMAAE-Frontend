@@ -26,24 +26,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetchUser(token);
-    } else {
-      setLoading(false);
-    }
+    fetchUser();
+    setLoading(false);
   }, []);
 
-  const fetchUser = async (token: string) => {
+  const fetchUser = async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/usuarios/me`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch(`/api/usuarios/me`);
 
       if (!res.ok) {
         logout();
@@ -61,10 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (token: string) => {
-    localStorage.setItem("token", token);
-
-    await fetchUser(token);
+  const login = async () => {
+    await fetchUser();
   };
 
   const logout = async () => {
@@ -73,7 +60,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.error("Erro ao fazer logout", e);
     } finally {
-      localStorage.removeItem("token");
       localStorage.removeItem("materialSelecionado");
       router.push("/");
       setUser(null);

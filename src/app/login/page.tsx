@@ -1,7 +1,7 @@
 "use client";
 
 import "./Login.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
@@ -13,13 +13,6 @@ export default function LoginPage() {
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-
-  useEffect(() => {
-    const jaLogado = localStorage.getItem("token");
-    if (jaLogado) {
-      router.push("dashboard/materiais");
-    }
-  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

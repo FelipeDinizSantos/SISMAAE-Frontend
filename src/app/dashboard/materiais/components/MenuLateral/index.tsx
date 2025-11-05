@@ -28,12 +28,9 @@ export default function MenuLateral({
   auxiliarBuscaEspecifica: string;
   setAuxiliarBuscaEspecifica: Dispatch<SetStateAction<string>>;
 }) {
-  const token = localStorage.getItem("token");
-  if (!token) return;
-
   const [filtroGeralValue, setFiltroGeralValue] = useState("");
-  const { batalhoes } = useBatalhao(token);
-  const { cabides } = useCabides(token);
+  const { batalhoes } = useBatalhao();
+  const { cabides } = useCabides();
 
   const opcoesModulos = [
     "antena",

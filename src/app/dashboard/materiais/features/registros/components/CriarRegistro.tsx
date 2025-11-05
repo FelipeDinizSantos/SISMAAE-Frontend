@@ -6,7 +6,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { FormRegistroProps } from "../interfaces";
 
-export default function CriarRegistro({ materialId, moduloId, mecanicoId, onSuccess }: FormRegistroProps) {
+export default function CriarRegistro({
+  materialId,
+  moduloId,
+  mecanicoId,
+  onSuccess,
+}: FormRegistroProps) {
   const [acao, setAcao] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,14 +28,10 @@ export default function CriarRegistro({ materialId, moduloId, mecanicoId, onSucc
     };
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/registros`, {
+      const res = await fetch(`/api/registros`, {
         method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
@@ -39,7 +40,7 @@ export default function CriarRegistro({ materialId, moduloId, mecanicoId, onSucc
 
       setAcao("");
 
-      toast.success("Registro criado")
+      toast.success("Registro criado");
 
       onSuccess();
     } catch (err: unknown) {

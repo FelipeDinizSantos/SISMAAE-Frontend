@@ -31,17 +31,9 @@ export default function MateriaisPage() {
   >(materialJaSelecionado as "radar" | "rbs" | "col" | "");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
     const fetchMateriais = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/materiais/`,
-          {
-            headers: { authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await fetch(`/api/materiais/`);
         const data = await res.json();
 
         setMateriais(data.materiais || []);

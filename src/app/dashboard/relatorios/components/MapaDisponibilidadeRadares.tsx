@@ -79,17 +79,9 @@ export default function MapaDisponibilidadeRadares() {
   ]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
     const fetchData = async () => {
       try {
-        let res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/relatorios/radares/disp-por-regiao`,
-          {
-            headers: { authorization: `Bearer ${token}` },
-          }
-        );
+        let res = await fetch(`/api/relatorios/radares/disp-por-regiao`);
 
         let data = await res.json();
         let regioes: regiao[] = data.regioes;
@@ -126,7 +118,7 @@ export default function MapaDisponibilidadeRadares() {
       <div className="mapa-legend-circulos">
         <div className="mapa-legend-circulos-item">
           <span className="circulo disponivel"></span>
-          Radares disponíveis / disponíveis com restrição 
+          Radares disponíveis / disponíveis com restrição
         </div>
         <div className="mapa-legend-circulos-item">
           <span className="circulo indisponivel"></span>

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { acessoRotas, PROTECTED_ROUTES } from "./config/middleware";
-import { verificarAuthToken } from "./utils/verificarAuthToken";
+import { verificarAuthToken } from "./lib/verificarAuthToken";
 
 // Middleware centralizado para toda aplicação.
 export async function middleware(req: NextRequest) {

@@ -32,9 +32,6 @@ export default function ListaModulos(
             setReload: Dispatch<SetStateAction<boolean>>
         }
 ) {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
     const { podeEditar } = usePermissao();
     const { user } = useAuth();
 
@@ -54,8 +51,8 @@ export default function ListaModulos(
     const [loading, setLoading] = useState(true);
 
     const { modal, abrirModal, abrirModalListar, fecharModal } = useModal();
-    const { batalhoes } = useBatalhao(token);
-    const { cabides } = useCabides(token);
+    const { batalhoes } = useBatalhao();
+    const { cabides } = useCabides();
 
     const { modulosEditaveis, setModulosEditaveis, iniciarEdicao, cancelarEdicao, confirmarEdicao } =
         useEdicaoModulos(modulos, setModulos, batalhoes, user, setItens, cabides);

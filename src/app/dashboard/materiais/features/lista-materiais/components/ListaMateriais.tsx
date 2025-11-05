@@ -32,13 +32,10 @@ export default function ListaMateriais(
             setReload: Dispatch<SetStateAction<boolean>>
         }
 ) {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
     const { podeEditar } = usePermissao();
     const { user } = useAuth();
 
-    const { batalhoes } = useBatalhao(token);
+    const { batalhoes } = useBatalhao();
     const { materiaisEditaveis, setMateriaisEditaveis, iniciarEdicao, cancelarEdicao, confirmarEdicao } =
         useEdicaoMateriais(materiais, setMateriais, batalhoes, user, setItens);
 

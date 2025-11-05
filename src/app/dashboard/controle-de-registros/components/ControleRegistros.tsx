@@ -5,14 +5,19 @@ import { useState, useMemo } from "react";
 import { usePaginacao } from "@/hooks/usePaginacao";
 import useRegistros from "../hooks/useRegistros";
 import formatarDataExibicao from "@/utils/formatarDataExibicao";
+import { useAuth } from "@/context/AuthContext";
+import { useRoleGuard } from "@/hooks/roleGuard";
 
 export default function ControleRegistros() {
+  // Define para está página quais niveis de acesso poderam acessa-la.
+  const { user } = useAuth();
+  useRoleGuard(["ADMIN", "COMANDO", "COL"], user!.perfil);
+
   const [buscaCod, setBuscaCod] = useState("");
   const [dataDe, setDataDe] = useState("");
   const [dataAte, setDataAte] = useState("");
 
-  const token = localStorage.getItem("token");
-  const { registros } = useRegistros(token!);
+  const { registros } = useRegistros();
 
   const registrosFiltrados = useMemo(() => {
     return registros.filter((r) => {

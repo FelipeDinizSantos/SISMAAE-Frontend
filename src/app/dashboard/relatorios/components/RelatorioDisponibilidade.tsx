@@ -9,183 +9,205 @@ import GraficoStatus from "@/components/GraficoStatus";
 import MapaDisponibilidadeRadares from "./MapaDisponibilidadeRadares";
 
 export default function RelatorioDisponibilidade() {
-    const [materiais, setMateriais] = useState<Material[]>([]);
-    const [modulos, setModulos] = useState<Modulo[]>([]);
-    const [loading, setLoading] = useState(true);
+  const [materiais, setMateriais] = useState<Material[]>([]);
+  const [modulos, setModulos] = useState<Modulo[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
+  useEffect(() => {
+    const fetchMateriais = async () => {
+      try {
+        const res = await fetch(`/api/materiais/`);
+        const data = await res.json();
+        setMateriais(data.materiais || []);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro inesperado!");
+        }
+      }
+    };
 
-        const fetchMateriais = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/materiais/`, {
-                    headers: { authorization: `Bearer ${token}` },
-                });
-                const data = await res.json();
-                setMateriais(data.materiais || []);
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    toast.error(error.message);
-                } else {
-                    toast.error("Ocorreu um erro inesperado!");
-                }
-            }
-        };
+    fetchMateriais();
 
-        fetchMateriais();
+    const fetchModulos = async () => {
+      try {
+        const res = await fetch(`/api/modulos/`);
+        const data = await res.json();
+        setModulos(data.modulos || []);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro inesperado!");
+        }
+      }
+    };
 
+    fetchModulos();
+    setLoading(false);
+  }, []);
 
-        const fetchModulos = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/modulos/`, {
-                    headers: { authorization: `Bearer ${token}` },
-                });
-                const data = await res.json();
-                setModulos(data.modulos || []);
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    toast.error(error.message);
-                } else {
-                    toast.error("Ocorreu um erro inesperado!");
-                }
-            }
-        };
+  const indicesMateriais = useMemo(() => {
+    const total = materiais.length;
+    const disponiveis = materiais.filter(
+      (m) => m.Disponibilidade === "DISPONIVEL"
+    ).length;
+    const restricao = materiais.filter(
+      (m) => m.Disponibilidade === "DISP_C_RESTRICAO"
+    ).length;
+    const indisponiveis = materiais.filter(
+      (m) => m.Disponibilidade === "INDISPONIVEL"
+    ).length;
+    const manutencao = materiais.filter(
+      (m) => m.Disponibilidade === "MANUTENCAO"
+    ).length;
 
-        fetchModulos();
-        setLoading(false);
-    }, []);
+    return { total, disponiveis, restricao, indisponiveis, manutencao };
+  }, [materiais]);
 
-    const indicesMateriais = useMemo(() => {
-        const total = materiais.length;
-        const disponiveis = materiais.filter((m) => m.Disponibilidade === "DISPONIVEL").length;
-        const restricao = materiais.filter((m) => m.Disponibilidade === "DISP_C_RESTRICAO").length;
-        const indisponiveis = materiais.filter((m) => m.Disponibilidade === "INDISPONIVEL").length;
-        const manutencao = materiais.filter((m) => m.Disponibilidade === "MANUTENCAO").length;
+  const indispPorModulos = useMemo(() => {
+    const ignorar = ["ANTENA", "CAIXA DE BATERIAS", "GERADOR", "CABEAMENTO"];
 
-        return { total, disponiveis, restricao, indisponiveis, manutencao };
-    }, [materiais]);
+    const renomear: Record<string, string> = {
+      PEDESTAL: "Pedestal",
+      QUADRIPE: "Quadripé",
+    };
 
-    const indispPorModulos = useMemo(() => {
-        const ignorar = ["ANTENA", "CAIXA DE BATERIAS", "GERADOR", "CABEAMENTO"];
+    const modulosMap = modulos.reduce<
+      Record<string, { nome: string; qtd: number; total: number }>
+    >((acc, mod) => {
+      let nome = mod.modulo?.toUpperCase();
+      if (!nome) return acc;
 
-        const renomear: Record<string, string> = {
-            "PEDESTAL": "Pedestal",
-            "QUADRIPE": "Quadripé"
-        };
+      if (ignorar.includes(nome)) return acc;
 
-        const modulosMap = modulos.reduce<
-            Record<string, { nome: string; qtd: number; total: number }>
-        >((acc, mod) => {
-            let nome = mod.modulo?.toUpperCase();
-            if (!nome) return acc;
+      const nomeFormatado = renomear[nome] || nome;
 
-            if (ignorar.includes(nome)) return acc;
+      if (!acc[nomeFormatado]) {
+        acc[nomeFormatado] = { nome: nomeFormatado, qtd: 0, total: 0 };
+      }
 
-            const nomeFormatado = renomear[nome] || nome;
+      acc[nomeFormatado].total++;
 
-            if (!acc[nomeFormatado]) {
-                acc[nomeFormatado] = { nome: nomeFormatado, qtd: 0, total: 0 };
-            }
+      if (
+        mod.Disponibilidade === "INDISPONIVEL" ||
+        mod.Disponibilidade === "MANUTENCAO"
+      ) {
+        acc[nomeFormatado].qtd++;
+      }
 
-            acc[nomeFormatado].total++;
+      return acc;
+    }, {});
 
-            if (
-                mod.Disponibilidade === "INDISPONIVEL" ||
-                mod.Disponibilidade === "MANUTENCAO"
-            ) {
-                acc[nomeFormatado].qtd++;
-            }
+    const modulosLista = Object.values(modulosMap);
 
-            return acc;
-        }, {});
+    const totalModulosIndisp = modulosLista.reduce(
+      (soma, m) => soma + m.qtd,
+      0
+    );
 
-        const modulosLista = Object.values(modulosMap);
+    return { modulosLista, totalModulosIndisp };
+  }, [modulos]);
 
-        const totalModulosIndisp = modulosLista.reduce(
-            (soma, m) => soma + m.qtd,
-            0
-        );
+  const percent = (valor: number, total: number) =>
+    total > 0 ? ((valor / total) * 100).toFixed(1) + "%" : "-";
 
-        return { modulosLista, totalModulosIndisp };
-    }, [modulos]);
-
-
-    const percent = (valor: number, total: number) =>
-        total > 0 ? ((valor / total) * 100).toFixed(1) + "%" : "-";
-
-    if (loading) {
-        return <p>Montando relatório ...</p>
-    } else {
-        return (
-            <div className="relatorio-bloco">
-                {/* --- Materiais --- */}
-                <div className="relatorio-conteudo-flex">
-                    <>
-                        <div className="grafico-area">
-                            <GraficoStatus itens={materiais} titulo="Relação de Disponibilidades" />
-                        </div>
-                        <div className="indices-area">
-                            <h3>Índice de Radares</h3>
-                            <ul>
-                                <li>
-                                    <span className="cor disponivel"></span> Disponíveis:{" "}
-                                    <strong>{indicesMateriais.disponiveis}</strong>{" "}
-                                    <em>{percent(indicesMateriais.disponiveis, indicesMateriais.total)}</em>
-                                </li>
-                                <li>
-                                    <span className="cor restricao"></span> Disp. c/ Restrição:{" "}
-                                    <strong>{indicesMateriais.restricao}</strong>{" "}
-                                    <em>{percent(indicesMateriais.restricao, indicesMateriais.total)}</em>
-                                </li>
-                                <li>
-                                    <span className="cor indisponivel"></span> Indisponíveis:{" "}
-                                    <strong>{indicesMateriais.indisponiveis}</strong>{" "}
-                                    <em>{percent(indicesMateriais.indisponiveis, indicesMateriais.total)}</em>
-                                </li>
-                                <li>
-                                    <span className="cor manutencao"></span> Em Manutenção:{" "}
-                                    <strong>{indicesMateriais.manutencao}</strong>{" "}
-                                    <em>{percent(indicesMateriais.manutencao, indicesMateriais.total)}</em>
-                                </li>
-                                <li className="total">
-                                    Total: <strong>{indicesMateriais.total}</strong>
-                                </li>
-                            </ul>
-                        </div>
-                    </>
-                </div>
-
-                {/* indispPorModulos */}
-                <div className="relatorio-conteudo-flex">
-                    <div className="indices-area">
-                        <h3>Indisponibilidade de Módulos</h3>
-                        <ul>
-                            {
-                                indispPorModulos.modulosLista.map((modulo: { nome: string, qtd: number, total: number }) => {
-                                    return (
-                                        <li key={modulo.nome}>
-                                            <span className="cor indisponivel"></span> {modulo.nome}:{" "}
-                                            <strong>{modulo.qtd}</strong>{" "}
-                                            <em>{percent(modulo.qtd, modulo.total)}</em>
-                                        </li>
-                                    )
-                                })
-                            }
-
-                            <li className="total">
-                                Total: <strong>{indispPorModulos.totalModulosIndisp}</strong>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                {/* --- Mapa --- */}
-                <div className="mapa-conteudo">
-                    <h3>Mapa de Disponibilidade de Radares</h3>
-                    <MapaDisponibilidadeRadares />
-                </div>
+  if (loading) {
+    return <p>Montando relatório ...</p>;
+  } else {
+    return (
+      <div className="relatorio-bloco">
+        {/* --- Materiais --- */}
+        <div className="relatorio-conteudo-flex">
+          <>
+            <div className="grafico-area">
+              <GraficoStatus
+                itens={materiais}
+                titulo="Relação de Disponibilidades"
+              />
             </div>
-        );
-    }
+            <div className="indices-area">
+              <h3>Índice de Radares</h3>
+              <ul>
+                <li>
+                  <span className="cor disponivel"></span> Disponíveis:{" "}
+                  <strong>{indicesMateriais.disponiveis}</strong>{" "}
+                  <em>
+                    {percent(
+                      indicesMateriais.disponiveis,
+                      indicesMateriais.total
+                    )}
+                  </em>
+                </li>
+                <li>
+                  <span className="cor restricao"></span> Disp. c/ Restrição:{" "}
+                  <strong>{indicesMateriais.restricao}</strong>{" "}
+                  <em>
+                    {percent(
+                      indicesMateriais.restricao,
+                      indicesMateriais.total
+                    )}
+                  </em>
+                </li>
+                <li>
+                  <span className="cor indisponivel"></span> Indisponíveis:{" "}
+                  <strong>{indicesMateriais.indisponiveis}</strong>{" "}
+                  <em>
+                    {percent(
+                      indicesMateriais.indisponiveis,
+                      indicesMateriais.total
+                    )}
+                  </em>
+                </li>
+                <li>
+                  <span className="cor manutencao"></span> Em Manutenção:{" "}
+                  <strong>{indicesMateriais.manutencao}</strong>{" "}
+                  <em>
+                    {percent(
+                      indicesMateriais.manutencao,
+                      indicesMateriais.total
+                    )}
+                  </em>
+                </li>
+                <li className="total">
+                  Total: <strong>{indicesMateriais.total}</strong>
+                </li>
+              </ul>
+            </div>
+          </>
+        </div>
+
+        {/* indispPorModulos */}
+        <div className="relatorio-conteudo-flex">
+          <div className="indices-area">
+            <h3>Indisponibilidade de Módulos</h3>
+            <ul>
+              {indispPorModulos.modulosLista.map(
+                (modulo: { nome: string; qtd: number; total: number }) => {
+                  return (
+                    <li key={modulo.nome}>
+                      <span className="cor indisponivel"></span> {modulo.nome}:{" "}
+                      <strong>{modulo.qtd}</strong>{" "}
+                      <em>{percent(modulo.qtd, modulo.total)}</em>
+                    </li>
+                  );
+                }
+              )}
+
+              <li className="total">
+                Total: <strong>{indispPorModulos.totalModulosIndisp}</strong>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* --- Mapa --- */}
+        <div className="mapa-conteudo">
+          <h3>Mapa de Disponibilidade de Radares</h3>
+          <MapaDisponibilidadeRadares />
+        </div>
+      </div>
+    );
+  }
 }
