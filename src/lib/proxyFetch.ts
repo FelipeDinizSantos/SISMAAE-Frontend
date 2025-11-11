@@ -1,4 +1,3 @@
-// /lib/apiProxy.ts
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 

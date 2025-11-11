@@ -25,15 +25,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Verifica as rotas que possuem nivel de acesso o comparando-o com do usuário logado. 
-  const allowedRoles = acessoRotas[pathname];
-  if (allowedRoles && !allowedRoles.includes(user.role as unknown as string))
-    return NextResponse.redirect(new URL("/nao-autorizado", req.url)); 
+  // Verifica as rotas que possuem nivel de acesso o comparando-o com do usuário logado.
+  const allowedRoles = Object.entries(acessoRotas).find(([route]) =>
+    pathname.startsWith(route)
+  )?.[1];
+
+  if (allowedRoles && !allowedRoles.includes(user.role as string)) {
+    return NextResponse.redirect(new URL("/nao-autorizado", req.url));
+  }
 
   // Analisar necessidade quando for implementar Barear de request padrão para o frontend
   const res = NextResponse.next();
-  res.headers.set("x-user-id", String(user.id));
-  res.headers.set("x-user-role", user.role as unknown as string);
   return res;
 }
 

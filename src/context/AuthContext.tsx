@@ -12,7 +12,7 @@ import { User } from "@/interfaces/Usuario.interface";
 
 type AuthContextType = {
   user: User | null;
-  login: (token: string) => Promise<void>;
+  login: () => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 };
@@ -27,20 +27,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchUser();
-    setLoading(false);
   }, []);
 
   const fetchUser = async () => {
+    setLoading(true);
     try {
       const res = await fetch(`/api/usuarios/me`);
-
-      if (!res.ok) {
+      if (res.status === 401) {
         logout();
         return;
       }
-
       const data = await res.json();
-
       setUser(data.resultado[0]);
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
