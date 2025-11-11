@@ -36,9 +36,9 @@ export default function GerarTabelas({
         try {
           if (busca) {
             const res = await fetch(
-              `/api/materiais?${busca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}`,
+              `/api/materiais?${busca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}&materialSelecionado=${localStorage.getItem("materialSelecionado")}`,
               {
-                credentials: "include",
+                credentials: "include"      
               }
             );
 
@@ -49,10 +49,10 @@ export default function GerarTabelas({
             setItens(materiais);
           }
           if (!busca) {
-            const res = await fetch(`/api/materiais/`, {
+            const res = await fetch(`/api/materiais?materialSelecionado=${localStorage.getItem("materialSelecionado")}`, {
               credentials: "include",
             });
-
+        
             const data = await res.json();
             const materiais = data.materiais || [];
 
