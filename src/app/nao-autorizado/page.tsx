@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./naoAutorizado.module.css";
 import { useAuth } from "@/context/AuthContext";

@@ -9,7 +9,7 @@ export default function SelecaoMateriais({
   setMaterialSelecionado,
 }: {
   setMaterialSelecionado: Dispatch<
-    SetStateAction<"" | "radar" | "rbs" | "col">
+    SetStateAction<"" | "radar" | "rbs70" | "col">
   >;
 }) {
   const opcoes = [
@@ -20,18 +20,13 @@ export default function SelecaoMateriais({
     },
     {
       nome: "RBS",
-      key: "rbs",
+      key: "rbs70",
       descricao: "Sistema lançador de mísseis e componentesde defesa antiaérea.",
-    },
-    {
-      nome: "COAAe",
-      key: "col",
-      descricao: "Viaturas e equipamentos de comunicação e enlace operacional.",
     },
   ];
 
   const handleSelect = (tipo: string) => {
-    setMaterialSelecionado(tipo as "radar" | "rbs" | "col");
+    setMaterialSelecionado(tipo as "radar" | "rbs70" | "col");
     localStorage.setItem("materialSelecionado", tipo);
   };
 
