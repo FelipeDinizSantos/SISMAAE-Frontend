@@ -35,7 +35,7 @@ export default function LoginPage() {
         return;
       }
 
-      login(data.token);
+      login();
       router.push("/dashboard/materiais");
     } catch (err: any) {
       console.error(err);
