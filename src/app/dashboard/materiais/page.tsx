@@ -38,6 +38,7 @@ export default function MateriaisPage() {
         ) : (
           <>
             <MenuLateral
+              parametrosDeBusca={contextoLista}
               itens={itens}
               setContextoLista={setContextoLista}
               auxiliarBuscaEspecifica={auxiliarBuscaEspecifica}

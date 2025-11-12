@@ -16,7 +16,7 @@ export default function RelatorioDisponibilidade() {
   useEffect(() => {
     const fetchMateriais = async () => {
       try {
-        const res = await fetch(`/api/materiais/`);
+        const res = await fetch(`/api/materiais?materialSelecionado=radar`);
         const data = await res.json();
         setMateriais(data.materiais || []);
       } catch (error: unknown) {
@@ -32,7 +32,7 @@ export default function RelatorioDisponibilidade() {
 
     const fetchModulos = async () => {
       try {
-        const res = await fetch(`/api/modulos/`);
+        const res = await fetch(`/api/modulos?materialSelecionado=radar`);
         const data = await res.json();
         setModulos(data.modulos || []);
       } catch (error: unknown) {

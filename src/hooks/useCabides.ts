@@ -8,9 +8,13 @@ export default function useCabides() {
   useEffect(() => {
     const fetchCabides = async () => {
       try {
-        const res = await fetch(`/api/materiais/`, {
-          credentials: "include",
-        });
+        const res = await fetch(
+          `/api/materiais?materialSelecionado=` +
+            localStorage.getItem("materialSelecionado"),
+          {
+            credentials: "include",
+          }
+        );
 
         if (!res.ok) throw new Error("Erro ao carregar cabides");
 

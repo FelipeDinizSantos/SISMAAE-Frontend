@@ -5,12 +5,15 @@ import "./MenuLateral.css";
 import { Material } from "@/interfaces/Material.interface";
 import GraficoStatus from "../../../../../components/GraficoStatus";
 import { Modulo } from "@/interfaces/Modulo.interface";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useBatalhao } from "@/hooks/useBatalhao";
 import useCabides from "@/hooks/useCabides";
+import buildQuery from "@/lib/buildQuery";
+import toast from "react-hot-toast";
 
 export default function MenuLateral({
   itens,
+  parametrosDeBusca,
   setContextoLista,
   buscaGeral,
   setBuscaGeral,
@@ -19,6 +22,7 @@ export default function MenuLateral({
   auxiliarBuscaEspecifica,
   setAuxiliarBuscaEspecifica,
 }: {
+  parametrosDeBusca: string;
   itens: Material[] | Modulo[];
   setContextoLista: Dispatch<SetStateAction<string>>;
   buscaGeral: "MODULO" | "MATERIAL" | "";
@@ -32,17 +36,40 @@ export default function MenuLateral({
   const { batalhoes } = useBatalhao();
   const { cabides } = useCabides();
 
-  const opcoesModulos = [
-    "antena",
-    "CRF",
-    "IFF",
-    "pedestal",
-    "UPS",
-    "caixa de baterias",
-    "quadripe",
-    "UV",
-    "cabeamento",
-  ];
+  const [opcoesModulos, setOpcoesModulos] = useState<string[]>([]);
+
+  useEffect(() => {
+    const [metodoDeBusca, busca] = parametrosDeBusca.split("-");
+    const tipo = "MODULO";
+
+    const fetchData = async () => {
+      try {
+        const url = buildQuery({
+          tipo,
+          busca,
+          auxiliar: auxiliarBuscaEspecifica,
+          materialSelecionado: localStorage.getItem("materialSelecionado")!,
+        });
+
+        const res = await fetch(url, { credentials: "include" });
+        const data = await res.json();
+
+        if (data.modulos && Array.isArray(data.modulos)) {
+          const nomesModulos = Array.from(
+            new Set(
+              data.modulos.map((m: Modulo) => m.modulo?.trim()).filter(Boolean)
+            )
+          );
+
+          setOpcoesModulos(nomesModulos as string[]);
+        }
+      } catch (error: any) {
+        toast.error(error.message || "Erro ao carregar dados");
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleBuscaGeral = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;

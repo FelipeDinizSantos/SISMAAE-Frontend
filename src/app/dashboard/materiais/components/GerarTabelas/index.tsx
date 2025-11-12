@@ -28,6 +28,7 @@ export default function GerarTabelas({
   materiais: Material[];
 }) {
   const [reload, setReload] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const [metodoDeBusca, busca] = parametrosDeBusca.split("-");
@@ -39,8 +40,7 @@ export default function GerarTabelas({
           tipo,
           busca,
           auxiliar: auxiliarBuscaEspecifica,
-          materialSelecionado:
-            localStorage.getItem("materialSelecionado") || "radar",
+          materialSelecionado: localStorage.getItem("materialSelecionado")!,
         });
 
         const res = await fetch(url, { credentials: "include" });
@@ -57,11 +57,16 @@ export default function GerarTabelas({
         toast.error(error.message || "Erro ao carregar dados");
       } finally {
         setReload(false);
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [parametrosDeBusca, auxiliarBuscaEspecifica, reload]);
+
+  if (loading) {
+    return <p>Montando a Tabela...</p>;
+  }
 
   return (
     <>
