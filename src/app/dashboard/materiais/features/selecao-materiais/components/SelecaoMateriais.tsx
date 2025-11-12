@@ -16,12 +16,14 @@ export default function SelecaoMateriais({
     {
       nome: "Radar",
       key: "radar",
-      descricao: "Radares e módulos de vigilância aérea responsáveis pela detecção e rastreamento de alvos.",
+      descricao:
+        "Radares e módulos de vigilância aérea responsáveis pela detecção e rastreamento de alvos.",
     },
     {
       nome: "RBS",
       key: "rbs70",
-      descricao: "Sistema lançador de mísseis e componentesde defesa antiaérea.",
+      descricao:
+        "Sistema lançador de mísseis e componentesde defesa antiaérea.",
     },
   ];
 

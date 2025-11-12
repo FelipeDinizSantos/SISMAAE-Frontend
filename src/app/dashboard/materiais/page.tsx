@@ -27,24 +27,8 @@ export default function MateriaisPage() {
     ? localStorage.getItem("materialSelecionado")
     : "";
   const [materialSelecionado, setMaterialSelecionado] = useState<
-    "radar" | "rbs" | "col" | ""
-  >(materialJaSelecionado as "radar" | "rbs" | "col" | "");
-
-  useEffect(() => {
-    const fetchMateriais = async () => {
-      try {
-        const res = await fetch(`/api/materiais/`);
-        const data = await res.json();
-
-        setMateriais(data.materiais || []);
-        setItens(data.materiais || []);
-      } catch (error) {
-        console.error("Erro ao buscar materiais:", error);
-      }
-    };
-
-    fetchMateriais();
-  }, []);
+    "radar" | "rbs70" | "col" | ""
+  >(materialJaSelecionado as "radar" | "rbs70" | "col" | "");
 
   return (
     <>

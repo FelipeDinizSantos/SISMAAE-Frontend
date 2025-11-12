@@ -7,6 +7,7 @@ import { Modulo } from "@/interfaces/Modulo.interface";
 import toast from "react-hot-toast";
 import { ListaMateriais } from "../../features/lista-materiais";
 import { ListaModulos } from "../../features/lista-modulos";
+import buildQuery from "@/lib/buildQuery";
 
 export default function GerarTabelas({
   parametrosDeBusca,
@@ -30,76 +31,36 @@ export default function GerarTabelas({
 
   useEffect(() => {
     const [metodoDeBusca, busca] = parametrosDeBusca.split("-");
+    const tipo = metodoDeBusca as "MATERIAL" | "MODULO";
 
-    if (metodoDeBusca === "MATERIAL") {
-      const fetchMateriais = async () => {
-        try {
-          if (busca) {
-            const res = await fetch(
-              `/api/materiais?${busca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}&materialSelecionado=${localStorage.getItem("materialSelecionado")}`,
-              {
-                credentials: "include"      
-              }
-            );
-
-            const data = await res.json();
-            const materiais = data.materiais || [];
-
-            setMateriais(materiais);
-            setItens(materiais);
-          }
-          if (!busca) {
-            const res = await fetch(`/api/materiais?materialSelecionado=${localStorage.getItem("materialSelecionado")}`, {
-              credentials: "include",
-            });
-        
-            const data = await res.json();
-            const materiais = data.materiais || [];
-
-            setMateriais(materiais);
-            setItens(materiais);
-          }
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            toast.error(error.message);
-          } else {
-            toast.error("Ocorreu um erro inesperado!");
-          }
-        }
-      };
-
-      fetchMateriais();
-      if (reload) setReload(false);
-    }
-
-    if (parametrosDeBusca.split("-")[0] === "MODULO") {
+    const fetchData = async () => {
       try {
-        const fetchData = async () => {
-          if (!auxiliarBuscaEspecifica) return;
+        const url = buildQuery({
+          tipo,
+          busca,
+          auxiliar: auxiliarBuscaEspecifica,
+          materialSelecionado:
+            localStorage.getItem("materialSelecionado") || "radar",
+        });
 
-          const res = await fetch(
-            `/api/modulos?${busca.toLowerCase()}=${auxiliarBuscaEspecifica.toUpperCase()}`,
-            {
-              credentials: "include",
-            }
-          );
+        const res = await fetch(url, { credentials: "include" });
+        const data = await res.json();
 
-          let data = await res.json();
-
-          setItens(data.modulos);
-          setModulos(data.modulos);
-        };
-
-        fetchData();
-        if (reload) setReload(false);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          toast.error(error.message);
+        if (tipo === "MATERIAL") {
+          setMateriais(data.materiais || []);
+          setItens(data.materiais || []);
         } else {
-          toast.error("Ocorreu um erro inesperado!");
+          setModulos(data.modulos || []);
+          setItens(data.modulos || []);
         }
+      } catch (error: any) {
+        toast.error(error.message || "Erro ao carregar dados");
+      } finally {
+        setReload(false);
       }
-    }
+    };
+
+    fetchData();
   }, [parametrosDeBusca, auxiliarBuscaEspecifica, reload]);
 
   return (

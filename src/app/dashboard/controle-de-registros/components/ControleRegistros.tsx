@@ -6,12 +6,12 @@ import { usePaginacao } from "@/hooks/usePaginacao";
 import useRegistros from "../hooks/useRegistros";
 import formatarDataExibicao from "@/utils/formatarDataExibicao";
 import { useAuth } from "@/context/AuthContext";
-import { useRoleGuard } from "@/hooks/roleGuard";
+import { useRoleGuard } from "@/hooks/useRoleGuard";
 
 export default function ControleRegistros() {
   // Define para está página quais niveis de acesso poderam acessa-la.
   const { user } = useAuth();
-  useRoleGuard(["ADMIN", "COMANDO", "COL"], user!.perfil);
+  useRoleGuard(["ADMIN", "COMANDO", "COL"], user?.perfil);
 
   const [buscaCod, setBuscaCod] = useState("");
   const [dataDe, setDataDe] = useState("");
