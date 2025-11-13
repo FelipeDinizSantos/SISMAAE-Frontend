@@ -3,8 +3,8 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise <{ id: string }> }
 ) {
-  const id = params.id;
+  const {id} = await context.params;
   return proxyFetch(req, `/registros/modulos/${id}`);
 }

@@ -16,13 +16,9 @@ export default async function criarRegistroAutomatico({ materialId = null, modul
     };
 
     try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/registros`, {
+        const res = await fetch(`/api/registros`, {
             method: "POST",
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(payload),
