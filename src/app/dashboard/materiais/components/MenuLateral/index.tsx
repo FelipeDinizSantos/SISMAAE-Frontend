@@ -282,7 +282,6 @@ export default function MenuLateral({
           Mudar material
         </button>
       </form>
-      {/* <GraficoStatus itens={itens} /> */}
     </section>
   );
 }
