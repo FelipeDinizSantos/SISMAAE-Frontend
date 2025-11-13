@@ -33,3 +33,32 @@
 .menu-btn.spin svg {
     animation: spin 0.4s linear;
 }
+
+.menu-search {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.2rem 0.4rem;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.menu-search .search-icon {
+    color: #666;
+    margin-right: 0.3rem;
+}
+
+.menu-search input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: .85rem;
+    color: #333;
+    width: 160px;
+}
+
+.menu-search input::placeholder {
+    color: #999;
+}

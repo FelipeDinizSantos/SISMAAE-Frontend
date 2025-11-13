@@ -3,17 +3,18 @@ import {
   LuRefreshCcw as ReloadIcon,
   LuListFilter as DisponibilidadeIcon,
   LuListOrdered as SerieIcon,
+  LuSearch as SearchIcon,
 } from "react-icons/lu";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 
 export default function FuncoesTabela<
   T extends {
     Disponibilidade:
-      | "DISPONIVEL"
-      | "INDISPONIVEL"
-      | "DISP_C_RESTRICAO"
-      | "MANUTENCAO";
+    | "DISPONIVEL"
+    | "INDISPONIVEL"
+    | "DISP_C_RESTRICAO"
+    | "MANUTENCAO";
     SN: string;
   }
 >({
@@ -26,6 +27,34 @@ export default function FuncoesTabela<
   setItensEditaveis: Dispatch<SetStateAction<T[]>>;
 }) {
   const [ordemSnAscendente, setOrdemSnAscendente] = useState(true);
+  const [busca, setBusca] = useState("");
+  const [itensOriginais, setItensOriginais] = useState<T[]>([]);
+  const primeiraRenderizacao = useRef(true);
+
+  useEffect(() => {
+    if (primeiraRenderizacao.current) {
+      primeiraRenderizacao.current = false;
+      setItensOriginais(itensEditaveis);
+      return;
+    }
+
+    if (!busca.trim()) {
+      setItensOriginais(itensEditaveis);
+    } 
+  }, [itensEditaveis]);
+
+  useEffect(() => {
+    if (!busca.trim()) {
+      setItensEditaveis(itensOriginais);
+      return;
+    }
+
+    const termo = busca.toLowerCase();
+    const filtrados = itensOriginais.filter((item) =>
+      item.SN?.toLowerCase().includes(termo)
+    );
+    setItensEditaveis(filtrados);
+  }, [busca]);
 
   const handleRecarregamentoClick = () => {
     handleReload();
@@ -63,9 +92,7 @@ export default function FuncoesTabela<
     setOrdemSnAscendente(!ordemSnAscendente);
 
     toast.success(
-      `Lista ordenada por número de série (${
-        ordemSnAscendente ? "A–Z" : "Z–A"
-      })`
+      `Lista ordenada por número de série (${ordemSnAscendente ? "A–Z" : "Z–A"})`
     );
   };
 
@@ -94,6 +121,16 @@ export default function FuncoesTabela<
       >
         <SerieIcon />
       </button>
+
+      <div className="menu-search">
+        <SearchIcon className="search-icon" />
+        <input
+          type="text"
+          placeholder="Buscar por SN"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+        />
+      </div>
     </div>
   );
 }
