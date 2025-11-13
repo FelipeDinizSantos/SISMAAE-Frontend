@@ -10,6 +10,7 @@ import { useBatalhao } from "@/hooks/useBatalhao";
 import useCabides from "@/hooks/useCabides";
 import buildQuery from "@/lib/buildQuery";
 import toast from "react-hot-toast";
+import capitalizar from "@/utils/capitalizar";
 
 export default function MenuLateral({
   itens,
@@ -57,7 +58,7 @@ export default function MenuLateral({
         if (data.modulos && Array.isArray(data.modulos)) {
           const nomesModulos = Array.from(
             new Set(
-              data.modulos.map((m: Modulo) => m.modulo?.trim()).filter(Boolean)
+              data.modulos.map((m: Modulo) => capitalizar(m.modulo?.trim())).filter(Boolean)
             )
           );
 
@@ -221,7 +222,7 @@ export default function MenuLateral({
               <option value="">Selecione</option>
               {opcoesModulos.map((opt) => (
                 <option key={opt} value={opt}>
-                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  {capitalizar(opt)}
                 </option>
               ))}
             </select>
