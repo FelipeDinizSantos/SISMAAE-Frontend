@@ -36,7 +36,7 @@ export default function LoginPage() {
       }
 
       login();
-      router.push("/dashboard/materiais");
+      router.replace("/dashboard/materiais");
     } catch (err: any) {
       console.error(err);
       toast.error(err.message);

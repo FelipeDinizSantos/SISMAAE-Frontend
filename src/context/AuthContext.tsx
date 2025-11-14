@@ -29,21 +29,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser();
   }, []);
 
-  const fetchUser = async () => {
-    setLoading(true);
+  const fetchUser = async (skipLoading = false) => {
+    if (!skipLoading) setLoading(true);
+
     try {
       const res = await fetch(`/api/usuarios/me`);
       if (res.status === 401) {
         logout();
         return;
       }
+
       const data = await res.json();
       setUser(data.resultado[0]);
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
       logout();
     } finally {
-      setLoading(false);
+      if (!skipLoading) setLoading(false);
     }
   };
 
