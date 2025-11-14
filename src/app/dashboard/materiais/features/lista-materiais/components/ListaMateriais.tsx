@@ -211,7 +211,7 @@ export default function ListaMateriais({
                         <div className="botoes-edicao">
                           <button
                             className="btn-confirmar"
-                            onClick={() => confirmarEdicao(realIndex)}
+                            onClick={() => confirmarEdicao(mat.id)}
                             title="Confirmar edição"
                           >
                             ✓

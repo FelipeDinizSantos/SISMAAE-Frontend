@@ -64,7 +64,13 @@ export function useEdicaoMateriais(
     setMateriaisEditaveis(novosMateriais);
   };
 
-  const confirmarEdicao = async (index: number) => {
+  const confirmarEdicao = async (id: number) => {
+    const index = materiaisEditaveis.findIndex((m) => m.id === id);
+    if (index === -1) return;
+
+    const originalIndex = materiais.findIndex((m) => m.id === id);
+    if (originalIndex === -1) return;
+
     const novosMateriais = [...materiaisEditaveis];
     const materialEditado = {
       ...novosMateriais[index],
@@ -108,7 +114,7 @@ export function useEdicaoMateriais(
         }
       }
 
-      const result = await fetch(`/api/materiais/${materiais[index].id}`, {
+      const result = await fetch(`/api/materiais/${materiais[originalIndex].id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
