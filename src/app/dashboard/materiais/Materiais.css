@@ -1,24 +1,31 @@
 /* Container principal */
 .dashboard-container {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
 /* Conteúdo central */
 .dashboard-container section.conteudo {
-    width: 100%;
-    padding: 1rem;
+  width: 100%;
+  padding: 1rem;
 }
 
 /* Formatação da tabela principal */
 .materiais-container {
-    margin-top: 1rem;
-    padding-bottom: 1rem;
+  margin-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .info-paginacao {
-    margin-top: 2px;
-    text-align: center;
-    font-size: 14px;
-    color: #555;
+  margin-top: 2px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+section.conteudo {
+  width: 100%;
+  padding: 1rem;
+
+  overflow: auto;
 }
