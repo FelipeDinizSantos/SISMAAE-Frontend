@@ -23,7 +23,7 @@ export default function SelecaoMateriais({
       nome: "RBS",
       key: "rbs70",
       descricao:
-        "Sistema lançador de mísseis e componentesde defesa antiaérea.",
+        "Sistema portátil para lançamento de mísseis antiaéreos remotamente controlados.",
     },
   ];
 
