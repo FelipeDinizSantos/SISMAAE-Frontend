@@ -7,6 +7,7 @@ export const PROTECTED_ROUTES = [
   "/dashboard/controle-de-registros",
   "/dashboard/materiais",
   "/dashboard/relatorios",
+  "/dashboard/cadastro-usuario"
 ];
 
 export const getJwtSecret = (): Uint8Array => {
@@ -21,4 +22,5 @@ export const getJwtSecret = (): Uint8Array => {
 
 export const acessoRotas: Record<string, string[]> = {
   "/dashboard/controle-de-registros": ["ADMIN", "COMANDO", "COL"],
+  "/dashboard/cadastro-usuario": ["ADMIN"]
 };

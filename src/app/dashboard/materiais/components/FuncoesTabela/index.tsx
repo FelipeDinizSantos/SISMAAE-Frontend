@@ -11,10 +11,10 @@ import toast from "react-hot-toast";
 export default function FuncoesTabela<
   T extends {
     Disponibilidade:
-      | "DISPONIVEL"
-      | "INDISPONIVEL"
-      | "DISP_C_RESTRICAO"
-      | "MANUTENCAO";
+    | "DISPONIVEL"
+    | "INDISPONIVEL"
+    | "DISP_C_RESTRICAO"
+    | "MANUTENCAO";
     SN: string;
   }
 >({
@@ -92,8 +92,7 @@ export default function FuncoesTabela<
     setOrdemSnAscendente(!ordemSnAscendente);
 
     toast.success(
-      `Lista ordenada por número de série (${
-        ordemSnAscendente ? "A–Z" : "Z–A"
+      `Lista ordenada por número de série (${ordemSnAscendente ? "A–Z" : "Z–A"
       })`
     );
   };

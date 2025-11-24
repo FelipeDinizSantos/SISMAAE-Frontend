@@ -15,7 +15,7 @@ export default function GraficoStatus({ itens, titulo = 'Distribuição de Statu
     const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
-        if(itens) setLoading(false)
+        if(itens) setLoading(false);
     }, [itens]);
 
     useEffect(() => {

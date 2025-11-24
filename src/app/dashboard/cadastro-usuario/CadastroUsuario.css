@@ -1,0 +1,82 @@
+/* Container principal */
+section.cadastro-usuario {
+    width: 100%;
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+section.cadastro-usuario h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* Formulário */
+section.cadastro-usuario form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Labels */
+section.cadastro-usuario label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Inputs */
+section.cadastro-usuario input {
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+section.cadastro-usuario input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+}
+
+/* Selects */
+section.cadastro-usuario select {
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-size: 0.9rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+section.cadastro-usuario select:focus {
+    outline: none;
+    border: 1px solid #4a90e2;
+    box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+}
+
+/* Botão cadastrar */
+.btn-cadastrar {
+    background: #4a90e2;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-cadastrar:hover {
+    background: #357abd;
+}

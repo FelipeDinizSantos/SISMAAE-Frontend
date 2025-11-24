@@ -19,17 +19,22 @@ export default function Tabs() {
     {
       key: "materiais",
       label: "Materiais",
-      allowed: ["ADMIN", "COMANDO", "COL", "S4", "MECANICO"],
+      allowed: ["COMANDO", "COL", "S4", "MECANICO"],
     },
     {
       key: "relatorios",
       label: "Relatórios",
-      allowed: ["ADMIN", "COMANDO", "COL", "S4", "MECANICO"],
+      allowed: ["COMANDO", "COL", "S4", "MECANICO"],
     },
     {
       key: "controle-de-registros",
       label: "Controle de registros",
       allowed: ["ADMIN", "COMANDO", "COL"],
+    },
+    {
+      key: "cadastro-usuario",
+      label: "Cadastro de Usuário",
+      allowed: ["ADMIN"],
     },
   ];
 

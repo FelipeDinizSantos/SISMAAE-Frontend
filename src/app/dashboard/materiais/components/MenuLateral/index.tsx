@@ -58,7 +58,7 @@ export default function MenuLateral({
         if (data.modulos && Array.isArray(data.modulos)) {
           const nomesModulos = Array.from(
             new Set(
-              data.modulos.map((m: Modulo) => capitalizar(m.modulo?.trim())).filter(Boolean)
+              data.modulos.map((m: Modulo) => capitalizar(m.modulo!.trim())).filter(Boolean)
             )
           );
 
