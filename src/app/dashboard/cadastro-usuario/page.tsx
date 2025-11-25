@@ -2,34 +2,78 @@
 
 import { useState } from "react";
 import "./CadastroUsuario.css";
+import toast from "react-hot-toast";
 
 export default function CadastroUsuario() {
 
     const [formData, setFormData] = useState({
         nome: "",
+        idtMil: "",
         senha: "",
         posto: "",
         batalhao: "",
+        email: "",
         perfil: ""
     });
 
     const postos = [
-        "Soldado", "Cabo", "3º Sargento", "2º Sargento", "1º Sargento",
-        "Subtenente", "Aspirante", "2º Tenente", "1º Tenente", "Capitão",
-        "Major", "Tenente Coronel", "Coronel"
+        "SD",
     ];
 
-    const batalhoes = ["1° BPM", "2° BPM", "3° BPM", "4° BPM", "5° BPM"];
+    const batalhoes = [
+        "1",
+    ];
 
-    const perfis = ["ADMIN", "GESTOR", "OPERADOR", "VISUALIZADOR"];
+    const perfis = [
+        "1", "2", "3",
+    ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert("Usuário cadastrado (mock)!");
+        const payload = {
+            idtMilitar: formData.idtMil,
+            senha: formData.senha,
+            pg: formData.posto,
+            email: formData.email,
+            nome: formData.nome,
+            batalhaoId: formData.batalhao,
+            perfilId: formData.perfil
+        }
+
+        try {
+            const res = await fetch(`/api/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) throw new Error("Erro ao criar registro");
+            console.log(res);
+
+            toast.success("Usuário cadastrado");
+            setFormData({
+                nome: "",
+                idtMil: "",
+                senha: "",
+                posto: "",
+                batalhao: "",
+                email: "",
+                perfil: ""
+            });
+
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("Ocorreu um erro inesperado!");
+            }
+        }
     };
 
     return (
@@ -45,6 +89,15 @@ export default function CadastroUsuario() {
                     value={formData.nome}
                     onChange={handleChange}
                     placeholder="Digite o nome completo"
+                />
+
+                <label>Identidade Militar</label>
+                <input
+                    type="text"
+                    name="idtMil"
+                    value={formData.idtMil}
+                    onChange={handleChange}
+                    placeholder="Digite a identidade militar"
                 />
 
                 <label>Senha</label>
@@ -71,6 +124,15 @@ export default function CadastroUsuario() {
                         <option key={b} value={b}>{b}</option>
                     ))}
                 </select>
+
+                <label>E-Mail</label>
+                <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Digite o e-mail do usuário"
+                />
 
                 <label>Perfil de Acesso</label>
                 <select name="perfil" value={formData.perfil} onChange={handleChange}>
