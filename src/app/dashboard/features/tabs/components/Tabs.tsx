@@ -17,6 +17,11 @@ export default function Tabs() {
 
   const tabs: readonly TabConfig[] = [
     {
+      key: "cadastro-usuario",
+      label: "Cadastro de Usuário",
+      allowed: ["ADMIN"],
+    },
+    {
       key: "materiais",
       label: "Materiais",
       allowed: ["COMANDO", "COL", "S4", "MECANICO"],
@@ -30,11 +35,6 @@ export default function Tabs() {
       key: "controle-de-registros",
       label: "Controle de registros",
       allowed: ["ADMIN", "COMANDO", "COL"],
-    },
-    {
-      key: "cadastro-usuario",
-      label: "Cadastro de Usuário",
-      allowed: ["ADMIN"],
     },
   ];
 

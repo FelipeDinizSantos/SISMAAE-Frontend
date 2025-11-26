@@ -12,7 +12,7 @@ import { User } from "@/interfaces/Usuario.interface";
 
 type AuthContextType = {
   user: User | null;
-  login: () => Promise<void>;
+  login: () => Promise<User | null>;
   logout: () => void;
   isAuthenticated: boolean;
 };
@@ -29,28 +29,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser();
   }, []);
 
-  const fetchUser = async (skipLoading = false) => {
+  const fetchUser = async (skipLoading = false): Promise<User | null> => {
     if (!skipLoading) setLoading(true);
 
     try {
       const res = await fetch(`/api/usuarios/me`);
+
       if (res.status === 401) {
         logout();
-        return;
+        return null;
       }
 
       const data = await res.json();
-      setUser(data.resultado[0]);
+      const userFetched = data.resultado[0];
+
+      setUser(userFetched);
+      return userFetched;
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
       logout();
+      return null;
     } finally {
       if (!skipLoading) setLoading(false);
     }
   };
 
-  const login = async () => {
-    await fetchUser();
+
+  const login = async (): Promise<User | null> => {
+    return await fetchUser();
   };
 
   const logout = async () => {

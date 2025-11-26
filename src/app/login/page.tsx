@@ -35,8 +35,19 @@ export default function LoginPage() {
         return;
       }
 
-      login();
-      router.replace("/dashboard/materiais");
+      const user = await login();
+
+      if (!user) {
+        toast.error("Erro ao carregar usuário");
+        return;
+      }
+
+      if (user.perfil.trim().toUpperCase() === "ADMIN") {
+        return router.replace("/dashboard/cadastro-usuario");
+      }
+
+      return router.replace("/dashboard/materiais");
+
     } catch (err: any) {
       console.error(err);
       toast.error(err.message);

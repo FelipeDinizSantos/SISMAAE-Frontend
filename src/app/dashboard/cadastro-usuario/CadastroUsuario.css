@@ -80,3 +80,24 @@ section.cadastro-usuario select:focus {
 .btn-cadastrar:hover {
     background: #357abd;
 }
+
+.password-input-wrapper {
+    display: flex;
+    position: relative;
+    border: 1px solid inherit;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.password-input-wrapper input {
+    border: none;
+    width: 100%;
+    padding: 0.5rem;
+    outline: none;
+}
+
+.error-text {
+    color: #dc2626;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}

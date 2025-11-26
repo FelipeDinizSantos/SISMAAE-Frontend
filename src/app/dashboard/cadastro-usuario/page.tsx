@@ -3,8 +3,13 @@
 import { useState } from "react";
 import "./CadastroUsuario.css";
 import toast from "react-hot-toast";
+import { useBatalhao } from "@/hooks/useBatalhao";
+import { usePerfis } from "@/hooks/usePerfis";
+import { usePgs } from "@/hooks/usePgs";
 
 export default function CadastroUsuario() {
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         nome: "",
@@ -16,17 +21,9 @@ export default function CadastroUsuario() {
         perfil: ""
     });
 
-    const postos = [
-        "SD",
-    ];
-
-    const batalhoes = [
-        "1",
-    ];
-
-    const perfis = [
-        "1", "2", "3",
-    ];
+    const { batalhoes } = useBatalhao();
+    const { perfis } = usePerfis();
+    const { postosGrads } = usePgs();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -53,8 +50,9 @@ export default function CadastroUsuario() {
                 body: JSON.stringify(payload),
             });
 
-            if (!res.ok) throw new Error("Erro ao criar registro");
-            console.log(res);
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || "Erro ao criar registro");
 
             toast.success("Usuário cadastrado");
             setFormData({
@@ -101,19 +99,29 @@ export default function CadastroUsuario() {
                 />
 
                 <label>Senha</label>
-                <input
-                    type="password"
-                    name="senha"
-                    value={formData.senha}
-                    onChange={handleChange}
-                    placeholder="Digite uma senha"
-                />
+                <div className="password-input-wrapper">
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        name="senha"
+                        value={formData.senha}
+                        onChange={handleChange}
+                        placeholder="Digite uma senha"
+                    />
+                    <button
+                        type="button"
+                        className="toggle-password"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+                    >
+                        {showPassword ? "🔓" : "🔒"}
+                    </button>
+                </div>
 
                 <label>Posto/Graduação</label>
                 <select name="posto" value={formData.posto} onChange={handleChange}>
                     <option value="">Selecione</option>
-                    {postos.map(p => (
-                        <option key={p} value={p}>{p}</option>
+                    {postosGrads.map(p => (
+                        <option key={p.sigla} value={p.sigla}>{p.nome}</option>
                     ))}
                 </select>
 
@@ -121,7 +129,7 @@ export default function CadastroUsuario() {
                 <select name="batalhao" value={formData.batalhao} onChange={handleChange}>
                     <option value="">Selecione</option>
                     {batalhoes.map(b => (
-                        <option key={b} value={b}>{b}</option>
+                        <option key={b.id} value={b.id}>{b.sigla}</option>
                     ))}
                 </select>
 
@@ -138,7 +146,7 @@ export default function CadastroUsuario() {
                 <select name="perfil" value={formData.perfil} onChange={handleChange}>
                     <option value="">Selecione</option>
                     {perfis.map(p => (
-                        <option key={p} value={p}>{p}</option>
+                        <option key={p.id} value={p.id}>{p.nome}</option>
                     ))}
                 </select>
 
