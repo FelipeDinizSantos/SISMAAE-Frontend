@@ -22,6 +22,11 @@ export default function Tabs() {
       allowed: ["ADMIN"],
     },
     {
+      key: "gerenciar-usuarios",
+      label: "Gerenciar Usuários",
+      allowed: ["ADMIN"],
+    },
+    {
       key: "materiais",
       label: "Materiais",
       allowed: ["COMANDO", "COL", "S4", "MECANICO"],

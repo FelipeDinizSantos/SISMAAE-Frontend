@@ -22,5 +22,7 @@ export const getJwtSecret = (): Uint8Array => {
 
 export const acessoRotas: Record<string, string[]> = {
   "/dashboard/controle-de-registros": ["ADMIN", "COMANDO", "COL"],
-  "/dashboard/cadastro-usuario": ["ADMIN"]
+  "/dashboard/cadastro-usuario": ["ADMIN"],
+  "/dashboard/materiais": ["COMANDO", "S4", "MECANICO", "COL"],
+  "/dashboard/relatorios": ["COMANDO", "S4", "MECANICO", "COL"],
 };

@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   ReactNode,
+  useRef,
 } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/interfaces/Usuario.interface";
@@ -25,8 +26,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const effectExecuted = useRef(false);
+
   useEffect(() => {
-    fetchUser();
+    if (!effectExecuted.current) {
+      effectExecuted.current = true;
+      fetchUser();
+    }
   }, []);
 
   const fetchUser = async (skipLoading = false): Promise<User | null> => {
@@ -36,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`/api/usuarios/me`);
 
       if (res.status === 401) {
-        logout();
+        setUser(null);
         return null;
       }
 
@@ -71,16 +77,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  if (loading) {
+    return null;
+  }
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
-      {!loading && children}
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+      {children}
     </AuthContext.Provider>
   );
 }

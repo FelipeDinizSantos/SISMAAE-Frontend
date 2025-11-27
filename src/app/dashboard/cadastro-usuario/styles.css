@@ -101,3 +101,40 @@ section.cadastro-usuario select:focus {
     font-size: 0.8rem;
     margin-top: 4px;
 }
+
+.password-rules {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    line-height: 1.2rem;
+}
+
+.password-rule {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.password-rule.valid {
+    color: #1ea93c;
+    /* verde */
+    font-weight: 600;
+}
+
+.password-rule.invalid {
+    color: #c0392b;
+    /* vermelho */
+}
+
+.password-rule span.check {
+    font-size: 1rem;
+}
+
+.toggle-password-cadastro-usuario {
+    position: absolute;
+    background: none;
+    right: 0;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
