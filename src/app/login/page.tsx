@@ -20,34 +20,13 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idtMilitar: email, senha }),
-      });
+      const user = await login({ email, senha });
 
-      const data: { success: boolean; token: string; error?: any } =
-        await response.json();
-
-      if (!response.ok) {
-        toast.error(data.error || "Erro ao realizar login.");
-        setLoading(false);
-        return;
-      }
-
-      const user = await login();
-
-      if (!user) {
-        toast.error("Erro ao carregar usuário");
-        return;
-      }
-
-      if (user.perfil.trim().toUpperCase() === "ADMIN") {
+      if ((user.role as string).trim().toUpperCase() === "ADMIN") {
         return router.replace("/dashboard/cadastro-usuario");
       }
 
       return router.replace("/dashboard/materiais");
-
     } catch (err: any) {
       console.error(err);
       toast.error(err.message);
