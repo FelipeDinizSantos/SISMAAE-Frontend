@@ -20,13 +20,18 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const user = await login({ email, senha });
+      const user = await login({email, senha});
+      if (!user) {
+        toast.error("Erro ao carregar usuário");
+        return;
+      }
 
-      if ((user.role as string).trim().toUpperCase() === "ADMIN") {
+      if (user.perfil.trim().toUpperCase() === "ADMIN") {
         return router.replace("/dashboard/cadastro-usuario");
       }
 
       return router.replace("/dashboard/materiais");
+
     } catch (err: any) {
       console.error(err);
       toast.error(err.message);

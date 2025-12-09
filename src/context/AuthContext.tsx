@@ -10,12 +10,10 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/interfaces/Usuario.interface";
-import { verificarAuthToken } from "@/lib/verificarAuthToken";
-import { JWTPayload } from "jose";
 
 type AuthContextType = {
   user: User | null;
-  login: ({ email, senha }: { email: string; senha: string }) => Promise<JWTPayload>;
+  login: ({ email, senha }: { email: string; senha: string }) => Promise<User | null>;
   logout: () => void;
   isAuthenticated: boolean;
 };
@@ -62,27 +60,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async ({ email, senha }: { email: string; senha: string }): Promise<JWTPayload> => {
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idtMilitar: email, senha }),
-    });
 
-    const data: { success: boolean; token: string; error?: any } =
-      await response.json();
+  const login = async ({ email, senha }: { email: string; senha: string }): Promise<User | null> => {
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idtMilitar: email, senha }),
+      });
 
-    if (!response.ok) {
-      throw new Error(data.error || "Erro ao realizar login.");
+      const data: { success: boolean; token: string; error?: any } =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao realizar login.");
+      }
+
+      return await fetchUser();
+    } catch (e: any) {
+      throw new Error(e);
     }
-
-    const user = await verificarAuthToken(data.token);
-
-    if (!user) {
-      throw new Error("Erro ao carregar usuário");
-    }
-
-    return user;
   };
 
   const logout = async () => {
