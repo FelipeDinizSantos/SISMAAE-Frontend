@@ -49,7 +49,6 @@
     text-align: center;
 }
 
-/* Conteúdo principal */
 .usuarios-conteudo {
     flex: 1;
     background: #fff;
@@ -62,7 +61,6 @@
     font-size: 1.2rem !important;
 }
 
-/* Tabela */
 .tabela-usuarios {
     overflow-x: auto;
     overflow-y: auto;
@@ -103,7 +101,6 @@
     font-weight: 600;
 }
 
-/* Botões */
 .btn-acao {
     padding: 0.35rem 0.7rem;
     border: none;
@@ -146,7 +143,6 @@
     background: #357abd;
 }
 
-/* Paginação */
 .tabs-container-usuarios {
     display: flex;
     gap: 0.5rem;
@@ -174,4 +170,65 @@
     font-size: 0.85rem;
     color: #555;
     margin-top: 0.5rem;
+}
+
+.btn-acao {
+    padding: 0.4rem 0.6rem;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 0.4rem;
+}
+
+.btn-danger {
+    background: #e14a4a;
+}
+
+.botoes-edicao {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.btn-confirmar,
+.btn-cancelar {
+    padding: 0.4rem 0.6rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-confirmar {
+    background: #4CAF50;
+    color: #fff
+}
+
+.btn-cancelar {
+    background: #f44336;
+    color: #fff
+}
+
+.tabs-container-usuarios {
+    margin-top: 0.8rem;
+}
+
+.tab-button-usuarios {
+    padding: 0.4rem 0.55rem;
+    margin-right: 0.25rem;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+}
+
+.tab-button-usuarios.active {
+    background: #4a90e2;
+    color: white;
+    border-color: #3d7fc1;
+}
+
+.info-paginacao-usuarios {
+    margin-top: 0.6rem;
+    color: #666;
 }
