@@ -1,3 +1,4 @@
+// useEdicaoUsuarios.ts
 import { Batalhao } from "@/interfaces/Batalhao.interface";
 import { Perfil } from "@/interfaces/Perfil.interface";
 import { PostosGrads } from "@/interfaces/PostosGrad.interface";
@@ -17,9 +18,36 @@ export function useEdicaoUsuarios(
 ) {
     const [usuariosEditaveis, setUsuariosEditaveis] = useState<Usuario[]>([]);
 
-    // Inicializa espelho quando a lista é passada
+    const coercePerfilId = (u: any) => {
+        if (u == null) return "";
+        if (typeof u.perfil === "object") return String(u.perfil.id ?? "");
+        return String(u.perfil ?? "");
+    };
+
+    const coerceBatalhaoId = (u: any) => {
+        if (u == null) return "";
+        // If batalhao is an object, use its id
+        if (typeof u.batalhao === "object") return String(u.batalhao.id ?? "");
+        // If batalhao is a sigla (string), try to find the id from batalhoes list
+        if (typeof u.batalhao === "string") {
+            const found = batalhoes.find((b) => b.sigla === u.batalhao || String(b.id) === u.batalhao);
+            if (found) return String(found.id);
+            return u.batalhao; // fallback (could be already an id string)
+        }
+        return String(u.batalhao ?? "");
+    };
+
     const inicializar = (lista: Usuario[]) => {
-        setUsuariosEditaveis(lista.map((u) => ({ ...u })));
+        setUsuariosEditaveis(
+            lista.map((u) => ({
+                ...u,
+                // guarantee perfil and batalhao are stored as id strings in the editable copy
+                perfil: coercePerfilId(u),
+                batalhao: coerceBatalhaoId(u),
+                pg: u.pg ?? "",
+                editando: false,
+            }))
+        );
     };
 
     const iniciarEdicao = (index: number) => {
@@ -90,15 +118,31 @@ export function useEdicaoUsuarios(
             ...usuarioSemPropsEditaveis
         } = usuarioEditado;
 
-        setUsuarios(((prev: User[]) => prev.map((u, i) => (i === originalIndex ? usuarioSemPropsEditaveis : u))) as unknown as User[]);
+        setUsuarios(((prev: User[]) =>
+            prev.map((u, i) =>
+                i === originalIndex
+                    ? {
+                        ...u,
+                        nome: usuarioSemPropsEditaveis.nome,
+                        idt_militar: usuarioSemPropsEditaveis.idt_militar,
+                        pg: usuarioSemPropsEditaveis.pg,
+                        perfil_id: usuarioSemPropsEditaveis.perfil,
+                        batalhao_id: usuarioSemPropsEditaveis.batalhao,
+                    }
+                    : u
+            )
+        ) as unknown as User[]);
 
         try {
+            const perfilId = usuarioEditado.perfil ? Number(usuarioEditado.perfil) : null;
+            const batalhaoId = usuarioEditado.batalhao ? Number(usuarioEditado.batalhao) : null;
+
             const body: any = {
-                nome: usuariosEditaveis[index].nome,
-                idt_militar: usuariosEditaveis[index].idt_militar,
-                pg: usuariosEditaveis[index].pg,
-                perfil: usuariosEditaveis[index].perfil,
-                batalhao: usuariosEditaveis[index].batalhao,
+                nome: usuarioEditado.nome,
+                idt_militar: usuarioEditado.idt_militar,
+                pg: usuarioEditado.pg,
+                perfil_id: perfilId,
+                batalhao_id: batalhaoId,
             };
 
             const res = await fetch(`/api/usuarios/${usuarios[originalIndex].id}`, {
@@ -123,13 +167,19 @@ export function useEdicaoUsuarios(
 
     const atualizarCampo = (index: number, campo: string, valor: any) => {
         const novos = [...usuariosEditaveis];
-        novos[index] = { ...novos[index], [campo]: valor };
+        if (campo === "perfil" || campo === "batalhao" || campo === "pg") {
+            novos[index] = { ...novos[index], [campo]: valor };
+        } else {
+            novos[index] = { ...novos[index], [campo]: valor };
+        }
         setUsuariosEditaveis(novos);
     };
 
     return {
         usuariosEditaveis,
         setUsuariosEditaveis,
+        setUsuarios,
+        usuarios,
         inicializar,
         iniciarEdicao,
         cancelarEdicao,

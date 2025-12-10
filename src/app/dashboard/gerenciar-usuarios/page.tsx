@@ -46,11 +46,11 @@ export default function GerenciarUsuariosPage() {
 
     const usuariosFiltrados = useMemo(() => {
         return usuariosEditaveis.filter((u) => {
-            const matchNome = u.nome.toLowerCase().includes(buscaNome.toLowerCase());
-            const matchIdt = u.idt_militar.toLowerCase().includes(buscaIdt.toLowerCase());
+            const matchNome = u.nome?.toLowerCase().includes(buscaNome.toLowerCase());
+            const matchIdt = u.idt_militar?.toLowerCase().includes(buscaIdt.toLowerCase());
             const matchPg = pgFiltro ? u.pg === pgFiltro : true;
-            const matchPerfil = perfilFiltro ? u.perfil === perfilFiltro : true;
-            const matchBatalhao = batalhaoFiltro ? u.batalhao == batalhaoFiltro : true;
+            const matchPerfil = perfilFiltro ? String(u.perfil) === String(perfilFiltro) : true;
+            const matchBatalhao = batalhaoFiltro ? String(u.batalhao) === String(batalhaoFiltro) : true;
 
             return matchNome && matchIdt && matchPg && matchPerfil && matchBatalhao;
         });
@@ -102,10 +102,11 @@ export default function GerenciarUsuariosPage() {
 
                 <div className={styles["filtro-bloco-usuarios"]}>
                     <label>Perfil:</label>
+                    {/* now using perfil.id as value */}
                     <select value={perfilFiltro} onChange={(e) => setPerfilFiltro(e.target.value)} className={styles["filtro-input-usuarios"]}>
                         <option value="">Todos</option>
                         {perfis.map((perfil) => (
-                            <option key={perfil.id} value={perfil.nome}>
+                            <option key={perfil.id} value={perfil.id}>
                                 {capitalizar(perfil.nome)}
                             </option>
                         ))}
@@ -114,10 +115,11 @@ export default function GerenciarUsuariosPage() {
 
                 <div className={styles["filtro-bloco-usuarios"]}>
                     <label>Batalhão:</label>
+                    {/* now using batalhao.id as value */}
                     <select value={batalhaoFiltro} onChange={(e) => setBatalhaoFiltro(e.target.value)} className={styles["filtro-input-usuarios"]}>
                         <option value="">Todos</option>
                         {batalhoes.map((batalhao) => (
-                            <option key={batalhao.id} value={batalhao.sigla}>
+                            <option key={batalhao.id} value={batalhao.id}>
                                 {capitalizar(batalhao.sigla)}
                             </option>
                         ))}
@@ -174,7 +176,7 @@ export default function GerenciarUsuariosPage() {
                                                         ))}
                                                     </select>
                                                 ) : (
-                                                    u.pg
+                                                    capitalizar(u.pg || "")
                                                 )}
                                             </td>
 
@@ -199,24 +201,36 @@ export default function GerenciarUsuariosPage() {
                                                     <select value={u.batalhao} onChange={(e) => atualizarCampo(idx + paginaAtual * 20, "batalhao", e.target.value)} className={styles["filtro-input-usuarios"]}>
                                                         <option value="">Selecione</option>
                                                         {batalhoes.map((b) => (
-                                                            <option key={b.id} value={b.sigla}>{capitalizar(b.sigla)}</option>
+                                                            <option key={b.id} value={b.id}>{capitalizar(b.sigla)}</option>
                                                         ))}
                                                     </select>
                                                 ) : (
-                                                    u.batalhao
+                                                    (() => {
+                                                        const b = batalhoes.find((bb) => String(bb.id) === String(u.batalhao));
+                                                        return b ? capitalizar(b.sigla) : u.batalhao;
+                                                    })()
                                                 )}
                                             </td>
 
                                             <td>
                                                 {u.editando ? (
-                                                    <select value={u.perfil} onChange={(e) => atualizarCampo(idx + paginaAtual * 20, "perfil", e.target.value)} className={styles["filtro-input-usuarios"]}>
+                                                    <select
+                                                        value={u.perfil || ""}
+                                                        onChange={(e) => atualizarCampo(idx + paginaAtual * itensPorPagina, "perfil", e.target.value)}
+                                                        className={styles["filtro-input-usuarios"]}
+                                                    >
                                                         <option value="">Selecione</option>
-                                                        {perfis.map((p: any) => (
-                                                            <option key={p.id} value={p.nome}>{capitalizar(p.nome)}</option>
+                                                        {perfis.map((p) => (
+                                                            <option key={p.id} value={String(p.id)}>
+                                                                {capitalizar(p.nome)}
+                                                            </option>
                                                         ))}
                                                     </select>
                                                 ) : (
-                                                    u.perfil
+                                                    (() => {
+                                                        const p = perfis.find((pp) => String(pp.id) === String(u.perfil));
+                                                        return p ? capitalizar(p.nome) : u.perfil;
+                                                    })()
                                                 )}
                                             </td>
 
