@@ -11,6 +11,8 @@ import { usePgs } from "@/hooks/usePgs";
 import capitalizar from "@/utils/capitalizar";
 import styles from "./styles.module.css";
 import { useEdicaoUsuarios } from "./hooks/useEdicaoUsuarios";
+import { User } from "@/interfaces/Usuario.interface";
+import toast from "react-hot-toast";
 
 export default function GerenciarUsuariosPage() {
     const { user } = useAuth();
@@ -44,6 +46,33 @@ export default function GerenciarUsuariosPage() {
         inicializar(usuarios);
     }, [usuarios]);
 
+    const destroy = async (id: number) => {
+        const confirm = window.confirm("Deseja realmente excluir este usuário?");
+        if (!confirm) return;
+
+        try {
+            const res = await fetch(`/api/usuarios/${id}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ativo: false
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err?.erro || "Erro inesperado");
+            }
+
+            setUsuarios((prev) => prev.filter((u) => u.id !== id));
+
+            toast.success("Usuário excluído com sucesso");
+        } catch (error: any) {
+            toast.error(error.message || "Erro ao excluir usuário");
+        }
+    };
+
+
     const usuariosFiltrados = useMemo(() => {
         return usuariosEditaveis.filter((u) => {
             const matchNome = u.nome?.toLowerCase().includes(buscaNome.toLowerCase());
@@ -58,6 +87,7 @@ export default function GerenciarUsuariosPage() {
 
     const itensPorPagina = 20;
     const { itensPaginados, paginaAtual, setPaginaAtual, totalPaginas } = usePaginacao(itensPorPagina, usuariosFiltrados);
+
 
     return (
         <div className={styles["usuarios-container"]}>
@@ -165,7 +195,7 @@ export default function GerenciarUsuariosPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {itensPaginados.map((u: any, idx: number) => (
+                                    {itensPaginados.map((u, idx: number) => (
                                         <tr key={u.id}>
                                             <td>
                                                 {u.editando ? (
@@ -215,7 +245,7 @@ export default function GerenciarUsuariosPage() {
                                             <td>
                                                 {u.editando ? (
                                                     <select
-                                                        value={u.perfil || ""}
+                                                        value={u.perfil}
                                                         onChange={(e) => atualizarCampo(idx + paginaAtual * itensPorPagina, "perfil", e.target.value)}
                                                         className={styles["filtro-input-usuarios"]}
                                                     >
@@ -243,7 +273,7 @@ export default function GerenciarUsuariosPage() {
                                                 ) : (
                                                     <div className={styles["acoes-container"]}>
                                                         <button className={styles["btn-acao"]} onClick={() => iniciarEdicao(idx + paginaAtual * 20)}>Editar</button>
-                                                        <button className={`${styles["btn-acao"]} ${styles["btn-danger"]}`}>Excluir</button>
+                                                        <button className={`${styles["btn-acao"]} ${styles["btn-danger"]}`} onClick={() => destroy(u.id)}>Excluir</button>
                                                     </div>
                                                 )}
                                             </td>

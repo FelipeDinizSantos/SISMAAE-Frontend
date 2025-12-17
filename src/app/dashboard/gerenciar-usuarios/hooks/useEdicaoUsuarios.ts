@@ -26,13 +26,10 @@ export function useEdicaoUsuarios(
 
     const coerceBatalhaoId = (u: any) => {
         if (u == null) return "";
-        // If batalhao is an object, use its id
         if (typeof u.batalhao === "object") return String(u.batalhao.id ?? "");
-        // If batalhao is a sigla (string), try to find the id from batalhoes list
         if (typeof u.batalhao === "string") {
             const found = batalhoes.find((b) => b.sigla === u.batalhao || String(b.id) === u.batalhao);
             if (found) return String(found.id);
-            return u.batalhao; // fallback (could be already an id string)
         }
         return String(u.batalhao ?? "");
     };
@@ -41,7 +38,6 @@ export function useEdicaoUsuarios(
         setUsuariosEditaveis(
             lista.map((u) => ({
                 ...u,
-                // guarantee perfil and batalhao are stored as id strings in the editable copy
                 perfil: coercePerfilId(u),
                 batalhao: coerceBatalhaoId(u),
                 pg: u.pg ?? "",
@@ -49,6 +45,7 @@ export function useEdicaoUsuarios(
             }))
         );
     };
+
 
     const iniciarEdicao = (index: number) => {
         const novos = usuariosEditaveis.map((u, i) => {
@@ -134,8 +131,15 @@ export function useEdicaoUsuarios(
         ) as unknown as User[]);
 
         try {
-            const perfilId = usuarioEditado.perfil ? Number(usuarioEditado.perfil) : null;
-            const batalhaoId = usuarioEditado.batalhao ? Number(usuarioEditado.batalhao) : null;
+            const perfilId =
+                usuarioEditado.perfil !== ""
+                    ? Number(usuarioEditado.perfil)
+                    : Number(usuarioEditado.perfil_original);
+
+            const batalhaoId =
+                usuarioEditado.batalhao !== ""
+                    ? Number(usuarioEditado.batalhao)
+                    : Number(usuarioEditado.batalhao_original);
 
             const body: any = {
                 nome: usuarioEditado.nome,
