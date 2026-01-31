@@ -19,10 +19,18 @@ const relatoriosDisponiveis: Relatorio[] = [
   },
   {
     id: "relatorio-disp-radares",
-    nome: "Relatório Disponibilidade de Radares",
+    nome: "Relatório Disponibilidade de RADARES",
     descricao:
-      "Apresenta resumo detalhado da disponibilidade atual dos radares, facilitando a visualização do status operacional e suporte à tomada de decisão.",
-    componente: <RelatorioDisponibilidade />,
+      "Apresenta resumo detalhado da disponibilidade atual dos RADARES",
+    componente: <RelatorioDisponibilidade material="RADAR"/>,
+    disponivelPara: ["COL"],
+  },
+  {
+    id: "relatorio-disp-rbs70",
+    nome: "Relatório Disponibilidade de RBS-70",
+    descricao:
+      "Apresenta resumo detalhado da disponibilidade atual dos RBS-70",
+    componente: <RelatorioDisponibilidade material="RBS70" />,
     disponivelPara: ["COL"],
   },
 ];
@@ -48,9 +56,8 @@ export default function Relatorios() {
           relatoriosPermitidos.map((relatorio) => (
             <div
               key={relatorio.id}
-              className={`relatorio-card ${
-                relatorioSelecionado === relatorio.id ? "ativo" : ""
-              }`}
+              className={`relatorio-card ${relatorioSelecionado === relatorio.id ? "ativo" : ""
+                }`}
               onClick={() => setRelatorioSelecionado(relatorio.id)}
             >
               <h3>{relatorio.nome}</h3>

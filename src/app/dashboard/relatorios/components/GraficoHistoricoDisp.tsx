@@ -40,7 +40,7 @@ export default function GraficoHistoricoDisp({
   const anoMax = anosDisponiveis[anosDisponiveis.length - 1];
   const anoAtual = new Date().getFullYear();
 
-  const [range, setRange] = useState<[number, number]>([anoAtual, anoAtual]);
+  const [range, setRange] = useState<[number, number]>([anoMin, anoMax]);
 
   const historicoFiltrado = useMemo(
     () =>
@@ -125,7 +125,7 @@ export default function GraficoHistoricoDisp({
           range
           min={anoMin}
           max={anoMax}
-          defaultValue={[anoAtual, anoAtual]}
+          defaultValue={[anoMin, anoMax]}
           value={range}
           onChange={(value) => setRange(value as [number, number])}
           trackStyle={[{ backgroundColor: "#4caf50" }]}

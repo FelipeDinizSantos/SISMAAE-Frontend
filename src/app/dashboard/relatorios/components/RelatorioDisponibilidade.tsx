@@ -6,9 +6,13 @@ import { useEffect, useState, useMemo } from "react";
 
 import toast from "react-hot-toast";
 import GraficoStatus from "@/components/GraficoStatus";
-import MapaDisponibilidadeRadares from "./MapaDisponibilidadeRadares";
+import MapaDisponibilidadeRadares from "./MapaDisponibilidade";
 
-export default function RelatorioDisponibilidade() {
+export default function RelatorioDisponibilidade({
+  material
+}: {
+  material: 'RBS70' | 'RADAR'
+}) {
   const [materiais, setMateriais] = useState<Material[]>([]);
   const [modulos, setModulos] = useState<Modulo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +20,7 @@ export default function RelatorioDisponibilidade() {
   useEffect(() => {
     const fetchMateriais = async () => {
       try {
-        const res = await fetch(`/api/materiais?materialSelecionado=radar`);
+        const res = await fetch(`/api/materiais?materialSelecionado=${material}`);
         const data = await res.json();
         setMateriais(data.materiais || []);
       } catch (error: unknown) {
@@ -32,7 +36,7 @@ export default function RelatorioDisponibilidade() {
 
     const fetchModulos = async () => {
       try {
-        const res = await fetch(`/api/modulos?materialSelecionado=radar`);
+        const res = await fetch(`/api/modulos?materialSelecionado=${material}`);
         const data = await res.json();
         setModulos(data.modulos || []);
       } catch (error: unknown) {
@@ -46,7 +50,7 @@ export default function RelatorioDisponibilidade() {
 
     fetchModulos();
     setLoading(false);
-  }, []);
+  }, [material]);
 
   const indicesMateriais = useMemo(() => {
     const total = materiais.length;
@@ -72,6 +76,7 @@ export default function RelatorioDisponibilidade() {
     const renomear: Record<string, string> = {
       PEDESTAL: "Pedestal",
       QUADRIPE: "Quadripé",
+      "APARELHO DE PONTARIA": "Aparelho de Pontaria"
     };
 
     const modulosMap = modulos.reduce<
@@ -204,8 +209,8 @@ export default function RelatorioDisponibilidade() {
 
         {/* --- Mapa --- */}
         <div className="mapa-conteudo">
-          <h3>Mapa de Disponibilidade de Radares</h3>
-          <MapaDisponibilidadeRadares />
+          <h3>Mapa de Disponibilidade - {material}</h3>
+          <MapaDisponibilidadeRadares material={material} />
         </div>
       </div>
     );

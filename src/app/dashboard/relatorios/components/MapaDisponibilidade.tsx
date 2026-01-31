@@ -59,7 +59,11 @@ const cores = [
   "#b7e1a1", // Sul
 ];
 
-export default function MapaDisponibilidadeRadares() {
+export default function MapaDisponibilidade({
+  material
+}: {
+  material: 'RADAR' | 'RBS70'
+}) {
   const [hoverDiv, setHoverDiv] = useState<number | null>(null);
   const [divisoesCoords, setDivisoesCoords] = useState<
     {
@@ -81,7 +85,7 @@ export default function MapaDisponibilidadeRadares() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let res = await fetch(`/api/relatorios/radares/disp-por-regiao`);
+        let res = await fetch(`/api/relatorios/disp-por-regiao?material=${material}`);
 
         let data = await res.json();
         let regioes: regiao[] = data.regioes;
@@ -111,18 +115,18 @@ export default function MapaDisponibilidadeRadares() {
     };
 
     fetchData();
-  }, []);
+  }, [material]);
 
   return (
     <div className="mapa-container">
       <div className="mapa-legend-circulos">
         <div className="mapa-legend-circulos-item">
           <span className="circulo disponivel"></span>
-          Radares disponíveis / disponíveis com restrição
+          Disponíveis / disponíveis com restrição
         </div>
         <div className="mapa-legend-circulos-item">
           <span className="circulo indisponivel"></span>
-          Radares indisponíveis / em manutenção
+          Dndisponíveis / em manutenção
         </div>
       </div>
       <ComposableMap
