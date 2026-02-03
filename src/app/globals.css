@@ -1,3 +1,16 @@
+/* Remover depois da apresentação */
+nextjs-portal {
+  display: none !important;
+}
+
+#__next-build-watcher {
+  display: none !important;
+}
+
+#__next-error-overlay {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
