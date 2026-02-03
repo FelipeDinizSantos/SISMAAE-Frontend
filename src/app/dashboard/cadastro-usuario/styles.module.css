@@ -127,11 +127,6 @@
     background: #357abd;
 }
 
-.botao:disabled {
-    background: #a0c4f3;
-    cursor: not-allowed;
-}
-
 @media (max-width: 650px) {
 
     .form {

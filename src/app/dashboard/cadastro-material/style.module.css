@@ -1,0 +1,269 @@
+.layout {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.container {
+    background: #fff;
+    border-radius: 10px;
+    min-width: 40%;
+    padding: 1.8rem;
+    border: 1px solid #0000001a;
+    z-index: 10000;
+    box-shadow: 0 2px 4px #0000000d;
+}
+
+.titulo {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.6rem;
+}
+
+.subTitulo {
+    margin: 1rem 0;
+    font-weight: 600;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.formField {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.fullWidth {
+    grid-column: span 2;
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 0.3rem;
+}
+
+.input,
+.select {
+    padding: 0.55rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px #2196f333;
+}
+
+.botao {
+    margin-top: 0.5rem;
+    background: #4a90e2;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.65rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.botao:hover {
+    background: #357abd;
+}
+
+.botaoSecundario {
+    background-color: transparent !important;
+    color: #4a90e2;
+    border: 1px solid #4a90e2;
+}
+
+.botaoCancelar {
+    background-color: #e74c3c;
+    color: white;
+    border: 1px solid white;
+
+    &:hover {
+        background-color: #e74c3c;
+    }
+}
+
+/* AREA DE TICKETS */
+
+.ticketsArea {
+    flex: 1;
+    padding: 1rem;
+}
+
+.ticketMaterial {
+    border: 1px solid #ccc;
+    padding: 0.8rem;
+    border-radius: 8px;
+    margin-bottom: 0.7rem;
+    cursor: pointer;
+    background: white;
+}
+
+.ticketSelecionado {
+    border-color: #4a90e2;
+    background: #eef5ff;
+}
+
+.ticketModulo {
+    margin-top: 0.4rem;
+    margin-left: 1rem;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.listaBusca {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* ========== CARDS MATERIAL ========== */
+
+.cardMaterial {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e6e6e6;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+.cardMaterial:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.cardSelecionado {
+    border-left: 5px solid #4a90e2;
+    background: #f7fbff;
+}
+
+/* HEADER */
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.cardTitulo {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #222;
+}
+
+.cardSub {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+/* GRID INFO */
+
+.cardInfoGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+}
+
+.infoItem {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+}
+
+.infoLabel {
+    color: #999;
+}
+
+.infoValue {
+    font-weight: 600;
+    color: #333;
+}
+
+/* ========== BADGES ========== */
+
+.badge {
+    padding: 0.25rem 0.55rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.DISPONIVEL {
+    background: #e6f6ec;
+    color: #2e7d32;
+}
+
+.DISP_C_RESTRICAO {
+    background: #fff4e5;
+    color: #b26a00;
+}
+
+.INDISPONIVEL {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.MANUTENCAO {
+    background: #eef3ff;
+    color: #3f51b5;
+}
+
+/* ========== MODULOS ========== */
+
+.modulosContainer {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.cardModulo {
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 0.7rem;
+    border: 1px solid #eee;
+}
+
+.cardModuloHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.wrapper{
+    display: flex;
+    flex-direction: column;
+}

@@ -22,6 +22,11 @@ export default function Tabs() {
       allowed: ["ADMIN"],
     },
     {
+      key: "cadastro-material",
+      label: "Cadastro de Material",
+      allowed: ["ADMIN", "COL"],
+    },
+    {
       key: "gerenciar-usuarios",
       label: "Gerenciar Usuários",
       allowed: ["ADMIN"],
