@@ -11,7 +11,7 @@ import { Relatorio } from "../interfaces";
 const relatoriosDisponiveis: Relatorio[] = [
   {
     id: "relatorio-historico-disp-radares",
-    nome: "Histórico de Disponibilidade de Radares",
+    nome: "Histórico de Disponibilidade de RADARES",
     descricao:
       "Acompanha a variação mensal da disponibilidade dos radares ao longo dos anos, permitindo análise comparativa entre períodos.",
     componente: <RelatorioHistoricoDispRadares />,
