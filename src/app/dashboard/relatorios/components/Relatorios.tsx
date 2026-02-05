@@ -15,15 +15,15 @@ const relatoriosDisponiveis: Relatorio[] = [
     descricao:
       "Acompanha a variação mensal da disponibilidade dos radares ao longo dos anos, permitindo análise comparativa entre períodos.",
     componente: <RelatorioHistoricoDispRadares />,
-    disponivelPara: ["COL"],
+    disponivelPara: ["COL", "COMANDO"],
   },
   {
     id: "relatorio-disp-radares",
     nome: "Relatório Disponibilidade de RADARES",
     descricao:
       "Apresenta resumo detalhado da disponibilidade atual dos RADARES",
-    componente: <RelatorioDisponibilidade material="RADAR"/>,
-    disponivelPara: ["COL"],
+    componente: <RelatorioDisponibilidade material="RADAR" />,
+    disponivelPara: ["COL", "COMANDO"],
   },
   {
     id: "relatorio-disp-rbs70",
@@ -31,7 +31,7 @@ const relatoriosDisponiveis: Relatorio[] = [
     descricao:
       "Apresenta resumo detalhado da disponibilidade atual dos RBS-70",
     componente: <RelatorioDisponibilidade material="RBS70" />,
-    disponivelPara: ["COL"],
+    disponivelPara: ["COL", "COMANDO"],
   },
 ];
 

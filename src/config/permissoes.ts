@@ -21,7 +21,7 @@ export const permissoes: PermissoesSistema = {
     },
     materiais: {
         ADMIN: { podeEditar: { } },
-        COMANDO: { podeEditar: { } },
+        COMANDO: { podeEditar: { obs: false } },
         COL: { podeEditar: { status: true, obs: true, omAtual: true  } },
         S4: { podeEditar: { status: true, obs: true, omAtual: false  } },
         MECANICO: { podeEditar: { status: true, obs: true, omAtual: false } },

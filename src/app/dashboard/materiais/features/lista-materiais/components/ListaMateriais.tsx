@@ -147,10 +147,10 @@ export default function ListaMateriais({
                             handleDisponibilidadeChange(
                               realIndex,
                               e.target.value as
-                                | "DISPONIVEL"
-                                | "DISP_C_RESTRICAO"
-                                | "INDISPONIVEL"
-                                | "MANUTENCAO"
+                              | "DISPONIVEL"
+                              | "DISP_C_RESTRICAO"
+                              | "INDISPONIVEL"
+                              | "MANUTENCAO"
                             )
                           }
                           className="select-disponibilidade"
@@ -232,7 +232,7 @@ export default function ListaMateriais({
                               setContextMenu({
                                 visible:
                                   contextMenu.visible &&
-                                  contextMenu.mat?.id === mat.id
+                                    contextMenu.mat?.id === mat.id
                                     ? false
                                     : true,
                                 x: 0,
@@ -257,17 +257,21 @@ export default function ListaMateriais({
                                   })
                                 }
                                 options={[
-                                  {
-                                    label: "Editar",
-                                    onClick: () => iniciarEdicao(realIndex),
-                                  },
+                                  ...(["COMANDO"].includes(user!.perfil)
+                                    ? []
+                                    : [
+                                      {
+                                        label: "Editar",
+                                        onClick: () => iniciarEdicao(realIndex),
+                                      }
+                                    ]),
                                   ...(["MECANICO", "COL"].includes(user!.perfil)
                                     ? [
-                                        {
-                                          label: "Criar Novo Registro",
-                                          onClick: () => abrirModal(mat.id),
-                                        },
-                                      ]
+                                      {
+                                        label: "Criar Novo Registro",
+                                        onClick: () => abrirModal(mat.id),
+                                      },
+                                    ]
                                     : []),
                                   {
                                     label: "Visualizar Registros",

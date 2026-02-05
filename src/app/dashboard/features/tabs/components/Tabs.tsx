@@ -17,21 +17,6 @@ export default function Tabs() {
 
   const tabs: readonly TabConfig[] = [
     {
-      key: "cadastro-usuario",
-      label: "Cadastro de Usuário",
-      allowed: ["ADMIN"],
-    },
-    {
-      key: "cadastro-material",
-      label: "Cadastro de Material",
-      allowed: ["ADMIN", "COL"],
-    },
-    {
-      key: "gerenciar-usuarios",
-      label: "Gerenciar Usuários",
-      allowed: ["ADMIN"],
-    },
-    {
       key: "materiais",
       label: "Materiais",
       allowed: ["COMANDO", "COL", "S4", "MECANICO"],
@@ -40,6 +25,21 @@ export default function Tabs() {
       key: "relatorios",
       label: "Relatórios",
       allowed: ["COMANDO", "COL", "S4", "MECANICO"],
+    },
+    {
+      key: "cadastro-material",
+      label: "Cadastro de Material",
+      allowed: ["ADMIN", "COL"],
+    },
+    {
+      key: "cadastro-usuario",
+      label: "Cadastro de Usuário",
+      allowed: ["ADMIN"],
+    },
+    {
+      key: "gerenciar-usuarios",
+      label: "Gerenciar Usuários",
+      allowed: ["ADMIN"],
     },
     {
       key: "controle-de-registros",

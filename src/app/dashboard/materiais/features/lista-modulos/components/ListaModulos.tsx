@@ -190,10 +190,10 @@ export default function ListaModulos({
                             handleDisponibilidadeChange(
                               realIndex,
                               e.target.value as
-                                | "DISPONIVEL"
-                                | "DISP_C_RESTRICAO"
-                                | "INDISPONIVEL"
-                                | "MANUTENCAO"
+                              | "DISPONIVEL"
+                              | "DISP_C_RESTRICAO"
+                              | "INDISPONIVEL"
+                              | "MANUTENCAO"
                             )
                           }
                           className="select-disponibilidade"
@@ -264,9 +264,8 @@ export default function ListaModulos({
                     </td>
 
                     <td
-                      className={`status ${
-                        mod.Disponibilidade_do_Cabide?.toLowerCase() || ""
-                      }`}
+                      className={`status ${mod.Disponibilidade_do_Cabide?.toLowerCase() || ""
+                        }`}
                     >
                       <p>{mod.Disponibilidade_do_Cabide}</p>
                     </td>
@@ -311,7 +310,7 @@ export default function ListaModulos({
                               setContextMenu({
                                 visible:
                                   contextMenu.visible &&
-                                  contextMenu.mod?.id === mod.id
+                                    contextMenu.mod?.id === mod.id
                                     ? false
                                     : true,
                                 x: 0,
@@ -336,17 +335,21 @@ export default function ListaModulos({
                                   })
                                 }
                                 options={[
-                                  {
-                                    label: "Editar",
-                                    onClick: () => iniciarEdicao(realIndex),
-                                  },
+                                  ...(["COMANDO"].includes(user!.perfil)
+                                    ? []
+                                    : [
+                                      {
+                                        label: "Editar",
+                                        onClick: () => iniciarEdicao(realIndex),
+                                      }
+                                    ]),
                                   ...(["MECANICO", "COL"].includes(user!.perfil)
                                     ? [
-                                        {
-                                          label: "Criar Novo Registro",
-                                          onClick: () => abrirModal(mod.id),
-                                        },
-                                      ]
+                                      {
+                                        label: "Criar Novo Registro",
+                                        onClick: () => abrirModal(mod.id),
+                                      },
+                                    ]
                                     : []),
                                   {
                                     label: "Visualizar Registros",
