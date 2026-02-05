@@ -153,7 +153,7 @@ export default function CadastroMaterial() {
         if (!materialSelecionado) return;
 
         const payload = {
-            serial_num: materialSelecionado.serial,
+            serial_num: formModulo.serial,
             nome: formModulo.tipo,
             status: formModulo.disponibilidade,
             origem_id: formMaterial.omOrigem,
@@ -174,7 +174,7 @@ export default function CadastroMaterial() {
 
             const modulo: Modulo = {
                 id: data.id,
-                serial: materialSelecionado.serial,
+                serial: data.serial_num,
                 disponibilidade: data.status,
                 omOrigem: materialSelecionado.omOrigem,
                 omAtual: materialSelecionado.omAtual,
@@ -426,6 +426,13 @@ export default function CadastroMaterial() {
                         </div>
 
                         <div className={styles.form}>
+                            <Input
+                                label="Número de Serie"
+                                value={formModulo.serial}
+                                onChange={(v: any) =>
+                                    setFormModulo({ ...formModulo, serial: v })
+                                }
+                            />
                             <Input
                                 label="Nome"
                                 value={formModulo.tipo}
