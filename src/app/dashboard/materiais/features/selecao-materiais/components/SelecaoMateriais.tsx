@@ -9,7 +9,7 @@ export default function SelecaoMateriais({
   setMaterialSelecionado,
 }: {
   setMaterialSelecionado: Dispatch<
-    SetStateAction<"" | "radar" | "rbs70" | "col">
+    SetStateAction<"" | "radar" | "rbs70" | "coaae" | "rbsSimulador">
   >;
 }) {
   const opcoes = [
@@ -25,10 +25,22 @@ export default function SelecaoMateriais({
       descricao:
         "Sistema portátil para lançamento de mísseis antiaéreos remotamente controlados.",
     },
+    {
+      nome: "COAAE",
+      key: "coaae",
+      descricao:
+        "Centro de operações responsável pelo comando, controle e coordenação das ações de artilharia antiaérea.",
+    },
+    {
+      nome: "Simulador RBS70",
+      key: "rbsSimulador",
+      descricao:
+        "Sistema de treinamento utilizado para simular a operação do RBS 70.",
+    },
   ];
 
   const handleSelect = (tipo: string) => {
-    setMaterialSelecionado(tipo as "radar" | "rbs70" | "col");
+    setMaterialSelecionado(tipo as "radar" | "rbs70" | "coaae" | "rbsSimulador");
     localStorage.setItem("materialSelecionado", tipo);
   };
 

@@ -27,14 +27,14 @@ export default function Tabs() {
       allowed: ["COMANDO", "COL", "S4", "MECANICO"],
     },
     {
-      key: "cadastro-material",
-      label: "Cadastro de Material",
-      allowed: ["ADMIN", "COL"],
-    },
-    {
       key: "cadastro-usuario",
       label: "Cadastro de Usuário",
       allowed: ["ADMIN"],
+    },
+    {
+      key: "cadastro-material",
+      label: "Cadastro de Material",
+      allowed: ["ADMIN", "COL"],
     },
     {
       key: "gerenciar-usuarios",
