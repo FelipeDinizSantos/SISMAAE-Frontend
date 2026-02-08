@@ -334,7 +334,7 @@ export default function CadastroMaterial() {
                         <Select
                             label="Tipo"
                             value={formMaterial.tipo}
-                            options={["RADAR", "RBS70"]}
+                            options={["RADAR", "RBS70", "COAAE", "RBS70 SIMULADOR"]}
                             onChange={(v: any) =>
                                 setFormMaterial({ ...formMaterial, tipo: v })
                             }

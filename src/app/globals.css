@@ -1,5 +1,5 @@
-/* Remover depois da apresentação */
-nextjs-portal {
+/* ESCONDER CONSOLE DE INSPEÇÃO DO NEXT (como todo bom programador. rsrs) */
+/* nextjs-portal {
   display: none !important;
 }
 
@@ -9,7 +9,7 @@ nextjs-portal {
 
 #__next-error-overlay {
   display: none !important;
-}
+} */
 
 html,
 body {

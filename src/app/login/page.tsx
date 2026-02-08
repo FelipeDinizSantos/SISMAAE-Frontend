@@ -20,7 +20,7 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const user = await login({email, senha});
+      const user = await login({ email, senha });
       if (!user) {
         toast.error("Erro ao carregar usuário");
         return;
@@ -33,7 +33,6 @@ export default function LoginPage() {
       return router.replace("/dashboard/materiais");
 
     } catch (err: any) {
-      console.error(err);
       toast.error(err.message);
     } finally {
       setLoading(false);
