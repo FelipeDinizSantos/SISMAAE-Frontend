@@ -47,7 +47,6 @@ export function useEdicaoUsuarios(
         );
     };
 
-
     const iniciarEdicao = (index: number) => {
         const novos = usuariosEditaveis.map((u, i) => {
             if (u.editando && i !== index) {
@@ -167,6 +166,8 @@ export function useEdicaoUsuarios(
                 perfil_id: perfilId,
                 batalhao_id: batalhaoId,
             };
+
+            console.log(body);
 
             const res = await fetch(`/api/usuarios/${usuarios[originalIndex].id}`, {
                 method: "PUT",
