@@ -62,7 +62,7 @@ const cores = [
 export default function MapaDisponibilidade({
   material
 }: {
-  material: 'RADAR' | 'RBS70'
+  material: 'RADAR' | 'RBS70' | 'COAAE' | 'RBS70SIMULADOR'
 }) {
   const [hoverDiv, setHoverDiv] = useState<number | null>(null);
   const [divisoesCoords, setDivisoesCoords] = useState<
@@ -126,7 +126,7 @@ export default function MapaDisponibilidade({
         </div>
         <div className="mapa-legend-circulos-item">
           <span className="circulo indisponivel"></span>
-          Dndisponíveis / em manutenção
+          Indisponíveis / em manutenção
         </div>
       </div>
       <ComposableMap

@@ -24,7 +24,7 @@ export default function GerenciarUsuariosPage() {
     const [perfilFiltro, setPerfilFiltro] = useState("");
     const [batalhaoFiltro, setBatalhaoFiltro] = useState("");
 
-    const { usuarios: usuariosFromHook } = useUsuarios();
+    const { usuarios: usuariosFromHook, reloadUsuarios } = useUsuarios();
     const { batalhoes } = useBatalhao();
     const { perfis } = usePerfis();
     const { postosGrads } = usePgs();
@@ -40,7 +40,7 @@ export default function GerenciarUsuariosPage() {
         cancelarEdicao,
         confirmarEdicao,
         atualizarCampo,
-    } = useEdicaoUsuarios(usuarios, setUsuarios, postosGrads, perfis, batalhoes, user!!);
+    } = useEdicaoUsuarios(usuarios, setUsuarios, postosGrads, perfis, batalhoes, user!!, reloadUsuarios);
 
     useEffect(() => {
         inicializar(usuarios);

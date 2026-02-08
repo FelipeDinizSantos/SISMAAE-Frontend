@@ -5,31 +5,32 @@ import toast from "react-hot-toast";
 export function useUsuarios() {
     const [usuarios, setUsuarios] = useState<User[]>([]);
 
-    useEffect(() => {
-        const fetchUsuarios = async () => {
-            try {
-                const res = await fetch(`/api/usuarios`, {
-                    credentials: "include",
-                });
+    const fetchUsuarios = async () => {
+        try {
+            const res = await fetch(`/api/usuarios`, {
+                credentials: "include",
+            });
 
-                const data = await res.json();
+            const data = await res.json();
 
-                if (!res.ok) throw new Error(data.error || "Erro ao carregar batalhões");
+            if (!res.ok) throw new Error(data.error || "Erro ao carregar batalhões");
 
-                setUsuarios(data.resultado || []);
-            } catch (err: unknown) {
-                if (err instanceof Error) {
-                    toast.error(err.message);
-                } else {
-                    toast.error("Ocorreu um erro inesperado!");
-                }
+            setUsuarios(data.resultado || []);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("Ocorreu um erro inesperado!");
             }
-        };
+        }
+    };
 
+    useEffect(() => {
         fetchUsuarios();
     }, []);
 
     return {
         usuarios,
+        reloadUsuarios: fetchUsuarios
     };
 }

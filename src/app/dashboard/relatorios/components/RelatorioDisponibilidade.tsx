@@ -11,7 +11,7 @@ import MapaDisponibilidadeRadares from "./MapaDisponibilidade";
 export default function RelatorioDisponibilidade({
   material
 }: {
-  material: 'RBS70' | 'RADAR'
+  material: 'RBS70' | 'RADAR' | 'COAAE' | 'RBS70SIMULADOR'
 }) {
   const [materiais, setMateriais] = useState<Material[]>([]);
   const [modulos, setModulos] = useState<Modulo[]>([]);
@@ -76,7 +76,9 @@ export default function RelatorioDisponibilidade({
     const renomear: Record<string, string> = {
       PEDESTAL: "Pedestal",
       QUADRIPE: "Quadripé",
-      "APARELHO DE PONTARIA": "Aparelho de Pontaria"
+      "APARELHO DE PONTARIA": "Aparelho de Pontaria",
+      SHELTER: "Shelter",
+      "VTR MARRUA": "Viatura Marrua"
     };
 
     const modulosMap = modulos.reduce<
@@ -184,32 +186,36 @@ export default function RelatorioDisponibilidade({
         </div>
 
         {/* indispPorModulos */}
-        <div className="relatorio-conteudo-flex">
-          <div className="indices-area">
-            <h3>Indisponibilidade de Módulos</h3>
-            <ul>
-              {indispPorModulos.modulosLista.map(
-                (modulo: { nome: string; qtd: number; total: number }) => {
-                  return (
-                    <li key={modulo.nome}>
-                      <span className="cor indisponivel"></span> {modulo.nome}:{" "}
-                      <strong>{modulo.qtd}</strong>{" "}
-                      <em>{percent(modulo.qtd, modulo.total)}</em>
-                    </li>
-                  );
-                }
-              )}
+        {
+          material != "RBS70SIMULADOR" && (
+            <div className="relatorio-conteudo-flex">
+              <div className="indices-area">
+                <h3>Indisponibilidade de Módulos</h3>
+                <ul>
+                  {indispPorModulos.modulosLista.map(
+                    (modulo: { nome: string; qtd: number; total: number }) => {
+                      return (
+                        <li key={modulo.nome}>
+                          <span className="cor indisponivel"></span> {modulo.nome}:{" "}
+                          <strong>{modulo.qtd}</strong>{" "}
+                          <em>{percent(modulo.qtd, modulo.total)}</em>
+                        </li>
+                      );
+                    }
+                  )}
 
-              <li className="total">
-                Total: <strong>{indispPorModulos.totalModulosIndisp}</strong>
-              </li>
-            </ul>
-          </div>
-        </div>
+                  <li className="total">
+                    Total: <strong>{indispPorModulos.totalModulosIndisp}</strong>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )
+        }
 
         {/* --- Mapa --- */}
         <div className="mapa-conteudo">
-          <h3>Mapa de Disponibilidade - {material}</h3>
+          <h3>Mapa de Disponibilidade - {material === "RBS70SIMULADOR" ? "Simulador do RBS-70" : material}</h3>
           <MapaDisponibilidadeRadares material={material} />
         </div>
       </div>

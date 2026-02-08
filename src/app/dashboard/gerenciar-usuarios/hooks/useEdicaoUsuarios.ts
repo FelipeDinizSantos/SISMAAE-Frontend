@@ -14,7 +14,8 @@ export function useEdicaoUsuarios(
     postosGrads: PostosGrads[],
     perfis: Perfil[],
     batalhoes: Batalhao[],
-    user: User
+    user: User,
+    reloadUsuarios: () => Promise<void>
 ) {
     const [usuariosEditaveis, setUsuariosEditaveis] = useState<Usuario[]>([]);
 
@@ -131,10 +132,28 @@ export function useEdicaoUsuarios(
         ) as unknown as User[]);
 
         try {
-            const perfilId =
-                usuarioEditado.perfil !== ""
-                    ? Number(usuarioEditado.perfil)
-                    : Number(usuarioEditado.perfil_original);
+            let perfilId;
+
+            if (usuarioEditado.perfil !== "" && !isNaN(Number(usuarioEditado.perfil))) {
+                perfilId = usuarioEditado.perfil;
+            } else {
+                switch (usuarioEditado.perfil) {
+                    case "COMANDO":
+                        perfilId = 2;
+                        break;
+                    case "COL":
+                        perfilId = 3;
+                        break;
+                    case "S4":
+                        perfilId = 4;
+                        break;
+                    case "MECANICO":
+                        perfilId = 5;
+                        break;
+                    default:
+                        throw new Error("Tipo do usuário inválido. Tipo fornecido: " + usuarioEditado.perfil);
+                }
+            }
 
             const batalhaoId =
                 usuarioEditado.batalhao !== ""
@@ -160,6 +179,7 @@ export function useEdicaoUsuarios(
                 throw new Error(err?.erro || "Erro inesperado");
             }
 
+            await reloadUsuarios();
             await res.json();
             toast.success("Usuário atualizado");
         } catch (error: unknown) {

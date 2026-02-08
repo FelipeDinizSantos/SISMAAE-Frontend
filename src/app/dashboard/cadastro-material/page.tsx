@@ -27,7 +27,7 @@ export default function CadastroMaterial() {
                 });
 
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error || "Erro ao criar registro");
+                if (!res.ok) throw new Error(data.error || "Erro ao buscar registro");
 
                 setMateriaisArmazenados(data.materiais);
             } catch (err: unknown) {

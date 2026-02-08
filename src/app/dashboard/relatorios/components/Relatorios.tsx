@@ -33,6 +33,22 @@ const relatoriosDisponiveis: Relatorio[] = [
     componente: <RelatorioDisponibilidade material="RBS70" />,
     disponivelPara: ["COL", "COMANDO"],
   },
+  {
+    id: "relatorio-disp-coaae",
+    nome: "Relatório Disponibilidade de COAAE",
+    descricao:
+      "Apresenta resumo detalhado da disponibilidade atual dos COAAE",
+    componente: <RelatorioDisponibilidade material="COAAE" />,
+    disponivelPara: ["COL", "COMANDO"],
+  },
+  {
+    id: "relatorio-disp-rbs70simulador",
+    nome: "Relatório Disponibilidade do Simulador do RBS-70",
+    descricao:
+      "Apresenta resumo detalhado da disponibilidade atual dos Simuladores de RBS-70",
+    componente: <RelatorioDisponibilidade material="RBS70SIMULADOR" />,
+    disponivelPara: ["COL", "COMANDO"],
+  },
 ];
 
 export default function Relatorios() {
